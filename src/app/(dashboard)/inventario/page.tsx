@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
+import { Upload } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { AutoPartTable } from '@/components/features/inventario/AutoPartTable';
 import { AutoPartFilters } from '@/components/features/inventario/AutoPartFilters';
@@ -37,7 +38,15 @@ export default async function InventarioPage({ searchParams }: PageProps) {
       <Navbar title="Inventario" breadcrumb={[{ label: 'Dashboard' }, { label: 'Inventario' }]} />
       <div className={styles.content}>
         <Suspense>
-          <AutoPartFilters categorias={categorias} />
+          <AutoPartFilters
+            categorias={categorias}
+            rightSlot={
+              <Link href="/inventario/importar" className={styles.importLink}>
+                <Upload size={16} aria-hidden="true" />
+                Importar factura
+              </Link>
+            }
+          />
         </Suspense>
 
         <div className={styles.tableSection}>

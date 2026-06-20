@@ -3,6 +3,7 @@ import { getCategorias } from '@/lib/api/categorias';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
 import { formatDate } from '@/lib/utils/format';
+import { NuevaCategoriaButton } from './NuevaCategoriaButton';
 import type { Categoria } from '@/types';
 import styles from './categorias.module.css';
 
@@ -27,6 +28,7 @@ export default async function CategoriasPage() {
             {categorias.length} categoría{categorias.length !== 1 ? 's' : ''} registrada
             {categorias.length !== 1 ? 's' : ''}
           </p>
+          <NuevaCategoriaButton />
         </div>
 
         {categorias.length === 0 ? (

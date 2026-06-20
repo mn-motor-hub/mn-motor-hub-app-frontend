@@ -13,6 +13,26 @@
   }
 }
 
+.importLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-primary);
+  color: #fff;
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.importLink:hover {
+  background-color: var(--color-primary-hover);
+}
+
 .tableSection {
   display: flex;
   flex-direction: column;

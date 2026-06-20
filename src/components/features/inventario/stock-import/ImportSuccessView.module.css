@@ -1,0 +1,253 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+}
+
+/* ── Success header ─────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background-color: var(--color-success-dim);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-lg);
+}
+
+.successIcon {
+  color: var(--color-success);
+  flex-shrink: 0;
+}
+
+.title {
+  font-family: var(--font-oswald);
+  font-size: var(--text-2xl);
+  font-weight: 500;
+  color: var(--color-success);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-xs);
+}
+
+.subtitle {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  line-height: 1.5;
+}
+
+.facturaCode {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-high);
+  padding: 1px var(--space-xs);
+  border-radius: var(--radius-sm);
+}
+
+/* ── Stats row ──────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  flex: 1;
+}
+
+.statUpdated {
+  border-color: var(--color-info);
+  background-color: var(--color-info-dim);
+}
+
+.statCreated {
+  border-color: var(--color-success);
+  background-color: var(--color-success-dim);
+}
+
+.statValue {
+  font-family: var(--font-oswald);
+  font-size: var(--text-3xl);
+  font-weight: 500;
+  color: var(--color-on-surface);
+  line-height: 1;
+  min-width: 2ch;
+  text-align: center;
+}
+
+.statUpdated .statValue {
+  color: var(--color-info);
+}
+
+.statCreated .statValue {
+  color: var(--color-success);
+}
+
+.statLabel {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  font-weight: 500;
+}
+
+/* ── Item list ──────────────────────────────────────────────── */
+.itemsSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.itemsHeading {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.itemList {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs);
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm);
+  min-height: 36px;
+}
+
+.itemRow:nth-child(even) {
+  background-color: var(--color-surface-low);
+}
+
+.accionBadge {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+  min-width: 80px;
+  text-align: center;
+}
+
+.badgeCreado {
+  color: var(--color-success);
+  background-color: var(--color-success-dim);
+}
+
+.badgeActualizado {
+  color: var(--color-info);
+  background-color: var(--color-info-dim);
+}
+
+.codigoInterno {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface);
+  letter-spacing: 0.04em;
+}
+
+/* ── Actions ────────────────────────────────────────────────── */
+.actions {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+.newImportButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-lg);
+  background-color: var(--color-primary);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.15s;
+}
+
+.newImportButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.viewInventoryLink {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-lg);
+  background-color: transparent;
+  color: var(--color-on-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  font-size: var(--text-base);
+  font-weight: 500;
+  width: 100%;
+  text-align: center;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.viewInventoryLink:hover {
+  background-color: var(--color-surface-high);
+  border-color: var(--color-outline);
+}
+
+/* ── Desktop ────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .container {
+    padding: var(--space-xl);
+  }
+
+  .stats {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .statCard {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: var(--space-lg);
+  }
+
+  .statValue {
+    font-size: var(--text-3xl);
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: flex-end;
+  }
+
+  .newImportButton,
+  .viewInventoryLink {
+    width: auto;
+  }
+}

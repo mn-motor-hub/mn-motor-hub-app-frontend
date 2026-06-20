@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/Button/Button';
 import { useAutoPartFilters } from '@/hooks/useAutoPartFilters';
 import type { Categoria } from '@/types';
@@ -9,9 +9,10 @@ import styles from './AutoPartFilters.module.css';
 
 interface AutoPartFiltersProps {
   categorias: Categoria[];
+  rightSlot?: React.ReactNode;
 }
 
-export function AutoPartFilters({ categorias }: AutoPartFiltersProps) {
+export function AutoPartFilters({ categorias, rightSlot }: AutoPartFiltersProps) {
   const { filters, applyFilters, clearFilters } = useAutoPartFilters();
   const [localMarca, setLocalMarca] = useState(filters.marca);
 
@@ -32,13 +33,18 @@ export function AutoPartFilters({ categorias }: AutoPartFiltersProps) {
 
         {/* Controles de filtro — lado izquierdo */}
         <div className={styles.controls}>
-          <input
-            type="text"
-            placeholder="Filtrar por marca..."
-            value={localMarca}
-            onChange={(e) => setLocalMarca(e.target.value)}
-            className={styles.textInput}
-          />
+          <div className={styles.inputWrapper}>
+            <input
+              type="text"
+              placeholder="Filtrar por marca..."
+              value={localMarca}
+              onChange={(e) => setLocalMarca(e.target.value)}
+              className={styles.textInput}
+            />
+            <button type="submit" className={styles.searchIcon} aria-label="Buscar">
+              <Search size={16} aria-hidden="true" />
+            </button>
+          </div>
 
           <select
             className={styles.select}
@@ -71,8 +77,12 @@ export function AutoPartFilters({ categorias }: AutoPartFiltersProps) {
           )}
         </div>
 
-        {/* Buscar — lado derecho */}
-        <Button type="submit" size="sm">Buscar</Button>
+        {/* Acción — todo a la derecha */}
+        {rightSlot && (
+          <div className={styles.rightGroup}>
+            {rightSlot}
+          </div>
+        )}
 
       </form>
     </div>

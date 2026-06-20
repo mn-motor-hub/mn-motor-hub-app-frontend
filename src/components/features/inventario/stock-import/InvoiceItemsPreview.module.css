@@ -1,0 +1,341 @@
+/* ── Section wrapper ────────────────────────────────────────── */
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.heading {
+  font-family: var(--font-oswald);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-on-surface);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.itemCount {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--color-text-muted);
+  background-color: var(--color-surface-high);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+}
+
+.globalWarning {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-warning-dim);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  color: var(--color-warning);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Card base ──────────────────────────────────────────────── */
+.card {
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Revision cards must be impossible to miss */
+.cardRevision {
+  border: 2px solid var(--color-warning);
+  background-color: rgba(240, 168, 69, 0.05);
+}
+
+/* ── Card header ────────────────────────────────────────────── */
+.cardHeader {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.badgeExisting {
+  color: var(--color-on-surface-variant);
+  background-color: var(--color-surface-high);
+}
+
+.badgeNew {
+  color: var(--color-info);
+  background-color: var(--color-info-dim);
+}
+
+.badgeRevision {
+  color: var(--color-warning);
+  background-color: var(--color-warning-dim);
+}
+
+.description {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-on-surface);
+  line-height: 1.4;
+}
+
+/* ── Info row — label/value cells ───────────────────────────── */
+.infoRow {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-md);
+}
+
+.infoCell {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 100px;
+}
+
+.infoLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.infoValue {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  font-weight: 500;
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  letter-spacing: 0.04em;
+}
+
+/* ── Catalog section ────────────────────────────────────────── */
+.catalogSection {
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface-low);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.catalogSectionTitle {
+  font-size: var(--text-xs);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+/* ── Edit section ───────────────────────────────────────────── */
+.editSection {
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+/* New item: all 5 fields in a flex column, 2-col on desktop */
+.newItemGrid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Existing item: precio field is narrower */
+.inputPrecio {
+  max-width: 200px;
+}
+
+/* ── Form fields ────────────────────────────────────────────── */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+/* label wraps its control — display flex-col so text sits above input */
+.fieldLabel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.fieldLabelText {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-text-muted);
+}
+
+.required {
+  color: var(--color-danger);
+}
+
+.input,
+.select {
+  height: 40px;
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface);
+  font-size: var(--text-sm);
+  font-family: inherit;
+  width: 100%;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.input:focus,
+.select:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(255, 87, 26, 0.2);
+}
+
+.inputError {
+  border-color: var(--color-danger);
+}
+
+.inputError:focus {
+  box-shadow: 0 0 0 2px rgba(240, 82, 82, 0.2);
+}
+
+.fieldError {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+/* ── Revision section ───────────────────────────────────────── */
+.revisionSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: rgba(240, 168, 69, 0.1);
+  border-top: 2px solid var(--color-warning);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  margin: calc(-1 * var(--space-md));
+  margin-top: 0;
+}
+
+.revisionMotivo {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+}
+
+.revisionIcon {
+  color: var(--color-warning);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.revisionMotivoText {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  line-height: 1.5;
+}
+
+/* Checkbox label — touch target, visually prominent */
+.revisionCheckLabel {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-warning-dim);
+  border: 1px solid var(--color-warning);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+/* CSS-only checked state — no JS needed for visual feedback */
+.revisionCheckLabel:has(.revisionCheckbox:checked) {
+  background-color: var(--color-success-dim);
+  border-color: var(--color-success);
+}
+
+.revisionCheckbox {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--color-warning);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.revisionCheckLabel:has(.revisionCheckbox:checked) .revisionCheckbox {
+  accent-color: var(--color-success);
+}
+
+.revisionCheckText {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-warning);
+  transition: color 0.15s;
+}
+
+.revisionCheckLabel:has(.revisionCheckbox:checked) .revisionCheckText {
+  color: var(--color-success);
+}
+
+/* ── Desktop ────────────────────────────────────────────────── */
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-lg);
+  }
+
+  .newItemGrid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-md);
+  }
+
+  /* Nombre spans full width on desktop */
+  .newItemGrid > :first-child {
+    grid-column: 1 / -1;
+  }
+
+  .revisionSection {
+    margin: calc(-1 * var(--space-lg));
+    margin-top: 0;
+    padding: var(--space-md) var(--space-lg);
+  }
+}

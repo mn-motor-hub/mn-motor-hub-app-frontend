@@ -1,0 +1,106 @@
+.card {
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.heading {
+  font-family: var(--font-oswald);
+  font-size: var(--text-xl);
+  font-weight: 500;
+  color: var(--color-on-surface);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* ── Duplicate invoice alert — must be impossible to miss ─── */
+.duplicateAlert {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: rgba(240, 82, 82, 0.18);
+  border: 2px solid var(--color-danger);
+  border-radius: var(--radius-md);
+}
+
+.duplicateIcon {
+  color: var(--color-danger);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.duplicateTitle {
+  font-size: var(--text-base);
+  font-weight: 700;
+  color: var(--color-danger);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  margin-bottom: var(--space-xs);
+}
+
+.duplicateBody {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  line-height: 1.6;
+}
+
+/* ── Header fields — stack on mobile, row on desktop ─────── */
+.fields {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.fieldLabel {
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--color-text-muted);
+}
+
+.fieldValue {
+  font-size: var(--text-base);
+  font-weight: 500;
+  color: var(--color-on-surface);
+}
+
+.mono {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+}
+
+.rif {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  font-weight: 400;
+}
+
+@media (min-width: 768px) {
+  .card {
+    padding: var(--space-xl);
+  }
+
+  .fields {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--space-lg);
+  }
+
+  .field {
+    flex: 1;
+    min-width: 160px;
+  }
+}

@@ -83,6 +83,13 @@
   cursor: pointer;
 }
 
+.rightGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-shrink: 0;
+}
+
 /* Tablet y desktop: el input de texto vuelve a ancho automático */
 @media (min-width: 768px) {
   .container {
