@@ -1,0 +1,56 @@
+.navbar {
+  background-color: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  padding: var(--space-md) var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 64px;
+  box-shadow: var(--shadow-sm);
+}
+
+.left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 0;
+}
+
+.crumbItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.crumbLink {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+  transition: color 0.15s;
+}
+
+.crumbLink:hover {
+  color: var(--color-accent);
+}
+
+.crumbCurrent {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.separator {
+  font-size: var(--text-sm);
+  color: var(--color-border);
+  margin: 0 var(--space-xs);
+}
+
+.title {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1.2;
+}
