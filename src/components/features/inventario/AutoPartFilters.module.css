@@ -5,7 +5,7 @@
   padding: var(--space-md);
 }
 
-/* Fila principal: controles a la izquierda, Buscar a la derecha */
+/* Fila principal: controles a la izquierda, slot a la derecha */
 .row {
   display: flex;
   align-items: center;
@@ -24,10 +24,16 @@
   min-width: 0;
 }
 
-/* Input de texto — ocupa todo el ancho en mobile */
+/* Wrapper relativo para el input + ícono de búsqueda */
+.inputWrapper {
+  position: relative;
+  width: 100%;
+}
+
+/* Input de texto */
 .textInput {
   height: 44px;
-  padding: 0 var(--space-md);
+  padding: 0 44px 0 var(--space-md);
   border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius-md);
   background-color: var(--color-surface-low);
@@ -45,6 +51,34 @@
 
 .textInput::placeholder {
   color: var(--color-outline);
+}
+
+/* Ícono de búsqueda superpuesto a la derecha del input */
+.searchIcon {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  border-left: 1px solid var(--color-outline-variant);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+  transition: color 0.15s, background-color 0.15s;
+}
+
+.searchIcon:hover {
+  color: var(--color-primary);
+  background-color: rgba(255, 87, 26, 0.08);
+}
+
+.inputWrapper:focus-within .searchIcon {
+  border-left-color: var(--color-primary);
 }
 
 .select {
@@ -90,14 +124,18 @@
   flex-shrink: 0;
 }
 
-/* Tablet y desktop: el input de texto vuelve a ancho automático */
+/* Tablet y desktop: el wrapper del input vuelve a ancho automático */
 @media (min-width: 768px) {
   .container {
     padding: var(--space-md) var(--space-lg);
   }
 
-  .textInput {
+  .inputWrapper {
     width: auto;
     min-width: 200px;
+  }
+
+  .textInput {
+    width: 100%;
   }
 }
