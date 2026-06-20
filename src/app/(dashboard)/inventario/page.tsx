@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import Link from 'next/link';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { AutoPartTable } from '@/components/features/inventario/AutoPartTable';
 import { AutoPartFilters } from '@/components/features/inventario/AutoPartFilters';
@@ -80,10 +81,10 @@ function PaginationControls({
   return (
     <div className={styles.paginationRow}>
       {meta.page > 1 && (
-        <a href={buildUrl(meta.page - 1)} className={styles.pageLink}>← Anterior</a>
+        <Link href={buildUrl(meta.page - 1)} className={styles.pageLink}>← Anterior</Link>
       )}
       {meta.page < meta.totalPages && (
-        <a href={buildUrl(meta.page + 1)} className={styles.pageLink}>Siguiente →</a>
+        <Link href={buildUrl(meta.page + 1)} className={styles.pageLink}>Siguiente →</Link>
       )}
     </div>
   );

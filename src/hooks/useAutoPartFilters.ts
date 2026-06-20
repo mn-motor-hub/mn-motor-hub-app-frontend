@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 
 export interface AutoPartFilters {
@@ -9,20 +9,27 @@ export interface AutoPartFilters {
   stockBajo: boolean;
 }
 
+/**
+ * La URL es la única fuente de verdad para los filtros.
+ * No hay useState local — los filtros siempre reflejan los searchParams actuales,
+ * por lo que el botón Atrás del browser funciona correctamente.
+ */
 export function useAutoPartFilters() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  const [filters, setFilters] = useState<AutoPartFilters>({
-    categoriaId: searchParams.get('categoriaId') ?? '',
-    marca: searchParams.get('marca') ?? '',
-    stockBajo: searchParams.get('stockBajo') === 'true',
-  });
+  const filters = useMemo<AutoPartFilters>(
+    () => ({
+      categoriaId: searchParams.get('categoriaId') ?? '',
+      marca: searchParams.get('marca') ?? '',
+      stockBajo: searchParams.get('stockBajo') === 'true',
+    }),
+    [searchParams]
+  );
 
   const applyFilters = useCallback(
     (next: Partial<AutoPartFilters>) => {
       const updated = { ...filters, ...next };
-      setFilters(updated);
 
       const params = new URLSearchParams();
       if (updated.categoriaId) params.set('categoriaId', updated.categoriaId);
@@ -36,7 +43,6 @@ export function useAutoPartFilters() {
   );
 
   const clearFilters = useCallback(() => {
-    setFilters({ categoriaId: '', marca: '', stockBajo: false });
     router.push('/inventario');
   }, [router]);
 
