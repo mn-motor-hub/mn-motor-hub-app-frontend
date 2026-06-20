@@ -1,38 +1,74 @@
+/* ─── Sidebar base ───────────────────────────────────────────── */
 .sidebar {
   width: 240px;
-  min-height: 100vh;
-  background-color: var(--color-primary);
+  height: 100%;
+  background-color: var(--color-surface-low);
+  border-right: 1px solid var(--color-outline-variant);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
+  overflow: hidden;
+  transition: width 0.25s ease;
+  position: relative;
+  z-index: 100;
 }
 
+.sidebarCollapsed {
+  width: 56px;
+}
+
+/* ─── Logo / header ─────────────────────────────────────────── */
 .logoArea {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-lg) var(--space-lg);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding: var(--space-md);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  min-height: 60px;
+  overflow: hidden;
 }
 
 .logoIcon {
-  color: var(--color-accent);
+  color: var(--color-primary-dim);
+  flex-shrink: 0;
 }
 
 .logoText {
-  font-size: var(--text-lg);
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: -0.02em;
+  flex: 1;
+  font-family: var(--font-oswald);
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  transition: opacity 0.15s ease;
 }
 
+/* Botón X — solo en mobile */
+.closeButton {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface-variant);
+  flex-shrink: 0;
+  transition: color 0.15s;
+}
+
+.closeButton:hover {
+  color: var(--color-on-surface);
+}
+
+/* ─── Navegación ─────────────────────────────────────────────── */
 .nav {
-  padding: var(--space-md) var(--space-sm);
+  padding: var(--space-sm);
   flex: 1;
+  overflow: hidden;
 }
 
 .navList {
-  list-style: none;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -42,24 +78,130 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
-  padding: var(--space-sm) var(--space-md);
+  padding: 10px var(--space-sm);
   border-radius: var(--radius-md);
-  color: rgba(255, 255, 255, 0.65);
+  color: rgba(229, 226, 225, 0.5);
   font-size: var(--text-sm);
   font-weight: 500;
-  transition: background-color 0.15s, color 0.15s;
+  transition: background-color 0.15s, color 0.15s, padding 0.25s ease, justify-content 0.25s ease;
+  white-space: nowrap;
+  min-height: 44px;
+  overflow: hidden;
 }
 
 .navLink:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #fff;
+  background-color: rgba(255, 255, 255, 0.06);
+  color: var(--color-on-surface);
 }
 
 .navLinkActive {
-  background-color: var(--color-accent);
-  color: #fff;
+  background-color: rgba(255, 87, 26, 0.15);
+  color: var(--color-primary-dim);
 }
 
 .navLinkActive:hover {
-  background-color: var(--color-accent-hover);
+  background-color: rgba(255, 87, 26, 0.22);
+}
+
+/* Cuando el sidebar está colapsado */
+.navLinkCollapsed {
+  justify-content: center;
+  padding: 10px;
+  gap: 0;
+}
+
+.navIcon {
+  flex-shrink: 0;
+}
+
+.navLabel {
+  overflow: hidden;
+  white-space: nowrap;
+  transition: max-width 0.2s ease, opacity 0.15s ease;
+  max-width: 200px;
+  opacity: 1;
+}
+
+/* Estado oculto: aplica a logoText y navLabel */
+.textHidden {
+  max-width: 0 !important;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* ─── Botón colapsar (desktop) ───────────────────────────────── */
+.collapseToggle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: var(--space-sm);
+  min-height: 44px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: rgba(229, 226, 225, 0.35);
+  transition: color 0.15s, background-color 0.15s;
+  flex-shrink: 0;
+}
+
+.collapseToggle:hover {
+  color: var(--color-on-surface);
+  background-color: rgba(255, 255, 255, 0.04);
+}
+
+.overlay {
+  display: none;
+}
+
+/* ─── Mobile (< 768px) ───────────────────────────────────────── */
+@media (max-width: 767px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 280px;
+    transform: translateX(-100%);
+    /* En mobile la transición es transform, no width */
+    transition: transform 0.25s ease;
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* En mobile ignorar el estado colapsado */
+  .sidebarCollapsed {
+    width: 280px;
+  }
+
+  .mobileOpen {
+    transform: translateX(0);
+  }
+
+  /* En mobile mostrar siempre los labels */
+  .textHidden {
+    max-width: 200px !important;
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .navLinkCollapsed {
+    justify-content: flex-start;
+    padding: 10px var(--space-sm);
+    gap: var(--space-sm);
+  }
+
+  .collapseToggle {
+    display: none;
+  }
+
+  .closeButton {
+    display: flex;
+  }
+
+  .overlay {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.6);
+    z-index: 99;
+    backdrop-filter: blur(2px);
+  }
 }

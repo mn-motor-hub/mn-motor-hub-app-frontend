@@ -1,12 +1,42 @@
 .navbar {
-  background-color: var(--color-surface);
-  border-bottom: 1px solid var(--color-border);
+  background-color: var(--color-surface-container);
+  border-bottom: 1px solid var(--color-outline-variant);
   padding: var(--space-md) var(--space-xl);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-md);
   min-height: 64px;
   box-shadow: var(--shadow-sm);
+}
+
+/* Hamburger — oculto en desktop */
+.menuToggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface);
+  flex-shrink: 0;
+  transition: background-color 0.15s;
+}
+
+.menuToggle:hover {
+  background-color: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 767px) {
+  .navbar {
+    padding: var(--space-sm) var(--space-md);
+    position: sticky;
+    top: 0;
+    z-index: 80;
+  }
+
+  .menuToggle {
+    display: flex;
+  }
 }
 
 .left {

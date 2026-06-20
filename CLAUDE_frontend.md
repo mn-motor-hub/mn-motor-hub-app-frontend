@@ -7,6 +7,37 @@ Guía de referencia para Claude Code. Leer completo antes de generar cualquier a
 
 ---
 
+## Mobile First — Regla crítica
+
+**Nuestros usuarios acceden principalmente desde teléfonos.** Toda UI se diseña y codea para móvil primero y se expande hacia escritorio.
+
+### Breakpoints
+```css
+/* Base → móvil (375px+) — aquí va todo el CSS por defecto */
+@media (min-width: 768px)  { /* tablet  */ }
+@media (min-width: 1280px) { /* desktop */ }
+```
+
+### Reglas obligatorias
+- **Media queries**: siempre `min-width`. Nunca `max-width` salvo casos excepcionales justificados.
+- **Touch targets**: mínimo `44 × 44px` para cualquier elemento interactivo (botones, links, íconos clicables).
+- **Inputs**: `font-size: max(1rem, 16px)` — previene zoom automático en iOS Safari.
+- **Spacing táctil**: mínimo `8px` de separación entre elementos interactivos adyacentes.
+- **Tipografía base**: nunca menos de `14px` en mobile; texto de datos/labels a `14px`, cuerpo a `16px`.
+- **Layouts**: columna única en mobile; grid/flex multi-columna solo desde `768px+`.
+- **Navegación**: en mobile el sidebar colapsa a un menú hamburguesa o bottom bar; nunca layout de sidebar fijo en pantallas `< 768px`.
+- **Tablas**: en mobile usar tarjetas apiladas (`display: block` por fila) o scroll horizontal con `overflow-x: auto` en un wrapper, nunca tabla sin scroll que desborde.
+- **Imágenes**: siempre `max-width: 100%`, nunca anchos fijos en mobile.
+- **No hover-only**: toda interacción que dependa de hover debe tener equivalente en tap/focus.
+
+### Orden de revisión antes de hacer PR
+1. Redimensionar a 375px — ¿se ve y funciona?
+2. Redimensionar a 768px — ¿la transición es correcta?
+3. Targets táctiles ≥ 44px verificados.
+4. Sin scroll horizontal no intencional.
+
+---
+
 ## Stack
 
 | Capa | Tecnología |
@@ -95,61 +126,74 @@ src/
 
 ## Design system
 
-### Variables CSS globales
+Compartido con `mn-motor-hub-web`. Fuente de verdad visual: `mn-motor-hub-web/design/DESIGN.md`.
+**Nunca inventar colores, radios ni tipografías.** Todo valor viene de las CSS variables en `src/app/globals.css`.
 
-Definidas en `src/app/globals.css`. **Nunca usar valores hardcodeados de color, spacing o tipografía** fuera de estas variables.
+### Paleta (Industrial Dark — "Onyx")
 
 ```css
-:root {
-  /* Colores principales */
-  --color-primary: #1a1a2e;        /* Azul noche — navbar, sidebar */
-  --color-primary-hover: #16213e;
-  --color-accent: #e94560;         /* Rojo automotriz — CTAs, badges */
-  --color-accent-hover: #c73652;
+/* Surfaces — elevación tonal, no shadows */
+--color-background:        #131313   /* canvas base */
+--color-surface-lowest:    #0e0e0e
+--color-surface-low:       #1c1b1b   /* sidebar, navbar */
+--color-surface-container: #201f1f   /* cards, paneles */
+--color-surface-high:      #2a2a2a   /* hover states, tooltips */
+--color-surface-variant:   #353534   /* chips inactivos */
 
-  /* Neutros */
-  --color-bg: #f8f9fa;
-  --color-surface: #ffffff;
-  --color-border: #e2e8f0;
-  --color-text: #1a202c;
-  --color-text-muted: #718096;
+/* Brand — Ignition Orange */
+--color-primary:           #ff571a   /* botones CTA, precios, acciones */
+--color-primary-dim:       #ffb59e   /* texto/íconos naranjas sobre fondo oscuro */
+--color-primary-hover:     #d63f00
+--color-on-primary:        #521300   /* texto sobre botón naranja */
 
-  /* Semánticos */
-  --color-success: #38a169;
-  --color-warning: #d69e2e;
-  --color-danger: #e53e3e;
-  --color-info: #3182ce;
+/* Texto */
+--color-on-surface:        #e5e2e1   /* texto principal */
+--color-on-surface-variant:#e6beb2   /* texto secundario */
 
-  /* Spacing */
-  --space-xs: 4px;
-  --space-sm: 8px;
-  --space-md: 16px;
-  --space-lg: 24px;
-  --space-xl: 32px;
-  --space-2xl: 48px;
+/* Bordes */
+--color-outline:           #ad897e
+--color-outline-variant:   #5c4037
 
-  /* Tipografía */
-  --font-sans: 'Inter', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', monospace;
-  --text-sm: 0.875rem;
-  --text-base: 1rem;
-  --text-lg: 1.125rem;
-  --text-xl: 1.25rem;
-  --text-2xl: 1.5rem;
-
-  /* Bordes y sombras */
-  --radius-sm: 4px;
-  --radius-md: 8px;
-  --radius-lg: 12px;
-  --shadow-sm: 0 1px 3px rgba(0,0,0,0.08);
-  --shadow-md: 0 4px 12px rgba(0,0,0,0.1);
-}
+/* Semánticos (badges, alertas) */
+--color-success: #4caf7d  --color-success-dim: rgba(76,175,125,0.12)
+--color-warning: #f0a845  --color-warning-dim: rgba(240,168,69,0.12)
+--color-danger:  #f05252  --color-danger-dim:  rgba(240,82,82,0.12)
+--color-info:    #4da6ff  --color-info-dim:    rgba(77,166,255,0.12)
 ```
 
-### Assets existentes
+### Tipografía
 
-- Hero image: `/public/images/hero-bg.png` — imagen procesada, sin watermark
-- Logo: dirección estética automotive-first (referencias: BBS, Brembo, ACDelco, Sparco)
+```css
+--font-oswald: 'Oswald'         /* headings, uppercase, display — cargada en layout.tsx */
+--font-inter:  'Inter'          /* body, labels, descripciones */
+--font-mono:   'JetBrains Mono' /* códigos internos MNM-XXX-00000 */
+```
+
+- Headings: Oswald, uppercase, `font-weight: 600–700`
+- Body / labels: Inter
+- Códigos y valores numéricos técnicos: JetBrains Mono
+
+### Bordes, radios y espaciado
+
+```css
+--radius-sm: 2px   /* chips, tags */
+--radius-md: 4px   /* botones, inputs */
+--radius-lg: 8px   /* cards, modals */
+
+--spacing-base: 8px   --space-sm: 8px   --space-md: 16px
+--spacing-gutter: 24px  --space-lg: 24px  --space-xl: 32px
+--spacing-section: 80px --space-2xl: 48px
+--container-max: 1280px
+```
+
+### Variables de compatibilidad (deprecar gradualmente)
+
+Estas siguen funcionando como aliases pero **no usar en código nuevo**:
+`--color-bg` `--color-surface` `--color-accent` `--color-border` `--color-text` `--color-text-muted` `--font-sans`
+
+### Assets
+
+- Logo SVG: `public/images/logo.svg` y `src/app/icon.svg` (favicon)
 
 ---
 

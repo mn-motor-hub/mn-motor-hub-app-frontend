@@ -1,4 +1,8 @@
+'use client';
+
 import Link from 'next/link';
+import { Menu } from 'lucide-react';
+import { useSidebar } from '@/components/layout/Sidebar/SidebarContext';
 import styles from './Navbar.module.css';
 
 interface NavbarProps {
@@ -7,8 +11,19 @@ interface NavbarProps {
 }
 
 export function Navbar({ title, breadcrumb }: NavbarProps) {
+  const { openMobile } = useSidebar();
+
   return (
     <header className={styles.navbar}>
+      {/* Hamburger — solo visible en mobile */}
+      <button
+        className={styles.menuToggle}
+        onClick={openMobile}
+        aria-label="Abrir menú"
+      >
+        <Menu size={20} />
+      </button>
+
       <div className={styles.left}>
         {breadcrumb && breadcrumb.length > 0 ? (
           <nav aria-label="Migas de pan" className={styles.breadcrumb}>
