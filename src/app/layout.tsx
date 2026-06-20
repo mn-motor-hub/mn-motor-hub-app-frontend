@@ -17,6 +17,9 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: 'MN Motor Hub — Gestión de Repuestos',
   description: 'Sistema de gestión de inventario, proveedores y ventas para MN Motor Hub.',
+  icons: {
+    icon: '/images/logo.svg',
+  },
 };
 
 export default function RootLayout({
