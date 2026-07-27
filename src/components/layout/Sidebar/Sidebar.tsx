@@ -7,6 +7,7 @@ import {
   Package,
   Users,
   Tag,
+  Wallet,
   LayoutDashboard,
   ChevronLeft,
   ChevronRight,
@@ -17,6 +18,7 @@ import styles from './Sidebar.module.css';
 
 const navItems = [
   { href: '/inventario', label: 'Inventario', icon: Package },
+  { href: '/finanzas', label: 'Finanzas', icon: Wallet },
   { href: '/proveedores', label: 'Proveedores', icon: Users },
   { href: '/categorias', label: 'Categorías', icon: Tag },
 ];

@@ -1,0 +1,147 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+}
+
+/* ── Header: selector de mes + acción ───────────────────────── */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.header > *:first-child {
+  flex: 1;
+}
+
+/* ── StatCards ──────────────────────────────────────────────── */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* ── Gráfico ────────────────────────────────────────────────── */
+.chartSection {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+}
+
+.chartHeading {
+  font-family: var(--font-oswald);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface);
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+/* Touch target 44px */
+.allMovementsLink {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  align-self: flex-end;
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  color: var(--color-primary-dim);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.allMovementsLink:hover {
+  background-color: var(--color-surface-high);
+  border-color: var(--color-outline);
+}
+
+.allMovementsLink:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Skeleton de carga ──────────────────────────────────────── */
+/* Misma estructura flex que el contenido final para no generar layout shift */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.skeletonStats {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.skeletonCard {
+  height: 76px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonChart {
+  height: 260px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonCard,
+  .skeletonChart {
+    animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-lg);
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  .stats,
+  .skeletonStats {
+    flex-direction: row;
+    gap: var(--space-md);
+  }
+
+  .skeletonCard {
+    flex: 1;
+    height: 104px;
+  }
+
+  .chartSection {
+    padding: var(--space-lg);
+  }
+}

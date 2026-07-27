@@ -69,6 +69,53 @@ export interface Supplier {
   updatedAt: string;
 }
 
+// ─── Finanzas ─────────────────────────────────────────────────
+export type FinancialType = 'ingreso' | 'gasto';
+export type FinancialMovementStatus = 'confirmado' | 'planificado';
+
+export interface FinancialCategory {
+  id: number;
+  name: string;
+  type: FinancialType;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FinancialMovement {
+  id: number;
+  type: FinancialType;
+  amount: number;
+  date: string; // YYYY-MM-DD — fecha real del movimiento, distinta de createdAt
+  description: string;
+  financialCategoryId: number;
+  // Presente solo cuando el backend carga la relación (listado y detalle, no en el POST crudo)
+  categoryName?: string;
+  registeredBy: string;
+  source: 'manual';
+  status: FinancialMovementStatus;
+  active: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface FinancialSummaryByCategory {
+  categoryId: number;
+  categoryName: string;
+  type: FinancialType;
+  total: number;
+}
+
+export interface FinancialSummary {
+  period: { month: number; year: number; from: string; to: string };
+  totalIncomeConfirmed: number;
+  totalExpensesConfirmed: number;
+  balanceConfirmed: number;
+  totalIncomePlanned: number;
+  totalExpensesPlanned: number;
+  byCategory: FinancialSummaryByCategory[];
+}
+
 // ─── Stock Import ─────────────────────────────────────────────
 export interface StockImportMatchedPart {
   auto_part_id: number;

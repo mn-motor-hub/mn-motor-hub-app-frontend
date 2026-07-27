@@ -1,0 +1,182 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  border: none;
+}
+
+.legend,
+.label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+}
+
+.required {
+  color: var(--color-primary);
+  margin-left: 2px;
+}
+
+/* ── Control segmentado (tipo / estado) ─────────────────────── */
+.segmented {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface-variant);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.segment:hover {
+  background-color: var(--color-surface-high);
+}
+
+.segmentActive {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+
+/* El radio real queda oculto pero sigue siendo focusable y accesible */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.segment:has(.srOnly:focus-visible) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Select de categoría ────────────────────────────────────── */
+.select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface);
+  font-size: max(var(--text-base), 16px);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.selectError {
+  border-color: var(--color-danger);
+}
+
+.error,
+.createError,
+.submitError {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+.submitError {
+  padding: var(--space-sm);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
+/* ── Creación inline de categoría ───────────────────────────── */
+.createForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  padding: var(--space-md);
+  background-color: var(--color-surface-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+}
+
+.createFormHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.createFormTitle {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.createFormClose {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  color: var(--color-on-surface-variant);
+  border-radius: var(--radius-md);
+}
+
+.createFormClose:hover {
+  background-color: var(--color-surface-high);
+  color: var(--color-on-surface);
+}
+
+.createFormActions,
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+.actions {
+  margin-top: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-direction: row;
+  }
+
+  .row > * {
+    flex: 1;
+  }
+}

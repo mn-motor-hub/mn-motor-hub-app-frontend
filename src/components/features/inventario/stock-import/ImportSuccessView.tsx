@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
+import { StatCard } from '@/components/ui/StatCard/StatCard';
 import type { StockImportConfirmResponse } from '@/types';
 import styles from './ImportSuccessView.module.css';
 
@@ -31,8 +32,8 @@ export function ImportSuccessView({ result, facturaNumero, onNewImport }: Import
       {/* ── Stats ────────────────────────────────────── */}
       <div className={styles.stats}>
         <StatCard value={resumen.total_items} label="Ítems procesados" />
-        <StatCard value={resumen.items_actualizados} label="Actualizados" variant="updated" />
-        <StatCard value={resumen.items_nuevos} label="Creados" variant="created" />
+        <StatCard value={resumen.items_actualizados} label="Actualizados" variant="info" />
+        <StatCard value={resumen.items_nuevos} label="Creados" variant="success" />
       </div>
 
       {/* ── Item list ────────────────────────────────── */}
@@ -68,31 +69,6 @@ export function ImportSuccessView({ result, facturaNumero, onNewImport }: Import
           <ArrowRight size={16} aria-hidden="true" />
         </Link>
       </div>
-    </div>
-  );
-}
-
-function StatCard({
-  value,
-  label,
-  variant,
-}: {
-  value: number;
-  label: string;
-  variant?: 'updated' | 'created';
-}) {
-  return (
-    <div
-      className={[
-        styles.statCard,
-        variant === 'updated' ? styles.statUpdated : '',
-        variant === 'created' ? styles.statCreated : '',
-      ]
-        .filter(Boolean)
-        .join(' ')}
-    >
-      <span className={styles.statValue}>{value}</span>
-      <span className={styles.statLabel}>{label}</span>
     </div>
   );
 }

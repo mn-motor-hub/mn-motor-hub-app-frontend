@@ -53,50 +53,7 @@
   gap: var(--space-sm);
 }
 
-.statCard {
-  display: flex;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-md);
-  background-color: var(--color-surface-container);
-  border: 1px solid var(--color-outline-variant);
-  border-radius: var(--radius-md);
-  flex: 1;
-}
-
-.statUpdated {
-  border-color: var(--color-info);
-  background-color: var(--color-info-dim);
-}
-
-.statCreated {
-  border-color: var(--color-success);
-  background-color: var(--color-success-dim);
-}
-
-.statValue {
-  font-family: var(--font-oswald);
-  font-size: var(--text-3xl);
-  font-weight: 500;
-  color: var(--color-on-surface);
-  line-height: 1;
-  min-width: 2ch;
-  text-align: center;
-}
-
-.statUpdated .statValue {
-  color: var(--color-info);
-}
-
-.statCreated .statValue {
-  color: var(--color-success);
-}
-
-.statLabel {
-  font-size: var(--text-sm);
-  color: var(--color-on-surface-variant);
-  font-weight: 500;
-}
+/* Los estilos de la tarjeta viven en components/ui/StatCard/StatCard.module.css */
 
 /* ── Item list ──────────────────────────────────────────────── */
 .itemsSection {
@@ -228,17 +185,6 @@
   .stats {
     flex-direction: row;
     gap: var(--space-md);
-  }
-
-  .statCard {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    padding: var(--space-lg);
-  }
-
-  .statValue {
-    font-size: var(--text-3xl);
   }
 
   .actions {

@@ -1,0 +1,121 @@
+.date {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  white-space: nowrap;
+}
+
+.description {
+  color: var(--color-on-surface);
+}
+
+.amountHeader,
+.amount {
+  display: block;
+  text-align: right;
+}
+
+.amount {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+/* ── Acciones de fila ───────────────────────────────────────── */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+/* Touch target 44px */
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface-variant);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--color-surface-high);
+  color: var(--color-primary);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.actionDanger:hover {
+  color: var(--color-danger);
+}
+
+/* ── Empty state ────────────────────────────────────────────── */
+.empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--color-text-muted);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Confirmación de borrado ────────────────────────────────── */
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.confirmText {
+  font-size: var(--text-base);
+  color: var(--color-on-surface);
+}
+
+.confirmDetail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+}
+
+.confirmDetailDesc {
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.confirmDetailAmount {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.confirmNote {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.confirmError {
+  padding: var(--space-sm);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}

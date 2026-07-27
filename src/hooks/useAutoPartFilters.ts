@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useMemo } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useUrlFilters } from './useUrlFilters';
 
 export interface AutoPartFilters {
   categoriaId: string;
@@ -9,42 +9,37 @@ export interface AutoPartFilters {
   stockBajo: boolean;
 }
 
+const KEYS = ['categoriaId', 'marca', 'stockBajo'] as const;
+
 /**
- * La URL es la única fuente de verdad para los filtros.
- * No hay useState local — los filtros siempre reflejan los searchParams actuales,
- * por lo que el botón Atrás del browser funciona correctamente.
+ * Wrapper fino sobre useUrlFilters para /inventario. La lógica de URL vive en el
+ * hook genérico; acá solo se traduce `stockBajo` entre boolean (la API del hook)
+ * y el string 'true' que viaja en la query.
  */
 export function useAutoPartFilters() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const { filters: raw, applyFilters: apply, clearFilters } = useUrlFilters<
+    Record<(typeof KEYS)[number], string>
+  >('/inventario', KEYS);
 
   const filters = useMemo<AutoPartFilters>(
     () => ({
-      categoriaId: searchParams.get('categoriaId') ?? '',
-      marca: searchParams.get('marca') ?? '',
-      stockBajo: searchParams.get('stockBajo') === 'true',
+      categoriaId: raw.categoriaId,
+      marca: raw.marca,
+      stockBajo: raw.stockBajo === 'true',
     }),
-    [searchParams]
+    [raw],
   );
 
   const applyFilters = useCallback(
     (next: Partial<AutoPartFilters>) => {
-      const updated = { ...filters, ...next };
-
-      const params = new URLSearchParams();
-      if (updated.categoriaId) params.set('categoriaId', updated.categoriaId);
-      if (updated.marca) params.set('marca', updated.marca);
-      if (updated.stockBajo) params.set('stockBajo', 'true');
-      params.set('page', '1');
-
-      router.push(`/inventario?${params.toString()}`);
+      apply({
+        ...(next.categoriaId !== undefined ? { categoriaId: next.categoriaId } : {}),
+        ...(next.marca !== undefined ? { marca: next.marca } : {}),
+        ...(next.stockBajo !== undefined ? { stockBajo: next.stockBajo ? 'true' : '' } : {}),
+      });
     },
-    [filters, router]
+    [apply],
   );
-
-  const clearFilters = useCallback(() => {
-    router.push('/inventario');
-  }, [router]);
 
   return { filters, applyFilters, clearFilters };
 }
