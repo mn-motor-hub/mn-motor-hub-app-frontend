@@ -41,19 +41,23 @@ export class DuplicateInvoiceError extends Error {
 export async function confirmImport(
   data: StockImportConfirmRequest
 ): Promise<StockImportConfirmResponse> {
+  const formData = new FormData();
+  formData.append('payload', JSON.stringify(data));
+
   const res = await fetch(`${BASE_URL}/api/stock-imports/confirm`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
+    // Sin Content-Type: el navegador lo setea automáticamente con el boundary correcto
+    body: formData,
   });
 
   if (!res.ok) {
     if (res.status === 409) throw new DuplicateInvoiceError();
+    const body = await res.json().catch(() => null) as { message?: string } | null;
     if (res.status === 400)
-      throw new Error('Hay ítems con revisión pendiente sin confirmar o datos inválidos.');
+      throw new Error(body?.message ?? 'Hay ítems con revisión pendiente sin confirmar o datos inválidos.');
     if (res.status === 404)
-      throw new Error('El proveedor seleccionado no existe o fue eliminado.');
-    throw new Error(`Error inesperado al confirmar la importación (HTTP ${res.status}).`);
+      throw new Error(body?.message ?? 'El proveedor seleccionado no existe o fue eliminado.');
+    throw new Error(body?.message ?? `Error inesperado al confirmar la importación (HTTP ${res.status}).`);
   }
 
   return res.json();
