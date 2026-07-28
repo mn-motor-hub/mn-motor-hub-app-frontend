@@ -1,6 +1,7 @@
 'use client'; // FormProvider + estado del modal
 
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { flushSync } from 'react-dom';
 import { useRouter } from 'next/navigation';
 import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -296,7 +297,18 @@ function CategorySelect({
     // no puede leer, así que el fetch tiene que ocurrir en el servidor.
     const result = await createFinancialCategoryAction({ name: nombre.trim(), type });
     if (result.ok) {
-      onCategoriaCreada(result.data);
+      // flushSync porque hacen falta dos garantías que un setState suelto no da.
+      // Next despacha las Server Actions dentro de startTransition (ver
+      // node_modules/next/dist/client/app-call-server.js), así que los updates de
+      // esta continuación caen en transition lane y su commit queda detrás del
+      // payload RSC: la categoría nueva no se pintaba hasta que el usuario tocaba
+      // el select. Y setValue con shouldValidate dispara trigger(), que lee el
+      // resolver de forma síncrona: sin el render ya commiteado validaría contra
+      // el schema derivado de la lista vieja y marcaría como inválida la
+      // categoría recién creada, dejando el submit deshabilitado.
+      // Commitear acá deja categoriasLocal —y con él el schema memoizado— al día
+      // antes de que setValue valide.
+      flushSync(() => onCategoriaCreada(result.data));
       setValue('financialCategoryId', result.data.id, { shouldValidate: true });
       closeCreateForm();
     } else {
