@@ -42,3 +42,46 @@
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: var(--space-lg);
 }
+
+/* ── Skeleton (fallback de Suspense) ────────────────────────── */
+.skeletonBlock {
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonEyebrow {
+  height: 14px;
+  width: 96px;
+  margin: 0 auto var(--space-sm);
+}
+
+.skeletonTitle {
+  height: 28px;
+  width: min(280px, 80%);
+  margin: 0 auto var(--space-sm);
+}
+
+.skeletonSubtitle {
+  height: 18px;
+  width: min(420px, 90%);
+  margin: 0 auto;
+}
+
+/* Alto aproximado de AutoPartCard: evita el salto al llegar los datos */
+.skeletonCard {
+  height: 200px;
+  border-radius: var(--radius-lg);
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonBlock {
+    animation: none;
+  }
+}
