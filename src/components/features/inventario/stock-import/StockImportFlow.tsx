@@ -3,7 +3,7 @@
 import { useState, useMemo, useCallback } from 'react';
 import { useForm, FormProvider } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { confirmImport, DuplicateInvoiceError } from '@/lib/api/stock-imports';
+import { confirmImportAction } from '@/app/(dashboard)/inventario/importar/actions';
 import {
   createConfirmSchema,
   confirmBaseSchema,
@@ -74,7 +74,7 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
     setConfirmError(null);
     setPhase('confirming');
 
-    try {
+    {
       const items: StockImportConfirmItem[] = parseResult.items.map((parsed, i) => {
         const fd = data.items[i];
         const base = {
@@ -98,24 +98,23 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
         return base;
       });
 
-      const result = await confirmImport({
+      const result = await confirmImportAction({
         supplier_id: data.supplier_id,
         numero_factura: parseResult.numero_factura,
         fecha_emision: parseResult.fecha_emision,
         items,
       });
 
-      setConfirmResult(result);
-      setPhase('success');
-    } catch (err) {
+      if (result.ok) {
+        setConfirmResult(result.data);
+        setPhase('success');
+        return;
+      }
+
+      // La acción ya distingue el caso de factura duplicada (code
+      // DUPLICATE_INVOICE) y devuelve el texto correspondiente.
       setPhase('preview');
-      setConfirmError(
-        err instanceof DuplicateInvoiceError
-          ? 'Esta factura ya fue importada anteriormente. No se puede volver a importar.'
-          : err instanceof Error
-            ? err.message
-            : 'Error inesperado al confirmar la importación.',
-      );
+      setConfirmError(result.error);
     }
   });
 

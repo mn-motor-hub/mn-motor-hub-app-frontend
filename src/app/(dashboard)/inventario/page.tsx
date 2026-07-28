@@ -8,6 +8,7 @@ import { getAutoParts } from '@/lib/api/auto-parts';
 import { getCategorias } from '@/lib/api/categorias';
 import type { Categoria } from '@/types';
 import styles from './inventario.module.css';
+import { withFallback } from '@/lib/utils/with-fallback';
 
 interface PageProps {
   searchParams: Promise<{
@@ -30,7 +31,7 @@ export default async function InventarioPage({ searchParams }: PageProps) {
       marca: params.marca || undefined,
       stockBajo: params.stockBajo === 'true' || undefined,
     }),
-    getCategorias().catch((): Categoria[] => []),
+    withFallback<Categoria[]>(getCategorias(), []),
   ]);
 
   return (

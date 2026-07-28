@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { Modal } from '@/components/ui/Modal/Modal';
 import { Button } from '@/components/ui/Button/Button';
 import { MovementFormModal } from './MovementFormModal';
-import { deleteFinancialMovement } from '@/lib/api/financial-movements';
+import { deleteMovementAction } from '@/app/(dashboard)/finanzas/actions';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import type { FinancialCategory, FinancialMovement } from '@/types';
 import styles from './MovementsTable.module.css';
@@ -109,17 +109,15 @@ export function MovementsTable({ data, categorias }: MovementsTableProps) {
     if (!deleting) return;
     setDeletingBusy(true);
     setDeleteError(null);
-    try {
-      await deleteFinancialMovement(deleting.id);
+
+    const result = await deleteMovementAction(deleting.id);
+    if (result.ok) {
       setDeleting(null);
       router.refresh();
-    } catch (err) {
-      setDeleteError(
-        err instanceof Error ? err.message : 'Error inesperado al eliminar el movimiento.',
-      );
-    } finally {
-      setDeletingBusy(false);
+    } else {
+      setDeleteError(result.error);
     }
+    setDeletingBusy(false);
   }
 
   if (data.length === 0) {

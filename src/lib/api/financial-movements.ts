@@ -1,4 +1,4 @@
-import { BASE_URL } from './client';
+import { BASE_URL, apiFetch } from './client';
 import type {
   CreateFinancialMovementData,
   UpdateFinancialMovementData,
@@ -44,14 +44,14 @@ export async function getFinancialMovements(params?: {
   if (params?.page) url.searchParams.set('page', String(params.page));
   if (params?.limit) url.searchParams.set('limit', String(params.limit));
 
-  const res = await fetch(url.toString(), { cache: 'no-store' });
+  const res = await apiFetch(url.toString(), { cache: 'no-store' });
   if (!res.ok) throw new Error('Error al obtener los movimientos financieros.');
   const body: ApiListResponse<FinancialMovement> = await res.json();
   return body;
 }
 
 export async function getFinancialMovement(id: number): Promise<FinancialMovement> {
-  const res = await fetch(`${BASE_URL}/api/financial-movements/${id}`, { cache: 'no-store' });
+  const res = await apiFetch(`${BASE_URL}/api/financial-movements/${id}`, { cache: 'no-store' });
   if (!res.ok) throw await movementError(res, `Error al obtener el movimiento #${id}.`);
   const body: ApiItemResponse<FinancialMovement> = await res.json();
   return body.data;
@@ -66,7 +66,7 @@ export async function getFinancialSummary(params?: {
   if (params?.month) url.searchParams.set('month', String(params.month));
   if (params?.year) url.searchParams.set('year', String(params.year));
 
-  const res = await fetch(url.toString(), { cache: 'no-store' });
+  const res = await apiFetch(url.toString(), { cache: 'no-store' });
   if (!res.ok) throw await movementError(res, 'Error al obtener el resumen financiero.');
   const body: ApiItemResponse<FinancialSummary> = await res.json();
   return body.data;
@@ -75,7 +75,7 @@ export async function getFinancialSummary(params?: {
 export async function createFinancialMovement(
   data: CreateFinancialMovementData,
 ): Promise<FinancialMovement> {
-  const res = await fetch(`${BASE_URL}/api/financial-movements`, {
+  const res = await apiFetch(`${BASE_URL}/api/financial-movements`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -89,7 +89,7 @@ export async function updateFinancialMovement(
   id: number,
   data: UpdateFinancialMovementData,
 ): Promise<FinancialMovement> {
-  const res = await fetch(`${BASE_URL}/api/financial-movements/${id}`, {
+  const res = await apiFetch(`${BASE_URL}/api/financial-movements/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -101,7 +101,7 @@ export async function updateFinancialMovement(
 
 /** Baja lógica — el backend marca `active: false` y responde 204. */
 export async function deleteFinancialMovement(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/financial-movements/${id}`, { method: 'DELETE' });
+  const res = await apiFetch(`${BASE_URL}/api/financial-movements/${id}`, { method: 'DELETE' });
   if (!res.ok) throw await movementError(res, `Error al eliminar el movimiento #${id}.`);
 }
 

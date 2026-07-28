@@ -11,8 +11,10 @@ import {
   LayoutDashboard,
   ChevronLeft,
   ChevronRight,
+  LogOut,
   X,
 } from 'lucide-react';
+import { logoutAction } from '@/app/login/actions';
 import { useSidebar } from './SidebarContext';
 import styles from './Sidebar.module.css';
 
@@ -79,6 +81,20 @@ export function Sidebar() {
             })}
           </ul>
         </nav>
+
+        {/* Cerrar sesión */}
+        <form action={logoutAction} className={styles.logoutForm}>
+          <button
+            type="submit"
+            className={`${styles.navLink} ${styles.logoutButton} ${collapsed ? styles.navLinkCollapsed : ''}`}
+            title={collapsed ? 'Cerrar sesión' : undefined}
+          >
+            <LogOut size={18} className={styles.navIcon} />
+            <span className={`${styles.navLabel} ${collapsed ? styles.textHidden : ''}`}>
+              Cerrar sesión
+            </span>
+          </button>
+        </form>
 
         {/* Colapsar — solo desktop */}
         <button

@@ -1,4 +1,4 @@
-import { BASE_URL } from './client';
+import { BASE_URL, apiFetch } from './client';
 import type { ApiItemResponse, ApiListResponse, FinancialCategory, FinancialType } from '@/types';
 
 export async function getFinancialCategories(params?: {
@@ -10,7 +10,7 @@ export async function getFinancialCategories(params?: {
   if (params?.active !== undefined) url.searchParams.set('active', String(params.active));
 
   // Catálogo casi-estático, mismo criterio que categorias.ts
-  const res = await fetch(url.toString(), { next: { revalidate: 300 } });
+  const res = await apiFetch(url.toString(), { next: { revalidate: 300 } });
   if (!res.ok) throw new Error('Error al obtener las categorías financieras.');
   const body: ApiListResponse<FinancialCategory> = await res.json();
   return body.data;
@@ -20,7 +20,7 @@ export async function createFinancialCategory(data: {
   name: string;
   type: FinancialType;
 }): Promise<FinancialCategory> {
-  const res = await fetch(`${BASE_URL}/api/financial-categories`, {
+  const res = await apiFetch(`${BASE_URL}/api/financial-categories`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -38,7 +38,7 @@ export async function updateFinancialCategory(
   id: number,
   data: { name?: string; active?: boolean },
 ): Promise<FinancialCategory> {
-  const res = await fetch(`${BASE_URL}/api/financial-categories/${id}`, {
+  const res = await apiFetch(`${BASE_URL}/api/financial-categories/${id}`, {
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(data),
@@ -50,7 +50,7 @@ export async function updateFinancialCategory(
 
 /** Baja lógica — el backend marca `active: false` y responde 204. */
 export async function deleteFinancialCategory(id: number): Promise<void> {
-  const res = await fetch(`${BASE_URL}/api/financial-categories/${id}`, { method: 'DELETE' });
+  const res = await apiFetch(`${BASE_URL}/api/financial-categories/${id}`, { method: 'DELETE' });
   if (!res.ok) throw await categoryError(res, `Error al eliminar la categoría #${id}.`);
 }
 

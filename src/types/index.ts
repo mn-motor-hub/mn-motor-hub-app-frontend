@@ -59,6 +59,18 @@ export interface ApiError {
   message: string;
 }
 
+/**
+ * Resultado de una Server Action.
+ * Las acciones devuelven este objeto en vez de lanzar: Next redacta los
+ * mensajes de error que cruzan el límite servidor→cliente en producción, así
+ * que un throw llegaría al usuario como "An error occurred in the Server
+ * Components render". `code` permite discriminar casos puntuales sin depender
+ * de `instanceof`, que tampoco sobrevive la serialización.
+ */
+export type ActionResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; error: string; code?: string };
+
 // ─── Suppliers ────────────────────────────────────────────────
 export interface Supplier {
   id: number;

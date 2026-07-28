@@ -11,6 +11,7 @@ import { getFinancialCategories } from '@/lib/api/financial-categories';
 import { formatCurrencyUsd } from '@/lib/utils/format';
 import type { FinancialCategory } from '@/types';
 import styles from './finanzas.module.css';
+import { withFallback } from '@/lib/utils/with-fallback';
 
 interface PageProps {
   searchParams: Promise<{ month?: string; year?: string }>;
@@ -24,8 +25,9 @@ export default async function FinanzasPage({ searchParams }: PageProps) {
 
   // Se precargan acá (cache 300s) para que el modal no tenga que hacer su propio
   // fetch al abrir — el catálogo cambia poco y así el form abre sin espera.
-  const categorias = await getFinancialCategories({ active: true }).catch(
-    (): FinancialCategory[] => [],
+  const categorias = await withFallback<FinancialCategory[]>(
+    getFinancialCategories({ active: true }),
+    [],
   );
 
   return (

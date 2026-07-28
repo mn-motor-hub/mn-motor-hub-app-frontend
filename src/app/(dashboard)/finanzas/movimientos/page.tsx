@@ -7,6 +7,7 @@ import { getFinancialMovements } from '@/lib/api/financial-movements';
 import { getFinancialCategories } from '@/lib/api/financial-categories';
 import type { FinancialCategory, FinancialMovementStatus, FinancialType } from '@/types';
 import styles from './movimientos.module.css';
+import { withFallback } from '@/lib/utils/with-fallback';
 
 interface PageProps {
   searchParams: Promise<{
@@ -46,8 +47,9 @@ export default async function MovimientosPage({ searchParams }: PageProps) {
 }
 
 async function FiltersSection() {
-  const categorias = await getFinancialCategories({ active: true }).catch(
-    (): FinancialCategory[] => [],
+  const categorias = await withFallback<FinancialCategory[]>(
+    getFinancialCategories({ active: true }),
+    [],
   );
   return <MovementFilters categorias={categorias} />;
 }
@@ -69,7 +71,7 @@ async function MovementsSection({
       dateFrom: params.dateFrom || undefined,
       dateTo: params.dateTo || undefined,
     }),
-    getFinancialCategories({ active: true }).catch((): FinancialCategory[] => []),
+    withFallback<FinancialCategory[]>(getFinancialCategories({ active: true }), []),
   ]);
 
   const { data, meta } = movementsData;

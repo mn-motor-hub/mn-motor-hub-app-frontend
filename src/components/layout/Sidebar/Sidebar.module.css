@@ -129,6 +129,22 @@
   pointer-events: none;
 }
 
+/* ─── Cerrar sesión ──────────────────────────────────────────── */
+.logoutForm {
+  padding: var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.logoutButton {
+  width: 100%;
+  text-align: left;
+}
+
+.logoutButton:hover {
+  background-color: rgba(240, 82, 82, 0.12);
+  color: var(--color-danger);
+}
+
 /* ─── Botón colapsar (desktop) ───────────────────────────────── */
 .collapseToggle {
   display: flex;

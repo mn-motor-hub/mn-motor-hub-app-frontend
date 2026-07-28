@@ -3,7 +3,10 @@
 import { useState, useEffect } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import { X } from 'lucide-react';
-import { getSuppliers, createSupplier } from '@/lib/api/suppliers';
+import {
+  createSupplierAction,
+  listSuppliersAction,
+} from '@/app/(dashboard)/inventario/importar/actions';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
 import type { ConfirmFormData } from '@/lib/schemas/stock-import.schema';
@@ -30,9 +33,12 @@ export function SupplierSelector({ supplierMatch }: SupplierSelectorProps) {
   const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
-    getSuppliers()
-      .then(setSuppliers)
-      .catch(() => {})
+    // Server Action, no fetch directo: el token vive en una cookie httpOnly
+    // que este componente no puede leer.
+    listSuppliersAction()
+      .then((result) => {
+        if (result.ok) setSuppliers(result.data);
+      })
       .finally(() => setLoadingSuppliers(false));
   }, []);
 
@@ -55,19 +61,20 @@ export function SupplierSelector({ supplierMatch }: SupplierSelectorProps) {
     }
     setCreating(true);
     setCreateError(null);
-    try {
-      const payload = createRif.trim()
-        ? { nombre: createNombre.trim(), rif: createRif.trim() }
-        : { nombre: createNombre.trim() };
-      const newSupplier = await createSupplier(payload);
-      setSuppliers((prev) => [...prev, newSupplier]);
-      setValue('supplier_id', newSupplier.id, { shouldValidate: true });
+
+    const payload = createRif.trim()
+      ? { nombre: createNombre.trim(), rif: createRif.trim() }
+      : { nombre: createNombre.trim() };
+
+    const result = await createSupplierAction(payload);
+    if (result.ok) {
+      setSuppliers((prev) => [...prev, result.data]);
+      setValue('supplier_id', result.data.id, { shouldValidate: true });
       closeCreateForm();
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Error al crear el proveedor.');
-    } finally {
-      setCreating(false);
+    } else {
+      setCreateError(result.error);
     }
+    setCreating(false);
   }
 
   const supplierError = errors.supplier_id?.message;

@@ -4,6 +4,8 @@ import { Badge } from '@/components/ui/Badge/Badge';
 import { SupplierRefList } from '@/components/features/proveedores/SupplierRefList';
 import { getAutoPart } from '@/lib/api/auto-parts';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
+import { withFallback } from '@/lib/utils/with-fallback';
+import type { AutoPart } from '@/types';
 import styles from './detail.module.css';
 
 interface PageProps {
@@ -16,7 +18,7 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
 
   if (isNaN(numId)) notFound();
 
-  const part = await getAutoPart(numId).catch(() => null);
+  const part = await withFallback<AutoPart | null>(getAutoPart(numId), null);
   if (!part) notFound();
 
   const isBelowMin = part.stockActual <= part.stockMinimo;

@@ -1,4 +1,4 @@
-import { BASE_URL } from './client';
+import { BASE_URL, apiFetch } from './client';
 import type {
   StockImportParseResponse,
   StockImportConfirmRequest,
@@ -16,7 +16,7 @@ export async function parseInvoice(file: File): Promise<StockImportParseResponse
   const formData = new FormData();
   formData.append('archivo', file);
 
-  const res = await fetch(`${BASE_URL}/api/stock-imports/parse`, {
+  const res = await apiFetch(`${BASE_URL}/api/stock-imports/parse`, {
     method: 'POST',
     body: formData,
   });
@@ -44,7 +44,7 @@ export async function confirmImport(
   const formData = new FormData();
   formData.append('payload', JSON.stringify(data));
 
-  const res = await fetch(`${BASE_URL}/api/stock-imports/confirm`, {
+  const res = await apiFetch(`${BASE_URL}/api/stock-imports/confirm`, {
     method: 'POST',
     // Sin Content-Type: el navegador lo setea automáticamente con el boundary correcto
     body: formData,

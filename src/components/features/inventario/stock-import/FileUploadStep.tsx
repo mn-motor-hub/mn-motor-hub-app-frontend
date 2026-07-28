@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react';
 import { Upload, FileText, X } from 'lucide-react';
-import { parseInvoice } from '@/lib/api/stock-imports';
+import { parseInvoiceAction } from '@/app/(dashboard)/inventario/importar/actions';
 import type { StockImportParseResponse } from '@/types';
 import styles from './FileUploadStep.module.css';
 
@@ -57,13 +57,18 @@ export function FileUploadStep({ onSuccess }: FileUploadStepProps) {
     if (!file) return;
     setUploading(true);
     setError(null);
-    try {
-      const result = await parseInvoice(file);
-      onSuccess(result);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error inesperado al procesar la factura.');
-      setUploading(false);
+    // El File viaja en FormData a la Server Action: el token está en una cookie
+    // httpOnly que este componente no puede leer.
+    const formData = new FormData();
+    formData.append('archivo', file);
+
+    const result = await parseInvoiceAction(formData);
+    if (result.ok) {
+      onSuccess(result.data);
+      return;
     }
+    setError(result.error);
+    setUploading(false);
   }
 
   if (uploading) {

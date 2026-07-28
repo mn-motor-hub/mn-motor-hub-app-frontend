@@ -6,9 +6,10 @@ import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { StockImportFlow } from '@/components/features/inventario/stock-import/StockImportFlow';
 import { getCategorias } from '@/lib/api/categorias';
 import type { Categoria } from '@/types';
+import { withFallback } from '@/lib/utils/with-fallback';
 
 export default async function ImportarFacturaPage() {
-  const categorias = await getCategorias().catch((): Categoria[] => []);
+  const categorias = await withFallback<Categoria[]>(getCategorias(), []);
 
   return (
     <>

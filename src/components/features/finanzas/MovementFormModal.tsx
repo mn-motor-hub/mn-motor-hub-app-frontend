@@ -8,11 +8,11 @@ import { X } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
-import { createFinancialCategory } from '@/lib/api/financial-categories';
 import {
-  createFinancialMovement,
-  updateFinancialMovement,
-} from '@/lib/api/financial-movements';
+  createFinancialCategoryAction,
+  createMovementAction,
+  updateMovementAction,
+} from '@/app/(dashboard)/finanzas/actions';
 import {
   createMovementFormSchema,
   type CreateFinancialMovementData,
@@ -70,22 +70,20 @@ export function MovementFormModal({
   const onSubmit = form.handleSubmit(async (data) => {
     setSubmitError(null);
     setSubmitting(true);
-    try {
-      if (movement) {
-        await updateFinancialMovement(movement.id, data);
-      } else {
-        // `status` no se expone en creación: el backend lo deriva de la fecha.
-        await createFinancialMovement(data);
-      }
+
+    // `status` no se expone en creación: el backend lo deriva de la fecha.
+    const result = movement
+      ? await updateMovementAction(movement.id, data)
+      : await createMovementAction(data);
+
+    if (result.ok) {
       onOpenChange(false);
       router.refresh();
-    } catch (err) {
-      setSubmitError(
-        err instanceof Error ? err.message : 'Error inesperado al guardar el movimiento.',
-      );
-    } finally {
-      setSubmitting(false);
+      return;
     }
+
+    setSubmitError(result.error);
+    setSubmitting(false);
   });
 
   return (
@@ -293,18 +291,18 @@ function CategorySelect({
     }
     setCreating(true);
     setCreateError(null);
-    try {
-      // Llamada directa al cliente API: este componente ya es 'use client' por el
-      // FormProvider, así que un Server Action solo agregaría un salto extra.
-      const nueva = await createFinancialCategory({ name: nombre.trim(), type });
-      onCategoriaCreada(nueva);
-      setValue('financialCategoryId', nueva.id, { shouldValidate: true });
+
+    // Server Action: el token vive en una cookie httpOnly que este componente
+    // no puede leer, así que el fetch tiene que ocurrir en el servidor.
+    const result = await createFinancialCategoryAction({ name: nombre.trim(), type });
+    if (result.ok) {
+      onCategoriaCreada(result.data);
+      setValue('financialCategoryId', result.data.id, { shouldValidate: true });
       closeCreateForm();
-    } catch (err) {
-      setCreateError(err instanceof Error ? err.message : 'Error al crear la categoría.');
-    } finally {
-      setCreating(false);
+    } else {
+      setCreateError(result.error);
     }
+    setCreating(false);
   }
 
   const error = errors.financialCategoryId?.message;
