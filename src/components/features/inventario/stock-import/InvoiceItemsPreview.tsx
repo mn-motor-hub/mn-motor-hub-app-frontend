@@ -1,6 +1,6 @@
 'use client';
 
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { AlertTriangle } from 'lucide-react';
 import type { ConfirmFormData } from '@/lib/schemas/stock-import.schema';
 import type { StockImportParseResponse, StockImportParsedItem, Categoria } from '@/types';
@@ -63,12 +63,16 @@ function ItemCard({
 }) {
   const {
     register,
+    control,
     formState: { errors },
   } = useFormContext<ConfirmFormData>();
 
   const itemErrors = errors.items?.[index];
   const isNew = item.match === null;
   const needsRevision = item.requiere_revision;
+
+  const selectedCategoriaId = useWatch({ control, name: `items.${index}.categoria_id` });
+  const selectedCategoria = categorias.find((c) => c.id === selectedCategoriaId);
 
   return (
     <div
@@ -127,7 +131,12 @@ function ItemCard({
               />
             </Field>
 
-            <Field label="Categoría" required error={itemErrors?.categoria_id?.message}>
+            <Field
+              label="Categoría"
+              required
+              error={itemErrors?.categoria_id?.message}
+              hint={selectedCategoria?.descripcion}
+            >
               <select
                 className={[styles.select, itemErrors?.categoria_id ? styles.inputError : '']
                   .filter(Boolean)
@@ -247,11 +256,13 @@ function Field({
   label,
   required,
   error,
+  hint,
   children,
 }: {
   label: string;
   required?: boolean;
   error?: string;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -263,7 +274,11 @@ function Field({
         </span>
         {children}
       </label>
-      {error && <span className={styles.fieldError}>{error}</span>}
+      {error ? (
+        <span className={styles.fieldError}>{error}</span>
+      ) : hint ? (
+        <span className={styles.fieldHint}>{hint}</span>
+      ) : null}
     </div>
   );
 }

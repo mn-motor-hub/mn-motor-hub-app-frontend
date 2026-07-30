@@ -242,6 +242,11 @@
   color: var(--color-danger);
 }
 
+.fieldHint {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
 /* ── Revision section ───────────────────────────────────────── */
 .revisionSection {
   display: flex;

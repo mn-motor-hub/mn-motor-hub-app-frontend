@@ -2,6 +2,7 @@ export interface Categoria {
   id: number;
   nombre: string;
   prefijo: string;
+  descripcion?: string;
   activo: boolean;
   createdAt: string;
   updatedAt: string;
