@@ -1,6 +1,7 @@
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { getCategorias } from '@/lib/api/categorias';
 import { Badge } from '@/components/ui/Badge/Badge';
+import { InfoPopover } from '@/components/ui/InfoPopover/InfoPopover';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
 import { formatDate } from '@/lib/utils/format';
 import { NuevaCategoriaButton } from './NuevaCategoriaButton';
@@ -46,7 +47,17 @@ export default async function CategoriasPage() {
             <Tbody>
               {categorias.map((cat) => (
                 <Tr key={cat.id}>
-                  <Td className={styles.nombre}>{cat.nombre}</Td>
+                  <Td>
+                    <div className={styles.nombreCell}>
+                      <span className={styles.nombre}>{cat.nombre}</span>
+                      {cat.descripcion ? (
+                        <InfoPopover
+                          text={cat.descripcion}
+                          label={`Ver descripción de ${cat.nombre}`}
+                        />
+                      ) : null}
+                    </div>
+                  </Td>
                   <Td>
                     <span className={styles.prefijo}>{cat.prefijo}</span>
                   </Td>

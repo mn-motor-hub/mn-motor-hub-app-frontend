@@ -25,6 +25,12 @@
   border-radius: var(--radius-lg);
 }
 
+.nombreCell {
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
 .nombre {
   font-weight: 500;
 }
