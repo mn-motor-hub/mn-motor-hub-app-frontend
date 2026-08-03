@@ -1,0 +1,141 @@
+.content {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-xl);
+  }
+}
+
+.empty {
+  text-align: center;
+  padding: var(--space-2xl);
+  color: var(--color-on-surface-variant);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .card {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.cardInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.cardTitle {
+  font-family: var(--font-oswald);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.cardDescription {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+}
+
+.cardAction {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.cardValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-primary-dim);
+}
+
+/* ── Botón editar ───────────────────────────────────────────── */
+.editButton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  min-width: 44px;
+  padding: var(--space-sm) var(--space-md);
+  background-color: transparent;
+  color: var(--color-on-surface);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s, border-color 0.15s;
+}
+
+.editButton:hover {
+  background-color: var(--color-surface-high);
+  border-color: var(--color-primary);
+}
+
+/* ── Confirmación de guardado ──────────────────────────────────── */
+.savedBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-success);
+}
+
+/* ── Modal form ─────────────────────────────────────────────── */
+.modalForm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.modalError {
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  line-height: 1.5;
+}
+
+.modalActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  padding-top: var(--space-xs);
+}

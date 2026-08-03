@@ -9,6 +9,7 @@ import {
   Tag,
   Wallet,
   LayoutDashboard,
+  Settings,
   ChevronLeft,
   ChevronRight,
   LogOut,
@@ -23,6 +24,7 @@ const navItems = [
   { href: '/finanzas', label: 'Finanzas', icon: Wallet },
   { href: '/proveedores', label: 'Proveedores', icon: Users },
   { href: '/categorias', label: 'Categorías', icon: Tag },
+  { href: '/configuracion', label: 'Configuración', icon: Settings },
 ];
 
 export function Sidebar() {

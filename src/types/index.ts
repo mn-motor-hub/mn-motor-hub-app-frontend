@@ -129,6 +129,14 @@ export interface FinancialSummary {
   byCategory: FinancialSummaryByCategory[];
 }
 
+// ─── Configuración del sistema ──────────────────────────────
+export interface Configuracion {
+  clave: string;
+  valor: number;
+  descripcion: string;
+  updatedAt: string;
+}
+
 // ─── Stock Import ─────────────────────────────────────────────
 export interface StockImportMatchedPart {
   auto_part_id: number;
