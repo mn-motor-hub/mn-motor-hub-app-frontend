@@ -1,54 +1,51 @@
-'use client';
+'use client'; // react-hook-form + estado del modal
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
 import { createCategoriaAction } from './actions';
+import { createCategoriaSchema, type CreateCategoriaData } from '@/lib/schemas/categoria.schema';
 import styles from './categorias.module.css';
 
 export function NuevaCategoriaButton() {
   const router = useRouter();
   const [open, setOpen] = useState(false);
-  const [nombre, setNombre] = useState('');
-  const [prefijo, setPrefijo] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting, isValid },
+  } = useForm<CreateCategoriaData>({
+    resolver: zodResolver(createCategoriaSchema),
+    mode: 'onChange',
+    defaultValues: { nombre: '' },
+  });
 
   function handleClose() {
     setOpen(false);
-    setNombre('');
-    setPrefijo('');
-    setError(null);
+    setSubmitError(null);
+    reset({ nombre: '' });
   }
 
-  function validate(): string | null {
-    if (!nombre.trim()) return 'El nombre es requerido.';
-    if (prefijo.length !== 3) return 'El prefijo debe tener exactamente 3 caracteres.';
-    return null;
-  }
+  const onSubmit = handleSubmit(async ({ nombre }) => {
+    setSubmitError(null);
+    const result = await createCategoriaAction(nombre);
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    const validationError = validate();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-    setLoading(true);
-    setError(null);
-    try {
-      await createCategoriaAction({ nombre: nombre.trim(), prefijo });
+    if (result.ok) {
       handleClose();
       router.refresh();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error inesperado.');
-    } finally {
-      setLoading(false);
+      return;
     }
-  }
+
+    setSubmitError(result.error);
+  });
 
   return (
     <>
@@ -59,40 +56,32 @@ export function NuevaCategoriaButton() {
 
       <Modal
         open={open}
-        onOpenChange={(v) => { if (!v) handleClose(); }}
+        onOpenChange={(v) => { if (!isSubmitting && !v) handleClose(); }}
         title="Nueva categoría"
         size="sm"
       >
-        <form onSubmit={handleSubmit} noValidate className={styles.modalForm}>
+        <form onSubmit={onSubmit} noValidate className={styles.modalForm}>
           <Input
             label="Nombre"
             required
-            value={nombre}
-            onChange={(e) => setNombre(e.target.value)}
-            placeholder="Ej: EMPACADURAS"
             autoFocus
-          />
-          <Input
-            label="Prefijo"
-            required
-            value={prefijo}
-            onChange={(e) => setPrefijo(e.target.value.toUpperCase().slice(0, 3))}
-            placeholder="Ej: EMP"
-            maxLength={3}
-            helper="3 caracteres — genera códigos del tipo MNM-EMP-00001"
+            placeholder="Ej: EMPACADURAS"
+            error={errors.nombre?.message}
+            helper="El código se genera automáticamente"
+            {...register('nombre')}
           />
 
-          {error && (
+          {submitError && (
             <p className={styles.modalError} role="alert">
-              {error}
+              {submitError}
             </p>
           )}
 
           <div className={styles.modalActions}>
-            <Button type="button" variant="ghost" onClick={handleClose} disabled={loading}>
+            <Button type="button" variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={isSubmitting} disabled={!isValid}>
               Crear categoría
             </Button>
           </div>

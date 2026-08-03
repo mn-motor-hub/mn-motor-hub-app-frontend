@@ -1,28 +1,75 @@
 .content {
-  padding: var(--space-xl);
+  padding: var(--space-md);
   display: flex;
   flex-direction: column;
   gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-xl);
+  }
+}
+
+/* ── Tabs ────────────────────────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: var(--space-xs);
+  border-bottom: 1px solid var(--color-outline-variant);
+  overflow-x: auto;
+}
+
+.tab {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  white-space: nowrap;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.tab:hover {
+  color: var(--color-on-surface);
+}
+
+.tabActive {
+  color: var(--color-primary-dim);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
 }
 
 .count {
   font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  color: var(--color-on-surface-variant);
 }
 
 .empty {
   text-align: center;
   padding: var(--space-2xl);
-  color: var(--color-text-muted);
-  background-color: var(--color-surface);
-  border: 1px solid var(--color-border);
+  color: var(--color-on-surface-variant);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
   border-radius: var(--radius-lg);
+}
+
+/* ── Fila clickeable (stretched link) ───────────────────────── */
+.clickableRow {
+  position: relative;
+  cursor: pointer;
 }
 
 .nombreCell {
@@ -31,21 +78,41 @@
   gap: var(--space-xs);
 }
 
-.nombre {
+.rowLink {
+  color: inherit;
+  text-decoration: none;
   font-weight: 500;
 }
 
-.prefijo {
+.rowLink:hover {
+  text-decoration: underline;
+}
+
+/* Estira el área clickeable a toda la fila sin necesitar JS en el cliente. */
+.rowLink::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+/* El popover de descripción tiene que quedar por encima del rowLink estirado. */
+.popoverSlot {
+  position: relative;
+  z-index: 2;
+}
+
+.codigo {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
-  background-color: var(--color-bg);
+  background-color: var(--color-surface-low);
   padding: 2px var(--space-sm);
   border-radius: var(--radius-sm);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-outline-variant);
 }
 
 .fecha {
-  color: var(--color-text-muted);
+  color: var(--color-on-surface-variant);
   font-size: var(--text-sm);
 }
 
@@ -53,11 +120,12 @@
 .addButton {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-xs);
   min-height: 44px;
   padding: var(--space-sm) var(--space-md);
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   border: none;
   border-radius: var(--radius-md);
   font-size: var(--text-sm);

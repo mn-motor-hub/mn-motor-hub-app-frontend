@@ -1,0 +1,109 @@
+.content {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-xl);
+  }
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding: var(--space-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.title {
+  font-family: var(--font-oswald);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: var(--text-xl);
+  color: var(--color-on-surface);
+  margin: 0;
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.codigo {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  background-color: var(--color-surface-low);
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-outline-variant);
+}
+
+.updated {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.descripcion {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  margin: 0;
+  max-width: 60ch;
+}
+
+.sectionTitle {
+  font-family: var(--font-oswald);
+  font-weight: 600;
+  font-size: var(--text-lg);
+  color: var(--color-on-surface);
+  margin: 0 0 var(--space-md);
+}
+
+/* ── ActivarDesactivarButton ────────────────────────────────── */
+.toggleWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  align-items: flex-start;
+}
+
+@media (min-width: 768px) {
+  .toggleWrapper {
+    align-items: flex-end;
+  }
+}
+
+.toggleError {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  max-width: 260px;
+}

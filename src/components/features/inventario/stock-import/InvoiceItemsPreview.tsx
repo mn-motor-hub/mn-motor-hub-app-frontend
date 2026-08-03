@@ -72,7 +72,10 @@ function ItemCard({
   const needsRevision = item.requiere_revision;
 
   const selectedCategoriaId = useWatch({ control, name: `items.${index}.categoria_id` });
-  const selectedCategoria = categorias.find((c) => c.id === selectedCategoriaId);
+  // categoria_id es number (deuda preexistente: el backend ya usa ids UUID para
+  // Categoria — este selector de stock-import no fue migrado, ver AutoPart.subcategoriaId).
+  // String() evita el choque de tipos sin tocar ese comportamiento ya roto, fuera de alcance acá.
+  const selectedCategoria = categorias.find((c) => c.id === String(selectedCategoriaId));
 
   return (
     <div

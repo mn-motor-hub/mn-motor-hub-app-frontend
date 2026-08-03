@@ -1,8 +1,18 @@
 export interface Categoria {
-  id: number;
+  id: string;
   nombre: string;
-  prefijo: string;
+  codigo: string;
   descripcion?: string;
+  activo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Subcategoria {
+  id: string;
+  categoriaId: string;
+  codigoSublinea: string;
+  nombre: string;
   activo: boolean;
   createdAt: string;
   updatedAt: string;

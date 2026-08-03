@@ -1,28 +1,49 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
-import { BASE_URL } from '@/lib/api/client';
-import type { Categoria } from '@/types';
+import { createCategoria, updateCategoria } from '@/lib/api/categorias';
+import { createSubcategoria } from '@/lib/api/subcategorias';
+import type { ActionResult, Categoria, Subcategoria } from '@/types';
 
-export async function createCategoriaAction(data: {
-  nombre: string;
-  prefijo: string;
-}): Promise<Categoria> {
-  const res = await fetch(`${BASE_URL}/api/categorias`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(data),
-  });
-
-  if (!res.ok) {
-    if (res.status === 409)
-      throw new Error('Ya existe una categoría con ese nombre o prefijo.');
-    if (res.status === 400)
-      throw new Error('Datos inválidos. Verificá que el prefijo tenga exactamente 3 caracteres en mayúsculas.');
-    throw new Error(`Error inesperado al crear la categoría (HTTP ${res.status}).`);
+export async function createCategoriaAction(nombre: string): Promise<ActionResult<Categoria>> {
+  try {
+    const data = await createCategoria(nombre);
+    revalidatePath('/categorias');
+    return { ok: true, data };
+  } catch (err) {
+    return { ok: false, error: message(err, 'Error al crear la categoría.') };
   }
+}
 
-  const body = await res.json();
-  revalidatePath('/categorias');
-  return body.data ?? body;
+export async function updateCategoriaAction(
+  id: string,
+  data: { nombre?: string; activo?: boolean },
+): Promise<ActionResult<Categoria>> {
+  try {
+    const categoria = await updateCategoria(id, data);
+    revalidatePath('/categorias');
+    revalidatePath(`/categorias/${id}`);
+    return { ok: true, data: categoria };
+  } catch (err) {
+    return { ok: false, error: message(err, 'Error al actualizar la categoría.') };
+  }
+}
+
+export async function createSubcategoriaAction(data: {
+  nombre: string;
+  categoriaId: string;
+}): Promise<ActionResult<Subcategoria>> {
+  try {
+    const subcategoria = await createSubcategoria(data);
+    revalidatePath('/categorias');
+    revalidatePath('/categorias/subcategorias');
+    revalidatePath(`/categorias/${data.categoriaId}`);
+    return { ok: true, data: subcategoria };
+  } catch (err) {
+    return { ok: false, error: message(err, 'Error al crear la subcategoría.') };
+  }
+}
+
+function message(err: unknown, fallback: string): string {
+  return err instanceof Error ? err.message : fallback;
 }
