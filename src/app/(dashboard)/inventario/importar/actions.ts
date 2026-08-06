@@ -1,9 +1,16 @@
 'use server';
 
-import { confirmImport, DuplicateInvoiceError, parseInvoice } from '@/lib/api/stock-imports';
+import {
+  classifySubcategorias,
+  confirmImport,
+  DuplicateInvoiceError,
+  parseInvoice,
+} from '@/lib/api/stock-imports';
 import { createSupplier, getSuppliers } from '@/lib/api/suppliers';
 import type {
   ActionResult,
+  ClassifySubcategoriaRequestItem,
+  ClassifySubcategoriaResultItem,
   StockImportConfirmRequest,
   StockImportConfirmResponse,
   StockImportParseResponse,
@@ -47,6 +54,16 @@ export async function confirmImportAction(
       };
     }
     return { ok: false, error: message(err, 'Error inesperado al confirmar la importación.') };
+  }
+}
+
+export async function classifySubcategoriasAction(
+  items: ClassifySubcategoriaRequestItem[],
+): Promise<ActionResult<ClassifySubcategoriaResultItem[]>> {
+  try {
+    return { ok: true, data: await classifySubcategorias(items) };
+  } catch (err) {
+    return { ok: false, error: message(err, 'Error al sugerir subcategorías con IA.') };
   }
 }
 

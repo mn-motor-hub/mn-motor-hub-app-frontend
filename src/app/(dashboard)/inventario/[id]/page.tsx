@@ -3,9 +3,10 @@ import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { SupplierRefList } from '@/components/features/proveedores/SupplierRefList';
 import { getAutoPart } from '@/lib/api/auto-parts';
+import { getCategorias } from '@/lib/api/categorias';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { AutoPart } from '@/types';
+import type { AutoPart, Categoria } from '@/types';
 import styles from './detail.module.css';
 
 interface PageProps {
@@ -18,8 +19,16 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
 
   if (isNaN(numId)) notFound();
 
-  const part = await withFallback<AutoPart | null>(getAutoPart(numId), null);
+  const [part, categorias] = await Promise.all([
+    withFallback<AutoPart | null>(getAutoPart(numId), null),
+    withFallback<Categoria[]>(getCategorias(), []),
+  ]);
   if (!part) notFound();
+
+  // auto_parts guarda subcategoria_id; el nombre de la categoría padre no viene
+  // anidado en la relación (el backend no carga subcategoria.categoria), así
+  // que se resuelve contra el catálogo — mismo patrón que en /inventario/importar.
+  const categoriaNombre = categorias.find((c) => c.id === part.subcategoria?.categoriaId)?.nombre;
 
   const isBelowMin = part.stockActual <= part.stockMinimo;
 
@@ -44,11 +53,15 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
               {part.marca ? <Field label="Marca" value={part.marca} /> : null}
               <Field
                 label="Categoría"
+                value={categoriaNombre ? <Badge variant="info">{categoriaNombre}</Badge> : '—'}
+              />
+              <Field
+                label="Subcategoría"
                 value={
-                  part.categoria ? (
-                    <Badge variant="info">{part.categoria.nombre}</Badge>
+                  part.subcategoria ? (
+                    <Badge variant="info">{part.subcategoria.nombre}</Badge>
                   ) : (
-                    String(part.categoriaId)
+                    '—'
                   )
                 }
               />

@@ -11,9 +11,11 @@ import {
 } from '@/lib/schemas/stock-import.schema';
 import type {
   Categoria,
+  Subcategoria,
   StockImportParseResponse,
   StockImportConfirmResponse,
   StockImportConfirmItem,
+  StockImportParsedItem,
 } from '@/types';
 import { FileUploadStep } from './FileUploadStep';
 import { InvoiceHeaderSummary } from './InvoiceHeaderSummary';
@@ -25,19 +27,26 @@ type FlowPhase = 'upload' | 'preview' | 'confirming' | 'success';
 
 export interface StockImportFlowProps {
   categorias: Categoria[];
+  subcategorias: Subcategoria[];
+  /** % de margen de ganancia por defecto (ej. 60), desde /api/configuraciones. */
+  margenDefault: number;
 }
 
-export function StockImportFlow({ categorias }: StockImportFlowProps) {
+export function StockImportFlow({ categorias, subcategorias, margenDefault }: StockImportFlowProps) {
   const [phase, setPhase] = useState<FlowPhase>('upload');
   const [parseResult, setParseResult] = useState<StockImportParseResponse | null>(null);
   const [confirmResult, setConfirmResult] = useState<StockImportConfirmResponse | null>(null);
   const [confirmError, setConfirmError] = useState<string | null>(null);
+  // Ítems que el clasificador de subcategorías por IA marcó requiere_revision
+  // después del parseo, indexados por posición — ver createConfirmSchema.
+  const [classifyRevision, setClassifyRevision] = useState<Record<number, boolean>>({});
 
   // Schema is derived from parsed items so superRefine has access to match/requiere_revision.
   // react-hook-form stores the resolver in a mutable ref and picks up changes each render.
   const schema = useMemo(
-    () => (parseResult ? createConfirmSchema(parseResult.items) : confirmBaseSchema),
-    [parseResult],
+    () =>
+      parseResult ? createConfirmSchema(parseResult.items, classifyRevision) : confirmBaseSchema,
+    [parseResult, classifyRevision],
   );
 
   const form = useForm<ConfirmFormData>({
@@ -49,14 +58,18 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
   const handleParseSuccess = useCallback(
     (result: StockImportParseResponse) => {
       setParseResult(result);
+      setClassifyRevision({});
       form.reset({
         supplier_id: result.supplier_match?.id ?? 0,
         items: result.items.map((item) => ({
-          // Existing items: seed with cost × (1 + current margin).
-          // New items: 0 — fails validation until user enters a real price.
-          precio_venta_nuevo: item.match
-            ? roundTwo(item.precio_unitario_usd * (1 + (item.match.margen_actual ?? 0)))
-            : 0,
+          precio_unitario_usd: item.precio_unitario_usd,
+          // Seed con costo × (1 + margen): margen propio del ítem si ya está en
+          // catálogo, margen_ganancia_default si es nuevo. Se recalcula en vivo
+          // en InvoiceItemsPreview mientras el usuario no toque precio_venta_nuevo.
+          precio_venta_nuevo: roundTwo(
+            item.precio_unitario_usd * (1 + margenFraction(item, margenDefault)),
+          ),
+          subcategoria_id: item.subcategoria_id ?? undefined,
           nombre: item.match === null ? item.descripcion : '',
           categoria_id: undefined,
           ubicacion_stock: 'PRINCIPAL',
@@ -66,7 +79,7 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
       });
       setPhase('preview');
     },
-    [form],
+    [form, margenDefault],
   );
 
   const onSubmit = form.handleSubmit(async (data) => {
@@ -81,10 +94,11 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
           codigo_proveedor: parsed.codigo_proveedor,
           descripcion: parsed.descripcion,
           cantidad: parsed.cantidad,
-          precio_unitario_usd: parsed.precio_unitario_usd,
+          precio_unitario_usd: fd.precio_unitario_usd,
           requiere_revision: false as const,
           auto_part_id: parsed.match?.auto_part_id ?? null,
           precio_venta_nuevo: fd.precio_venta_nuevo,
+          ...(fd.subcategoria_id ? { subcategoria_id: fd.subcategoria_id } : {}),
         };
         if (parsed.match === null) {
           return {
@@ -123,8 +137,13 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
     setParseResult(null);
     setConfirmResult(null);
     setConfirmError(null);
+    setClassifyRevision({});
     form.reset({ supplier_id: 0, items: [] });
   }
+
+  const handleClassifyRevision = useCallback((updates: Record<number, boolean>) => {
+    setClassifyRevision((prev) => ({ ...prev, ...updates }));
+  }, []);
 
   if (phase === 'success' && confirmResult && parseResult) {
     return (
@@ -147,7 +166,14 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
 
             {!parseResult.factura_ya_importada && (
               <>
-                <InvoiceItemsPreview parseResult={parseResult} categorias={categorias} />
+                <InvoiceItemsPreview
+                  parseResult={parseResult}
+                  categorias={categorias}
+                  subcategorias={subcategorias}
+                  margenDefault={margenDefault}
+                  revisionOverrides={classifyRevision}
+                  onRevisionChange={handleClassifyRevision}
+                />
 
                 {confirmError && (
                   <p className={styles.confirmError} role="alert">
@@ -180,6 +206,11 @@ export function StockImportFlow({ categorias }: StockImportFlowProps) {
   );
 }
 
-function roundTwo(n: number): number {
+export function roundTwo(n: number): number {
   return Math.round(n * 100) / 100;
+}
+
+/** Margen como fracción (0.6, no 60): propio del ítem si ya está en catálogo, global si es nuevo. */
+export function margenFraction(item: StockImportParsedItem, margenDefaultPct: number): number {
+  return item.match ? (item.match.margen_actual ?? 0) : margenDefaultPct / 100;
 }

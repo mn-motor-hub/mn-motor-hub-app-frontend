@@ -32,9 +32,9 @@ export function AutoPartCard({ part }: AutoPartCardProps) {
             <span className={styles.metaLabel}>Marca:</span> {part.marca}
           </span>
         ) : null}
-        {part.categoria ? (
+        {part.subcategoria ? (
           <span className={styles.metaItem}>
-            <span className={styles.metaLabel}>Categoría:</span> {part.categoria.nombre}
+            <span className={styles.metaLabel}>Subcategoría:</span> {part.subcategoria.nombre}
           </span>
         ) : null}
       </div>

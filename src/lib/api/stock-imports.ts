@@ -3,6 +3,8 @@ import type {
   StockImportParseResponse,
   StockImportConfirmRequest,
   StockImportConfirmResponse,
+  ClassifySubcategoriaRequestItem,
+  ClassifySubcategoriaResultItem,
 } from '@/types';
 
 const PARSE_ERROR_MESSAGES: Record<number, string> = {
@@ -29,6 +31,27 @@ export async function parseInvoice(file: File): Promise<StockImportParseResponse
   }
 
   return res.json();
+}
+
+export async function classifySubcategorias(
+  items: ClassifySubcategoriaRequestItem[],
+): Promise<ClassifySubcategoriaResultItem[]> {
+  const res = await apiFetch(`${BASE_URL}/api/stock-imports/classify-subcategorias`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // El DTO del backend valida un objeto { items }, no un array suelto.
+    body: JSON.stringify({ items }),
+  });
+
+  if (!res.ok) {
+    const body = (await res.json().catch(() => null)) as { message?: string } | null;
+    throw new Error(
+      body?.message ?? `Error al sugerir subcategorías con IA (HTTP ${res.status}).`,
+    );
+  }
+
+  const body: { data: ClassifySubcategoriaResultItem[] } = await res.json();
+  return body.data;
 }
 
 export class DuplicateInvoiceError extends Error {

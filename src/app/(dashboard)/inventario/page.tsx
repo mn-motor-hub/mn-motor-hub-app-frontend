@@ -61,7 +61,7 @@ export default async function InventarioPage({ searchParams }: PageProps) {
             </p>
           </div>
 
-          <AutoPartTable data={partsData.data} />
+          <AutoPartTable data={partsData.data} categorias={categorias} />
 
           <Suspense>
             <PaginationControls meta={partsData.meta} searchParams={params} />

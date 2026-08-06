@@ -36,7 +36,7 @@ export interface AutoPart {
   nombre: string;
   descripcion: string | null;
   marca: string | null;
-  categoriaId: number;
+  subcategoriaId: string;
   stockActual: number;
   stockMinimo: number;
   precioVenta: number | null;
@@ -44,7 +44,7 @@ export interface AutoPart {
   activo: boolean;
   createdAt: string;
   updatedAt: string;
-  categoria?: Categoria;
+  subcategoria?: Subcategoria;
   supplierRefs?: SupplierRef[];
 }
 
@@ -166,6 +166,7 @@ export interface StockImportParsedItem {
   requiere_revision: boolean;
   motivo_revision: string | null;
   match: StockImportMatchedPart | null;
+  subcategoria_id: string | null;
 }
 
 export interface StockImportParseResponse {
@@ -187,7 +188,8 @@ export interface StockImportConfirmItem {
   auto_part_id: number | null;
   precio_venta_nuevo: number;
   nombre?: string;
-  categoria_id?: number;
+  categoria_id?: string;
+  subcategoria_id?: string;
   ubicacion_stock?: string;
   marca?: string;
 }
@@ -197,6 +199,28 @@ export interface StockImportConfirmRequest {
   numero_factura: string;
   fecha_emision: string;
   items: StockImportConfirmItem[];
+}
+
+// Sugerencia de subcategoría por IA (endpoint separado, on-demand desde el staging).
+export interface ClassifySubcategoriaRequestItem {
+  tempId: string;
+  nombre: string;
+  descripcion: string;
+}
+
+export interface ClassifySubcategoriaCandidato {
+  subcategoriaId: string;
+  codigoSublinea: string;
+  nombre: string;
+  categoriaNombre: string;
+  // Fracción 0–1, no porcentaje — mismo criterio que StockImportMatchedPart.margen_actual.
+  score: number;
+}
+
+export interface ClassifySubcategoriaResultItem {
+  tempId: string;
+  candidatos: ClassifySubcategoriaCandidato[];
+  requiereRevision: boolean;
 }
 
 export interface StockImportConfirmResultItem {
