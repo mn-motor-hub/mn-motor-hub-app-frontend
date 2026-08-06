@@ -1,0 +1,41 @@
+.widget {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-sm);
+  margin: 0 var(--space-sm);
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: 22px;
+  white-space: nowrap;
+}
+
+.label {
+  font-size: var(--text-sm);
+  color: rgba(229, 226, 225, 0.5);
+}
+
+.value {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * El rail colapsado (solo íconos, sin espacio para 3 líneas de texto) es un
+ * estado exclusivo de desktop — en mobile el sidebar siempre se expande por
+ * completo (ver .sidebarCollapsed en Sidebar.module.css), así que este
+ * ocultamiento recién aplica desde el breakpoint donde el rail existe.
+ */
+@media (min-width: 768px) {
+  .collapsed {
+    display: none;
+  }
+}

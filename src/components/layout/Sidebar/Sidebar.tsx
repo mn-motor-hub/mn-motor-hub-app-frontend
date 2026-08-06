@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { logoutAction } from '@/app/login/actions';
 import { useSidebar } from './SidebarContext';
+import { ExchangeRatesWidget } from './ExchangeRatesWidget';
 import styles from './Sidebar.module.css';
 
 const navItems = [
@@ -83,6 +84,9 @@ export function Sidebar() {
             })}
           </ul>
         </nav>
+
+        {/* Tasas de cambio */}
+        <ExchangeRatesWidget collapsed={collapsed} />
 
         {/* Cerrar sesión */}
         <form action={logoutAction} className={styles.logoutForm}>

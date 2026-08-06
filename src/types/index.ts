@@ -139,6 +139,26 @@ export interface FinancialSummary {
   byCategory: FinancialSummaryByCategory[];
 }
 
+// ─── Tasas de cambio ──────────────────────────────────────────
+export type TasaTipo = 'automatica' | 'manual';
+export type TasaFuente = 'online' | 'manual';
+
+export interface Tasa {
+  id: string;
+  clave: string;
+  label: string;
+  tipo: TasaTipo;
+  providerId: string | null;
+  valorAutomatico: number | null;
+  valorManual: number | null;
+  // manual ?? automatico — lo que debe usar cualquier consumidor
+  valorEfectivo: number | null;
+  fetchedAt: string | null;
+  fuente: TasaFuente;
+  activo: boolean;
+  orden: number;
+}
+
 // ─── Configuración del sistema ──────────────────────────────
 export interface Configuracion {
   clave: string;

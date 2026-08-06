@@ -25,3 +25,15 @@ export function formatDate(dateStr: string): string {
 export function formatCode(code: string): string {
   return code.toUpperCase();
 }
+
+/**
+ * "Bs 45,68" — a propósito no usa `style: 'currency', currency: 'VES'`:
+ * el símbolo ICU para VES es "Bs.S", no "Bs".
+ */
+export function formatBs(amount: number): string {
+  const formatted = new Intl.NumberFormat('es-VE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(amount);
+  return `Bs ${formatted}`;
+}
