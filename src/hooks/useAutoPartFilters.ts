@@ -5,11 +5,12 @@ import { useUrlFilters } from './useUrlFilters';
 
 export interface AutoPartFilters {
   categoriaId: string;
+  subcategoriaId: string;
   marca: string;
   stockBajo: boolean;
 }
 
-const KEYS = ['categoriaId', 'marca', 'stockBajo'] as const;
+const KEYS = ['categoriaId', 'subcategoriaId', 'marca', 'stockBajo'] as const;
 
 /**
  * Wrapper fino sobre useUrlFilters para /inventario. La lógica de URL vive en el
@@ -24,6 +25,7 @@ export function useAutoPartFilters() {
   const filters = useMemo<AutoPartFilters>(
     () => ({
       categoriaId: raw.categoriaId,
+      subcategoriaId: raw.subcategoriaId,
       marca: raw.marca,
       stockBajo: raw.stockBajo === 'true',
     }),
@@ -34,6 +36,7 @@ export function useAutoPartFilters() {
     (next: Partial<AutoPartFilters>) => {
       apply({
         ...(next.categoriaId !== undefined ? { categoriaId: next.categoriaId } : {}),
+        ...(next.subcategoriaId !== undefined ? { subcategoriaId: next.subcategoriaId } : {}),
         ...(next.marca !== undefined ? { marca: next.marca } : {}),
         ...(next.stockBajo !== undefined ? { stockBajo: next.stockBajo ? 'true' : '' } : {}),
       });

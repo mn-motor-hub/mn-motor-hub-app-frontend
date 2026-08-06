@@ -4,14 +4,16 @@ import type { AutoPart, ApiListResponse, ApiItemResponse, PaginationMeta } from 
 export async function getAutoParts(params?: {
   page?: number;
   limit?: number;
-  categoriaId?: number;
+  // Único filtro de categorización que el backend soporta hoy (igualdad
+  // simple sobre auto_parts.subcategoria_id) — no hay categoriaId ni lista.
+  subcategoriaId?: string;
   marca?: string;
   stockBajo?: boolean;
 }): Promise<{ data: AutoPart[]; meta: PaginationMeta }> {
   const url = new URL(`${BASE_URL}/api/auto-parts`);
   if (params?.page) url.searchParams.set('page', String(params.page));
   if (params?.limit) url.searchParams.set('limit', String(params.limit));
-  if (params?.categoriaId) url.searchParams.set('categoriaId', String(params.categoriaId));
+  if (params?.subcategoriaId) url.searchParams.set('subcategoriaId', params.subcategoriaId);
   if (params?.marca) url.searchParams.set('marca', params.marca);
   if (params?.stockBajo) url.searchParams.set('stockBajo', 'true');
 
