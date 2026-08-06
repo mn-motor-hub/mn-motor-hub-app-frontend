@@ -15,14 +15,14 @@ interface AutoPartFiltersProps {
 
 export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPartFiltersProps) {
   const { filters, applyFilters, clearFilters } = useAutoPartFilters();
-  const [localMarca, setLocalMarca] = useState(filters.marca);
+  const [localQ, setLocalQ] = useState(filters.q);
 
   useEffect(() => {
-    setLocalMarca(filters.marca);
-  }, [filters.marca]);
+    setLocalQ(filters.q);
+  }, [filters.q]);
 
   const hasActiveFilters =
-    filters.categoriaId || filters.subcategoriaId || filters.marca || filters.stockBajo;
+    filters.categoriaId || filters.subcategoriaId || filters.q || filters.stockBajo;
 
   const subcategoriasDeCategoria = filters.categoriaId
     ? subcategorias.filter((s) => s.categoriaId === filters.categoriaId)
@@ -30,7 +30,7 @@ export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPa
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    applyFilters({ marca: localMarca });
+    applyFilters({ q: localQ });
   }
 
   return (
@@ -42,9 +42,9 @@ export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPa
           <div className={styles.inputWrapper}>
             <input
               type="text"
-              placeholder="Filtrar por marca..."
-              value={localMarca}
-              onChange={(e) => setLocalMarca(e.target.value)}
+              placeholder="Buscar por nombre, código o categoría..."
+              value={localQ}
+              onChange={(e) => setLocalQ(e.target.value)}
               className={styles.textInput}
             />
             <button type="submit" className={styles.searchIcon} aria-label="Buscar">

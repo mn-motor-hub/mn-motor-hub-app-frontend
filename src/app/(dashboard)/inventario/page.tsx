@@ -16,7 +16,7 @@ interface PageProps {
     page?: string;
     categoriaId?: string;
     subcategoriaId?: string;
-    marca?: string;
+    q?: string;
     stockBajo?: string;
   }>;
 }
@@ -40,7 +40,7 @@ export default async function InventarioPage({ searchParams }: PageProps) {
     page,
     limit: 20,
     subcategoriaId: params.subcategoriaId || undefined,
-    marca: params.marca || undefined,
+    q: params.q || undefined,
     stockBajo: params.stockBajo === 'true' || undefined,
   });
 
@@ -110,7 +110,7 @@ function PaginationControls({
     const p = new URLSearchParams();
     if (searchParams.categoriaId) p.set('categoriaId', searchParams.categoriaId);
     if (searchParams.subcategoriaId) p.set('subcategoriaId', searchParams.subcategoriaId);
-    if (searchParams.marca) p.set('marca', searchParams.marca);
+    if (searchParams.q) p.set('q', searchParams.q);
     if (searchParams.stockBajo) p.set('stockBajo', searchParams.stockBajo);
     p.set('page', String(page));
     return `/inventario?${p.toString()}`;
