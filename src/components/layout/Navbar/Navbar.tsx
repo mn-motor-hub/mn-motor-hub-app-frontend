@@ -10,7 +10,7 @@ interface NavbarProps {
   breadcrumb?: { label: string; href?: string }[];
 }
 
-export function Navbar({ title, breadcrumb }: NavbarProps) {
+export function Navbar({ breadcrumb }: NavbarProps) {
   const { openMobile } = useSidebar();
 
   return (
@@ -41,7 +41,6 @@ export function Navbar({ title, breadcrumb }: NavbarProps) {
             ))}
           </nav>
         ) : null}
-        <h1 className={styles.title}>{title}</h1>
       </div>
     </header>
   );

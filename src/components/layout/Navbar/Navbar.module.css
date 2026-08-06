@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-md);
-  min-height: 64px;
+  min-height: 60px;
   box-shadow: var(--shadow-sm);
 }
 
@@ -76,11 +76,4 @@
   font-size: var(--text-sm);
   color: var(--color-border);
   margin: 0 var(--space-xs);
-}
-
-.title {
-  font-size: var(--text-xl);
-  font-weight: 600;
-  color: var(--color-text);
-  line-height: 1.2;
 }
