@@ -2,6 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
+import { unstable_rethrow } from 'next/navigation';
 import { getAutoParts } from '@/lib/api/auto-parts';
 import { anularSale, createSale, getTasaEfectiva } from '@/lib/api/sales';
 import { USER_NAME_COOKIE } from '@/lib/api/client';
@@ -41,6 +42,11 @@ export async function createSaleAction(
     revalidatePath('/ventas');
     return { ok: true, data: sale };
   } catch (err) {
+    // Si el token venció, apiFetch ya disparó redirect('/login') — eso es un throw
+    // de control de flujo (NEXT_REDIRECT), no un error de negocio. Sin este rethrow
+    // quedaba atrapado acá y se mostraba como si la venta hubiera fallado sin
+    // ningún mensaje claro, en vez de mandar al usuario a loguearse de nuevo.
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al registrar la venta.') };
   }
 }
@@ -52,6 +58,7 @@ export async function anularSaleAction(id: number): Promise<ActionResult<Sale>> 
     revalidatePath(`/ventas/${id}`);
     return { ok: true, data: sale };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al anular la venta.') };
   }
 }
@@ -60,6 +67,7 @@ export async function getTasaEfectivaAction(): Promise<ActionResult<TasaEfectiva
   try {
     return { ok: true, data: await getTasaEfectiva() };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al obtener la tasa de cambio.') };
   }
 }
@@ -71,6 +79,7 @@ export async function searchAutoPartsAction(q: string): Promise<ActionResult<Aut
     const result = await getAutoParts({ q, limit: 8 });
     return { ok: true, data: result.data };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al buscar repuestos.') };
   }
 }

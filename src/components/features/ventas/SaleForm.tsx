@@ -27,6 +27,24 @@ function roundTwo(n: number): number {
   return Math.round(n * 100) / 100;
 }
 
+/**
+ * `errors.items` puede ser un array (un objeto de errores por ítem) en vez de
+ * un FieldError plano con `.message` — por eso `Object.values(errors)[0]?.message`
+ * no alcanza para mostrar algo útil. Busca el primer mensaje real recorriendo
+ * objetos y arrays anidados.
+ */
+function findFirstErrorMessage(node: unknown): string | undefined {
+  if (!node || typeof node !== 'object') return undefined;
+  if ('message' in node && typeof (node as { message?: unknown }).message === 'string') {
+    return (node as { message: string }).message;
+  }
+  for (const value of Object.values(node as Record<string, unknown>)) {
+    const found = findFirstErrorMessage(value);
+    if (found) return found;
+  }
+  return undefined;
+}
+
 const DEFAULT_VALUES: CreateSaleFormData = {
   clienteNombre: '',
   clienteTelefono: '',
@@ -46,19 +64,39 @@ export function SaleForm() {
     defaultValues: DEFAULT_VALUES,
   });
 
-  const onSubmit = form.handleSubmit(async (data) => {
-    setSubmitError(null);
-    setSubmitting(true);
+  // `formState.isValid` queda desincronizado de `formState.errors` en este
+  // form: combina useFieldArray (items) con useWatch leído desde componentes
+  // hermanos (ItemsSection, FormaPagoSection) que disparan setValue con
+  // shouldValidate. RHF no siempre recalcula el flag derivado `isValid` en ese
+  // escenario, aunque `errors` sí queda correcto en cada validación — así que
+  // el submit se habilita a partir de `errors` directamente, no de `isValid`.
+  const hasErrors = Object.keys(form.formState.errors).length > 0;
 
-    const result = await createSaleAction(data);
-    if (result.ok) {
-      router.push(`/ventas/${result.data.id}`);
-      return;
-    }
+  const onSubmit = form.handleSubmit(
+    async (data) => {
+      setSubmitError(null);
+      setSubmitting(true);
 
-    setSubmitError(result.error);
-    setSubmitting(false);
-  });
+      const result = await createSaleAction(data);
+      if (result.ok) {
+        router.push(`/ventas/${result.data.id}`);
+        return;
+      }
+
+      setSubmitError(result.error);
+      setSubmitting(false);
+    },
+    // handleSubmit siempre revalida contra el schema al enviar, sin importar
+    // el estado de `errors` que habilitó el botón. Sin este handler, si esa
+    // revalidación encuentra algo inválido el submit no hace absolutamente
+    // nada — ni guarda ni avisa. Acá al menos se muestra el primer motivo real.
+    (invalidFields) => {
+      setSubmitError(
+        findFirstErrorMessage(invalidFields) ??
+          'Revisá los datos del formulario: hay campos inválidos.',
+      );
+    },
+  );
 
   return (
     <FormProvider {...form}>
@@ -82,7 +120,7 @@ export function SaleForm() {
           >
             Cancelar
           </Button>
-          <Button type="submit" loading={submitting} disabled={!form.formState.isValid}>
+          <Button type="submit" loading={submitting} disabled={hasErrors}>
             Registrar venta
           </Button>
         </div>
@@ -135,12 +173,15 @@ function ItemsSection() {
       });
       return;
     }
+    // precioVenta es numeric(10,2) en Postgres — el driver `pg` lo devuelve
+    // como string sin importar el tipo de la entidad TypeORM (confirmado con
+    // backend-mn). id/stockActual sí son columnas integer, llegan como number.
     append({
       autoPartId: part.id,
       cantidad: 1,
       nombre: part.nombre,
       codigoInterno: part.codigoInterno,
-      precioVentaUsd: part.precioVenta,
+      precioVentaUsd: part.precioVenta == null ? null : Number(part.precioVenta),
       stockActual: part.stockActual,
     });
   }
@@ -291,7 +332,7 @@ function AutoPartSearch({
                     </span>
                   </span>
                   <span className={styles.resultPrecio}>
-                    {part.precioVenta != null ? formatCurrencyUsd(part.precioVenta) : '—'}
+                    {part.precioVenta != null ? formatCurrencyUsd(Number(part.precioVenta)) : '—'}
                   </span>
                 </button>
               </li>

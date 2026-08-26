@@ -39,7 +39,10 @@ export interface AutoPart {
   subcategoriaId: string;
   stockActual: number;
   stockMinimo: number;
-  precioVenta: number | null;
+  // numeric(10,2) en Postgres — el driver `pg` lo devuelve como string sin
+  // importar el tipo declarado en la entidad de TypeORM; convertir con
+  // Number() en el punto de uso, nunca operar sobre esto directo.
+  precioVenta: string | null;
   ubicacionStock: string;
   activo: boolean;
   createdAt: string;
