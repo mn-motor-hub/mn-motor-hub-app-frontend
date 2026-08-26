@@ -47,6 +47,7 @@ function findFirstErrorMessage(node: unknown): string | undefined {
 
 const DEFAULT_VALUES: CreateSaleFormData = {
   clienteNombre: '',
+  clienteDocumento: '',
   clienteTelefono: '',
   formaPago: 'usd',
   montoEnFormaPago: 0,
@@ -147,6 +148,13 @@ function ClienteSection() {
           placeholder="Ej: Juan Pérez"
           error={errors.clienteNombre?.message}
           {...register('clienteNombre')}
+        />
+        <Input
+          label="Cédula o RIF"
+          required
+          placeholder="Ej: V-12345678"
+          error={errors.clienteDocumento?.message}
+          {...register('clienteDocumento')}
         />
         <Input
           label="Teléfono (opcional)"

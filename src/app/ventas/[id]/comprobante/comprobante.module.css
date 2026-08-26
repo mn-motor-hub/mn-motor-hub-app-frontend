@@ -1,0 +1,254 @@
+/*
+ * Documento imprimible: fondo blanco fijo a propósito, independiente del
+ * tema oscuro de la app — así es como debe verse un comprobante impreso o
+ * exportado a PDF, sin importar el theme del panel.
+ */
+
+.page {
+  min-height: 100vh;
+  background-color: #f4f4f5;
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.blockedPage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  gap: var(--space-md);
+  padding: var(--space-xl);
+  max-width: 480px;
+  margin: 0 auto;
+  color: var(--color-on-surface);
+}
+
+.blockedText {
+  font-size: var(--text-base);
+}
+
+.backLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  color: var(--color-primary-dim);
+  font-weight: 500;
+}
+
+.actions {
+  width: 100%;
+  max-width: 800px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.document {
+  width: 100%;
+  max-width: 800px;
+  background-color: #ffffff;
+  color: #18181b;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+  font-family: var(--font-inter), sans-serif;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  padding-bottom: var(--space-md);
+  border-bottom: 2px solid #18181b;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.logo {
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.companyName {
+  font-family: var(--font-oswald), sans-serif;
+  font-size: var(--text-lg);
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.companyMeta {
+  font-size: var(--text-xs);
+  color: #52525b;
+}
+
+.docInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.docTitle {
+  font-family: var(--font-oswald), sans-serif;
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #52525b;
+}
+
+.docNumber {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-lg);
+  font-weight: 700;
+}
+
+.docMeta {
+  font-size: var(--text-sm);
+  color: #52525b;
+}
+
+.clienteBlock {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: #f4f4f5;
+  border-radius: var(--radius-md);
+}
+
+.clienteField {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+}
+
+.clienteLabel {
+  color: #52525b;
+}
+
+.clienteValue {
+  font-weight: 600;
+  text-align: right;
+}
+
+.itemsTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+}
+
+.itemsTable th {
+  text-align: left;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #52525b;
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid #d4d4d8;
+}
+
+.itemsTable td {
+  padding: var(--space-xs) var(--space-sm);
+  border-bottom: 1px solid #e4e4e7;
+  vertical-align: top;
+}
+
+.mono {
+  font-family: var(--font-mono), monospace;
+  font-size: var(--text-xs);
+}
+
+.num {
+  text-align: right;
+  white-space: nowrap;
+  font-family: var(--font-mono), monospace;
+}
+
+.totals {
+  align-self: flex-end;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  width: 100%;
+  max-width: 280px;
+}
+
+.totalRow,
+.totalRowMain {
+  display: flex;
+  justify-content: space-between;
+  font-size: var(--text-sm);
+}
+
+.totalRowMain {
+  font-size: var(--text-lg);
+  font-weight: 700;
+  padding-top: var(--space-xs);
+  border-top: 2px solid #18181b;
+}
+
+.notas {
+  font-size: var(--text-sm);
+  color: #3f3f46;
+}
+
+.notasLabel {
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  color: #52525b;
+  margin-bottom: 2px;
+}
+
+.footer {
+  text-align: center;
+  font-size: var(--text-xs);
+  color: #71717a;
+  border-top: 1px solid #e4e4e7;
+  padding-top: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+
+  .docInfo {
+    align-items: flex-end;
+    text-align: right;
+  }
+}
+
+@media print {
+  .noPrint {
+    display: none !important;
+  }
+
+  .page {
+    background-color: #ffffff;
+    padding: 0;
+    min-height: 0;
+  }
+
+  .document {
+    box-shadow: none;
+    border-radius: 0;
+    max-width: none;
+    padding: 0;
+  }
+}

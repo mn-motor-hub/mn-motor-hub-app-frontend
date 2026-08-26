@@ -49,7 +49,8 @@ export function SaleFilters({ rightSlot }: SaleFiltersProps) {
             onChange={(e) => applyFilters({ estado: e.target.value })}
           >
             <option value="">Todos los estados</option>
-            <option value="completada">Completadas</option>
+            <option value="en_proceso">En proceso</option>
+            <option value="confirmada">Confirmadas</option>
             <option value="anulada">Anuladas</option>
           </select>
 

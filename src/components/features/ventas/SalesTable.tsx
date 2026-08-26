@@ -8,8 +8,9 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
 import { AnularSaleButton } from './AnularSaleButton';
+import { ConfirmarSaleButton } from './ConfirmarSaleButton';
+import { SaleEstadoBadge } from './SaleEstadoBadge';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import type { Sale } from '@/types';
 import styles from './SalesTable.module.css';
@@ -44,12 +45,7 @@ export function SalesTable({ data }: SalesTableProps) {
     }),
     columnHelper.accessor('estado', {
       header: 'Estado',
-      cell: (info) =>
-        info.getValue() === 'completada' ? (
-          <Badge variant="success">Completada</Badge>
-        ) : (
-          <Badge variant="danger">Anulada</Badge>
-        ),
+      cell: (info) => <SaleEstadoBadge estado={info.getValue()} />,
     }),
     columnHelper.accessor('createdBy', {
       header: 'Registrado por',
@@ -63,6 +59,7 @@ export function SalesTable({ data }: SalesTableProps) {
           <Link href={`/ventas/${info.row.original.id}`} className={styles.detailLink}>
             Ver
           </Link>
+          <ConfirmarSaleButton sale={info.row.original} variant="icon" />
           <AnularSaleButton sale={info.row.original} variant="icon" />
         </div>
       ),

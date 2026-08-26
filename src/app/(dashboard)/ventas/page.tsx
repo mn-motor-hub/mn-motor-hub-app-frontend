@@ -100,5 +100,5 @@ function parsePage(raw: string | undefined): number {
 }
 
 function parseEstado(raw: string | undefined): SaleEstado | undefined {
-  return raw === 'completada' || raw === 'anulada' ? raw : undefined;
+  return raw === 'en_proceso' || raw === 'confirmada' || raw === 'anulada' ? raw : undefined;
 }

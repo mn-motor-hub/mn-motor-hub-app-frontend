@@ -1,8 +1,11 @@
 import { notFound } from 'next/navigation';
+import Link from 'next/link';
+import { FileText } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
-import { Badge } from '@/components/ui/Badge/Badge';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
 import { AnularSaleButton } from '@/components/features/ventas/AnularSaleButton';
+import { ConfirmarSaleButton } from '@/components/features/ventas/ConfirmarSaleButton';
+import { SaleEstadoBadge } from '@/components/features/ventas/SaleEstadoBadge';
 import { getSale } from '@/lib/api/sales';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
@@ -34,10 +37,17 @@ export default async function VentaDetailPage({ params }: PageProps) {
 
       <div className={styles.content}>
         <div className={styles.headerRow}>
-          <Badge variant={sale.estado === 'completada' ? 'success' : 'danger'}>
-            {sale.estado === 'completada' ? 'Completada' : 'Anulada'}
-          </Badge>
-          <AnularSaleButton sale={sale} />
+          <SaleEstadoBadge estado={sale.estado} />
+          <div className={styles.headerActions}>
+            <ConfirmarSaleButton sale={sale} />
+            {sale.estado === 'confirmada' && (
+              <Link href={`/ventas/${sale.id}/comprobante`} className={styles.comprobanteLink}>
+                <FileText size={16} aria-hidden="true" />
+                Emitir comprobante
+              </Link>
+            )}
+            <AnularSaleButton sale={sale} />
+          </div>
         </div>
 
         <div className={styles.grid}>
@@ -45,6 +55,7 @@ export default async function VentaDetailPage({ params }: PageProps) {
             <h2 className={styles.sectionTitle}>Información general</h2>
             <dl className={styles.fieldGrid}>
               <Field label="Cliente" value={sale.clienteNombre} span />
+              <Field label="Documento" value={sale.clienteDocumento} mono />
               {sale.clienteTelefono ? (
                 <Field label="Teléfono" value={sale.clienteTelefono} />
               ) : null}

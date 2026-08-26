@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { unstable_rethrow } from 'next/navigation';
 import { getAutoParts } from '@/lib/api/auto-parts';
-import { anularSale, createSale, getTasaEfectiva } from '@/lib/api/sales';
+import { anularSale, confirmarSale, createSale, getTasaEfectiva } from '@/lib/api/sales';
 import { USER_NAME_COOKIE } from '@/lib/api/client';
 import type { CreateSaleFormData } from '@/lib/schemas/sale.schema';
 import type { ActionResult, AutoPart, Sale, TasaEfectivaPreview } from '@/types';
@@ -29,6 +29,7 @@ export async function createSaleAction(
 
     const sale = await createSale({
       clienteNombre: data.clienteNombre,
+      clienteDocumento: data.clienteDocumento,
       clienteTelefono: data.clienteTelefono || undefined,
       createdBy,
       formaPago: data.formaPago,
@@ -60,6 +61,18 @@ export async function anularSaleAction(id: number): Promise<ActionResult<Sale>> 
   } catch (err) {
     unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al anular la venta.') };
+  }
+}
+
+export async function confirmarSaleAction(id: number): Promise<ActionResult<Sale>> {
+  try {
+    const sale = await confirmarSale(id);
+    revalidatePath('/ventas');
+    revalidatePath(`/ventas/${id}`);
+    return { ok: true, data: sale };
+  } catch (err) {
+    unstable_rethrow(err);
+    return { ok: false, error: message(err, 'Error al confirmar la venta.') };
   }
 }
 

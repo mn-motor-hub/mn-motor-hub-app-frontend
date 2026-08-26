@@ -26,6 +26,9 @@ export type SaleItemFormData = z.infer<typeof saleItemFormSchema>;
 // Server Action desde la cookie de sesión, no es un campo del form).
 export const createSaleSchema = z.object({
   clienteNombre: z.string().trim().min(1, 'El nombre del cliente es requerido'),
+  // Texto libre — cubre cédula ("V-12345678") y RIF ("J-500088906") en un
+  // mismo campo, sin validar formato (así lo definió el backend a propósito).
+  clienteDocumento: z.string().trim().min(1, 'La cédula o RIF es requerida'),
   clienteTelefono: z.string().trim().optional(),
   formaPago: z.enum(['usd', 'bs'], { message: 'Seleccioná la forma de pago' }),
   montoEnFormaPago: z

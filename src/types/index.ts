@@ -164,7 +164,7 @@ export interface Tasa {
 
 // ─── Ventas ───────────────────────────────────────────────────
 export type FormaPago = 'usd' | 'bs';
-export type SaleEstado = 'completada' | 'anulada';
+export type SaleEstado = 'en_proceso' | 'confirmada' | 'anulada';
 
 export interface SaleItem {
   id: number;
@@ -183,6 +183,8 @@ export interface Sale {
   id: number;
   fecha: string;
   clienteNombre: string;
+  // Cédula o RIF en un solo campo de texto libre — ej. "V-12345678", "J-500088906".
+  clienteDocumento: string;
   clienteTelefono: string | null;
   subtotalUsd: number;
   totalUsd: number;

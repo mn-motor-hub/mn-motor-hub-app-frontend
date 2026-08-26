@@ -13,6 +13,30 @@
   flex-wrap: wrap;
 }
 
+.headerActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.comprobanteLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface);
+  font-size: var(--text-sm);
+  font-weight: 500;
+}
+
+.comprobanteLink:hover {
+  background-color: var(--color-surface-high);
+}
+
 .grid {
   display: grid;
   grid-template-columns: 1fr;

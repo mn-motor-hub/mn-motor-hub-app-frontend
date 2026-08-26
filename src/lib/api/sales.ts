@@ -10,6 +10,7 @@ import type {
 
 export interface CreateSalePayload {
   clienteNombre: string;
+  clienteDocumento: string;
   clienteTelefono?: string;
   createdBy: string;
   formaPago: 'usd' | 'bs';
@@ -66,6 +67,17 @@ export async function anularSale(id: number): Promise<Sale> {
 }
 
 /**
+ * Transición en_proceso → confirmada (el usuario interno verificó el pago).
+ * 409 si ya estaba confirmada o si está anulada — se propaga el mensaje del backend.
+ */
+export async function confirmarSale(id: number): Promise<Sale> {
+  const res = await apiFetch(`${BASE_URL}/api/sales/${id}/confirmar`, { method: 'PATCH' });
+  if (!res.ok) throw await saleError(res, `Error al confirmar la venta #${id}.`);
+  const body: ApiItemResponse<Sale> = await res.json();
+  return body.data;
+}
+
+/**
  * Preview de tasa para el formulario de carga (formaPago = 'bs'). Solo para
  * mostrar en pantalla: nunca se manda `tasaVentaEfectiva` de vuelta al POST,
  * el backend recalcula todo internamente al confirmar la venta.
@@ -83,7 +95,9 @@ export async function getTasaEfectiva(): Promise<TasaEfectivaPreview> {
 
 async function saleError(res: Response, fallback: string): Promise<Error> {
   const body = (await res.json().catch(() => null)) as { message?: string } | null;
-  if (res.status === 409) return new Error(body?.message ?? 'La venta ya fue anulada.');
+  if (res.status === 409) {
+    return new Error(body?.message ?? 'La operación no es válida para el estado actual de la venta.');
+  }
   if (res.status === 404) return new Error(body?.message ?? 'La venta no existe.');
   if (res.status === 400) return new Error(body?.message ?? 'Los datos de la venta no son válidos.');
   return new Error(body?.message ?? `${fallback} (HTTP ${res.status})`);
