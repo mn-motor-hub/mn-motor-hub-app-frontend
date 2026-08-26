@@ -162,7 +162,9 @@ export interface Tasa {
 // ─── Configuración del sistema ──────────────────────────────
 export interface Configuracion {
   clave: string;
-  valor: number;
+  // La columna es varchar de punta a punta en el backend (Configuracion.entity.ts) —
+  // el GET nunca devuelve number, aunque el valor represente algo numérico.
+  valor: string;
   descripcion: string;
   updatedAt: string;
 }

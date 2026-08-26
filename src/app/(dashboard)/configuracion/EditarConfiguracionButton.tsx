@@ -34,13 +34,15 @@ export function EditarConfiguracionButton({ configuracion }: EditarConfiguracion
   } = useForm<ConfiguracionFormData>({
     resolver: zodResolver(createConfiguracionFormSchema(configuracion.clave)),
     mode: 'onChange',
-    defaultValues: { valor: configuracion.valor },
+    // configuracion.valor es string (columna varchar) — el input numérico
+    // necesita el number equivalente para poder editarlo y validar rangos.
+    defaultValues: { valor: Number(configuracion.valor) },
   });
 
   function handleClose() {
     setOpen(false);
     setSubmitError(null);
-    reset({ valor: configuracion.valor });
+    reset({ valor: Number(configuracion.valor) });
   }
 
   const onSubmit = handleSubmit(async ({ valor }) => {

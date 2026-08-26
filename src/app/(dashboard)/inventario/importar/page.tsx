@@ -19,7 +19,8 @@ export default async function ImportarFacturaPage() {
     withFallback<Subcategoria[]>(listSubcategorias(), []),
     withFallback(getConfiguracion('margen_ganancia_default'), null),
   ]);
-  const margenDefault = margenConfig?.valor ?? MARGEN_GANANCIA_FALLBACK;
+  // margenConfig.valor es string (columna varchar en el backend).
+  const margenDefault = margenConfig ? Number(margenConfig.valor) : MARGEN_GANANCIA_FALLBACK;
 
   return (
     <>

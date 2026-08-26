@@ -18,11 +18,17 @@ export async function getConfiguracion(clave: string): Promise<Configuracion> {
   return body.data;
 }
 
+/**
+ * `valor` llega como number desde el form (input numérico, validado con rangos),
+ * pero la columna en el backend es varchar — el PUT rechaza con 400 si se manda
+ * un number crudo ("valor debe ser string"). La conversión se hace acá, no en
+ * el form, para que el resto del módulo siga trabajando con un número.
+ */
 export async function updateConfiguracion(clave: string, valor: number): Promise<Configuracion> {
   const res = await apiFetch(`${BASE_URL}/api/configuraciones/${clave}`, {
     method: 'PUT',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ valor }),
+    body: JSON.stringify({ valor: String(valor) }),
   });
   if (!res.ok) throw await configuracionError(res, `Error al actualizar la configuración "${clave}".`);
   const body: GetConfiguracionResponse = await res.json();
