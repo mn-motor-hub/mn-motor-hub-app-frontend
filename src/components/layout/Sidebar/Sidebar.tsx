@@ -14,6 +14,7 @@ import {
   ChevronRight,
   LogOut,
   X,
+  ShoppingCart,
 } from 'lucide-react';
 import { logoutAction } from '@/app/login/actions';
 import { useSidebar } from './SidebarContext';
@@ -22,6 +23,7 @@ import styles from './Sidebar.module.css';
 
 const navItems = [
   { href: '/inventario', label: 'Inventario', icon: Package },
+  { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
   { href: '/finanzas', label: 'Finanzas', icon: Wallet },
   { href: '/proveedores', label: 'Proveedores', icon: Users },
   { href: '/categorias', label: 'Categorías', icon: Tag },

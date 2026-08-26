@@ -2,7 +2,7 @@
 
 import { cookies } from 'next/headers';
 import { redirect } from 'next/navigation';
-import { BASE_URL, SESSION_COOKIE } from '@/lib/api/client';
+import { BASE_URL, SESSION_COOKIE, USER_NAME_COOKIE } from '@/lib/api/client';
 
 const SEVEN_DAYS_IN_SECONDS = 60 * 60 * 24 * 7;
 
@@ -49,26 +49,37 @@ export async function loginAction(
   }
 
   // El backend responde { token, user } en la raíz, sin envelope `data`
-  // (verificado en auth.service.ts / auth.controller.ts).
-  const body = (await res.json().catch(() => null)) as { token?: string } | null;
+  // (verificado en auth.service.ts / auth.controller.ts). `user.name` es el
+  // único dato de sesión legible que se persiste — lo necesita el módulo de
+  // ventas como `createdBy` sin pedírselo de nuevo al usuario en el form.
+  const body = (await res.json().catch(() => null)) as
+    | { token?: string; user?: { name?: string } }
+    | null;
   const token = body?.token;
+  const userName = body?.user?.name;
 
   if (!token) {
     return { error: 'El servidor no devolvió un token de sesión.' };
   }
 
-  (await cookies()).set(SESSION_COOKIE, token, {
+  const cookieStore = await cookies();
+  const cookieOptions = {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'lax',
+    sameSite: 'lax' as const,
     maxAge: SEVEN_DAYS_IN_SECONDS,
     path: '/',
-  });
+  };
+
+  cookieStore.set(SESSION_COOKIE, token, cookieOptions);
+  if (userName) cookieStore.set(USER_NAME_COOKIE, userName, cookieOptions);
 
   redirect('/inventario');
 }
 
 export async function logoutAction(): Promise<void> {
-  (await cookies()).delete(SESSION_COOKIE);
+  const cookieStore = await cookies();
+  cookieStore.delete(SESSION_COOKIE);
+  cookieStore.delete(USER_NAME_COOKIE);
   redirect('/login');
 }

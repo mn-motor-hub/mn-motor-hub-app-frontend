@@ -1,0 +1,68 @@
+/* Touch target 44px */
+.actionButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface-variant);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.actionButton:hover {
+  background-color: var(--color-surface-high);
+  color: var(--color-danger);
+}
+
+.actionButton:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.confirmText {
+  font-size: var(--text-base);
+  color: var(--color-on-surface);
+}
+
+.confirmDetail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-surface-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+}
+
+.confirmDetailDesc {
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.confirmDetailAmount {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.confirmError {
+  padding: var(--space-sm);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.confirmActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}

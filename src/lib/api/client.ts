@@ -7,6 +7,13 @@ export const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:300
 export const SESSION_COOKIE = 'mn_session';
 
 /**
+ * Nombre legible del usuario logueado (user.name de la respuesta de login).
+ * httpOnly igual que la sesión: no hace falta que el cliente la lea, solo los
+ * Server Actions que necesitan un `createdBy` sin pedírselo al usuario (ventas).
+ */
+export const USER_NAME_COOKIE = 'mn_user_name';
+
+/**
  * Header Authorization a partir de la cookie httpOnly.
  * Solo funciona en contexto de servidor (Server Component, Server Action o
  * Route Handler): `cookies()` no existe en el navegador. Por eso ningún

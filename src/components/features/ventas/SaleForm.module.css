@@ -1,0 +1,341 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  padding: var(--space-md);
+}
+
+.sectionTitle {
+  font-size: var(--text-base);
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* ── Buscador de auto_parts ──────────────────────────────────── */
+.searchWrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.searchInputWrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.searchIcon {
+  position: absolute;
+  left: var(--space-sm);
+  color: var(--color-on-surface-variant);
+  pointer-events: none;
+}
+
+.searchInput {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 var(--space-sm) 0 calc(var(--space-sm) * 2 + 16px);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface);
+  font-size: max(var(--text-base), 16px);
+}
+
+.searchInput:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.searchHint {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.searchError {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
+.resultsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  padding: var(--space-xs);
+}
+
+.resultItem {
+  display: flex;
+}
+
+.resultButton {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-sm);
+  min-height: 44px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-md);
+  text-align: left;
+}
+
+.resultButton:hover:not(:disabled) {
+  background-color: var(--color-surface-high);
+}
+
+.resultButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resultInfo {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.resultNombre {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  font-weight: 500;
+}
+
+.resultMeta {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-mono);
+}
+
+.resultPrecio {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  white-space: nowrap;
+}
+
+/* ── Lista de ítems agregados ────────────────────────────────── */
+.emptyItemsHint {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.itemsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.itemRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-sm);
+  background-color: var(--color-surface-low);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  flex-wrap: wrap;
+}
+
+.itemInfo {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 140px;
+  min-width: 0;
+}
+
+.itemNombre {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  font-weight: 500;
+}
+
+.itemCodigo {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-mono);
+}
+
+.cantidadInput {
+  width: 64px;
+  min-height: 44px;
+  padding: 0 var(--space-xs);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-container);
+  color: var(--color-on-surface);
+  text-align: center;
+  font-size: max(var(--text-sm), 16px);
+}
+
+.cantidadInput:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 1px;
+}
+
+.itemSubtotal {
+  min-width: 72px;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
+.removeButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  border-radius: var(--radius-md);
+  color: var(--color-on-surface-variant);
+}
+
+.removeButton:hover {
+  background-color: var(--color-danger-dim);
+  color: var(--color-danger);
+}
+
+.totalRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+.totalLabel {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.totalValue {
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-primary-dim);
+}
+
+/* ── Forma de pago ────────────────────────────────────────────── */
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  border: none;
+}
+
+.legend {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-on-surface-variant);
+}
+
+.segmented {
+  display: flex;
+  gap: var(--space-sm);
+}
+
+.segment {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 var(--space-md);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface-variant);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+}
+
+.segment:hover {
+  background-color: var(--color-surface-high);
+}
+
+.segmentActive {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary);
+  color: var(--color-on-primary);
+  font-weight: 600;
+}
+
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.segment:has(.srOnly:focus-visible) {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.bsPreview {
+  padding: var(--space-sm);
+  background-color: var(--color-info-dim);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-md);
+}
+
+.bsPreviewText {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  font-family: var(--font-mono);
+}
+
+.bsPreviewRate {
+  color: var(--color-on-surface-variant);
+}
+
+/* ── Errores y acciones ───────────────────────────────────────── */
+.submitError {
+  padding: var(--space-sm);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .row {
+    flex-direction: row;
+  }
+
+  .row > * {
+    flex: 1;
+  }
+}

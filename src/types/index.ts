@@ -159,6 +159,52 @@ export interface Tasa {
   orden: number;
 }
 
+// ─── Ventas ───────────────────────────────────────────────────
+export type FormaPago = 'usd' | 'bs';
+export type SaleEstado = 'completada' | 'anulada';
+
+export interface SaleItem {
+  id: number;
+  saleId: number;
+  autoPartId: number;
+  autoPartNombre: string;
+  autoPartCodigoInterno: string | null;
+  cantidad: number;
+  // Snapshots al momento de la venta — nunca reflejan el precio/costo actual del catálogo.
+  precioUnitarioUsd: number;
+  costoUnitarioUsd: number;
+  subtotalUsd: number;
+}
+
+export interface Sale {
+  id: number;
+  fecha: string;
+  clienteNombre: string;
+  clienteTelefono: string | null;
+  subtotalUsd: number;
+  totalUsd: number;
+  tasaEurValor: number;
+  descuentoTasaVentaPctAplicado: number;
+  tasaVentaEfectiva: number;
+  tasaFueOverride: boolean;
+  totalBs: number;
+  costoTotalUsd: number;
+  formaPago: FormaPago;
+  montoEnFormaPago: number;
+  estado: SaleEstado;
+  notas: string | null;
+  createdAt: string;
+  createdBy: string;
+  items: SaleItem[];
+}
+
+/** Preview de tasa para el formulario de carga — nunca se manda de vuelta al POST. */
+export interface TasaEfectivaPreview {
+  tasaEurValor: number;
+  descuentoTasaVentaPctAplicado: number;
+  tasaVentaEfectiva: number;
+}
+
 // ─── Configuración del sistema ──────────────────────────────
 export interface Configuracion {
   clave: string;
