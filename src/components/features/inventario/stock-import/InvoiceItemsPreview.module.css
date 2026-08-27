@@ -289,8 +289,9 @@
   gap: var(--space-sm);
 }
 
-.subcategoriaRow > .select {
+.subcategoriaRow > *:first-child {
   flex: 1;
+  min-width: 0;
 }
 
 .suggestButtonSmall {

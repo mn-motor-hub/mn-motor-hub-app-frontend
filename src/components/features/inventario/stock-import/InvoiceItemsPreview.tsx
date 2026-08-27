@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { useFormContext, useWatch } from 'react-hook-form';
+import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { AlertTriangle, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/Button/Button';
+import { SearchableSelect } from '@/components/ui/Select/Select';
 import { classifySubcategoriasAction } from '@/app/(dashboard)/inventario/importar/actions';
 import type { ConfirmFormData } from '@/lib/schemas/stock-import.schema';
 import type {
@@ -332,19 +333,22 @@ function ItemCard({
           }
         >
           <div className={styles.subcategoriaRow}>
-            <select
-              className={[styles.select, itemErrors?.subcategoria_id ? styles.inputError : '']
-                .filter(Boolean)
-                .join(' ')}
-              {...register(`items.${index}.subcategoria_id`)}
-            >
-              <option value="">— Sin subcategoría —</option>
-              {subcategorias.map((s) => (
-                <option key={s.id} value={s.id}>
-                  {s.nombre}
-                </option>
-              ))}
-            </select>
+            <Controller
+              control={control}
+              name={`items.${index}.subcategoria_id`}
+              render={({ field }) => (
+                <SearchableSelect
+                  value={field.value ?? ''}
+                  onValueChange={field.onChange}
+                  options={subcategorias.map((s) => ({ value: s.id, label: s.nombre }))}
+                  placeholder="Seleccioná una subcategoría"
+                  searchPlaceholder="Buscar subcategoría…"
+                  emptyOptionLabel="— Sin subcategoría —"
+                  error={Boolean(itemErrors?.subcategoria_id)}
+                  aria-label="Subcategoría"
+                />
+              )}
+            />
             <Button
               type="button"
               variant="ghost"
