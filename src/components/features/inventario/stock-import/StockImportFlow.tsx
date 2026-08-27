@@ -17,6 +17,7 @@ import type {
   StockImportConfirmItem,
   StockImportParsedItem,
 } from '@/types';
+import { ScrollToBottomButton } from '@/components/ui/ScrollToBottomButton/ScrollToBottomButton';
 import { FileUploadStep } from './FileUploadStep';
 import { InvoiceHeaderSummary } from './InvoiceHeaderSummary';
 import { InvoiceItemsPreview } from './InvoiceItemsPreview';
@@ -197,6 +198,8 @@ export function StockImportFlow({ categorias, subcategorias, margenDefault }: St
                     )}
                   </button>
                 </div>
+
+                <ScrollToBottomButton label="Ir hasta el final para confirmar" />
               </>
             )}
           </form>
