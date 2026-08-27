@@ -25,3 +25,66 @@
 .muted {
   color: var(--color-text-muted);
 }
+
+/* ── Edición inline por fila ────────────────────────────────── */
+.rowInput {
+  height: 36px;
+  min-width: 96px;
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface);
+  font-size: var(--text-sm);
+  font-family: inherit;
+}
+
+.rowInput:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(255, 87, 26, 0.2);
+}
+
+.rowError {
+  display: block;
+  margin-top: 2px;
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+  white-space: normal;
+}
+
+.rowActions {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.rowActionButton,
+.rowActionButtonCancel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.rowActionButton:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dim);
+}
+
+.rowActionButtonCancel:hover {
+  border-color: var(--color-danger);
+  color: var(--color-danger);
+}
+
+.rowActionButton:disabled,
+.rowActionButtonCancel:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

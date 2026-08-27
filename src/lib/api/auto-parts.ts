@@ -32,3 +32,30 @@ export async function getAutoPart(id: number): Promise<AutoPart> {
   const body: ApiItemResponse<AutoPart> = await res.json();
   return body.data;
 }
+
+export async function updateAutoPart(
+  id: number,
+  data: {
+    nombre?: string;
+    descripcion?: string;
+    marca?: string;
+    subcategoriaId?: string;
+    precioVenta?: number;
+  },
+): Promise<AutoPart> {
+  const res = await apiFetch(`${BASE_URL}/api/auto-parts/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw await autoPartError(res, `Error al actualizar el repuesto #${id}.`);
+  const body: ApiItemResponse<AutoPart> = await res.json();
+  return body.data;
+}
+
+async function autoPartError(res: Response, fallback: string): Promise<Error> {
+  const body = (await res.json().catch(() => null)) as { message?: string } | null;
+  if (res.status === 404) return new Error(body?.message ?? 'El repuesto no existe.');
+  if (res.status === 400) return new Error(body?.message ?? 'Datos inválidos.');
+  return new Error(body?.message ?? `${fallback} (HTTP ${res.status})`);
+}

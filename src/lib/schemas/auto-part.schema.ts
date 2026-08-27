@@ -1,16 +1,14 @@
 import { z } from 'zod';
 
-export const autoPartSchema = z.object({
-  codigoInterno: z.string().min(1, 'El código es requerido'),
+// Edición de un AutoPart existente — codigoInterno queda fuera a propósito:
+// lo genera el backend y no es editable. Ver PATCH /api/auto-parts/:id.
+export const editAutoPartSchema = z.object({
   nombre: z.string().min(1, 'El nombre es requerido'),
-  descripcion: z.string().nullable().optional(),
-  marca: z.string().nullable().optional(),
-  categoriaId: z.number().int().positive('Debe seleccionar una categoría'),
-  stockActual: z.number().int().min(0, 'El stock no puede ser negativo'),
-  stockMinimo: z.number().int().min(0, 'El stock mínimo no puede ser negativo'),
-  precioVenta: z.number().positive('El precio debe ser mayor a 0').nullable().optional(),
-  ubicacionStock: z.string().min(1, 'La ubicación es requerida'),
-  activo: z.boolean().default(true),
+  descripcion: z.string().optional(),
+  marca: z.string().optional(),
+  // UUID — Subcategoria.id en el backend.
+  subcategoriaId: z.string().min(1, 'Seleccioná una subcategoría'),
+  precioVenta: z.number().min(0, 'El precio no puede ser negativo'),
 });
 
-export type AutoPartFormData = z.infer<typeof autoPartSchema>;
+export type EditAutoPartFormData = z.infer<typeof editAutoPartSchema>;

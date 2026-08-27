@@ -2,11 +2,14 @@ import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { Badge } from '@/components/ui/Badge/Badge';
 import { SupplierRefList } from '@/components/features/proveedores/SupplierRefList';
+import { EditAutoPartButton } from '@/components/features/inventario/EditAutoPartButton';
 import { getAutoPart } from '@/lib/api/auto-parts';
 import { getCategorias } from '@/lib/api/categorias';
+import { listSubcategorias } from '@/lib/api/subcategorias';
+import { getSupplierRefs } from '@/lib/api/supplier-refs';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { AutoPart, Categoria } from '@/types';
+import type { AutoPart, Categoria, Subcategoria, SupplierRef } from '@/types';
 import styles from './detail.module.css';
 
 interface PageProps {
@@ -19,9 +22,13 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
 
   if (isNaN(numId)) notFound();
 
-  const [part, categorias] = await Promise.all([
+  const [part, categorias, subcategorias, supplierRefs] = await Promise.all([
     withFallback<AutoPart | null>(getAutoPart(numId), null),
     withFallback<Categoria[]>(getCategorias(), []),
+    withFallback<Subcategoria[]>(listSubcategorias(), []),
+    // Vía /api/supplier-refs (no part.supplierRefs): es el único endpoint que
+    // hoy carga la relación supplier con el nombre del proveedor.
+    withFallback<SupplierRef[]>(getSupplierRefs(numId), []),
   ]);
   if (!part) notFound();
 
@@ -45,7 +52,10 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
       <div className={styles.content}>
         <div className={styles.grid}>
           <section className={styles.card}>
-            <h2 className={styles.sectionTitle}>Información general</h2>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>Información general</h2>
+              <EditAutoPartButton part={part} categorias={categorias} subcategorias={subcategorias} />
+            </div>
             <dl className={styles.fieldGrid}>
               <Field label="Código Interno" value={part.codigoInterno} mono />
               <Field label="Nombre" value={part.nombre} span />
@@ -101,7 +111,7 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
 
         <section className={styles.card}>
           <h2 className={styles.sectionTitle}>Referencias de proveedores</h2>
-          <SupplierRefList refs={part.supplierRefs ?? []} />
+          <SupplierRefList autoPartId={part.id} refs={supplierRefs} />
         </section>
       </div>
     </>

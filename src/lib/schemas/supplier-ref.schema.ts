@@ -1,12 +1,11 @@
 import { z } from 'zod';
 
-export const supplierRefSchema = z.object({
-  autoPartId: z.number().int().positive(),
-  proveedor: z.string().min(1, 'El proveedor es requerido'),
-  referenciaProveedor: z.string().nullable().optional(),
-  precioCompra: z.number().positive('El precio debe ser mayor a 0').nullable().optional(),
-  notas: z.string().nullable().optional(),
-  activo: z.boolean().default(true),
+// Edición inline de una fila de SupplierRefList — reasignar el proveedor
+// (supplierId) queda fuera del alcance de este form. Ver PATCH /api/supplier-refs/:id.
+export const editSupplierRefSchema = z.object({
+  referenciaProveedor: z.string().optional(),
+  precioCompra: z.number().min(0, 'El precio no puede ser negativo').optional(),
+  notas: z.string().optional(),
 });
 
-export type SupplierRefFormData = z.infer<typeof supplierRefSchema>;
+export type EditSupplierRefFormData = z.infer<typeof editSupplierRefSchema>;

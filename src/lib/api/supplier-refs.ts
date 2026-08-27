@@ -22,7 +22,7 @@ export async function getAllSupplierRefs(): Promise<SupplierRef[]> {
 
 export async function createSupplierRef(payload: {
   autoPartId: number;
-  proveedor: string;
+  supplierId: number;
   referenciaProveedor?: string;
   precioCompra?: number;
   notas?: string;
@@ -32,7 +32,28 @@ export async function createSupplierRef(payload: {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   });
-  if (!res.ok) throw new Error('Error al crear referencia de proveedor');
+  if (!res.ok) throw await supplierRefError(res, 'Error al crear referencia de proveedor');
   const body: ApiItemResponse<SupplierRef> = await res.json();
   return body.data;
+}
+
+export async function updateSupplierRef(
+  id: number,
+  data: { supplierId?: number; referenciaProveedor?: string; precioCompra?: number; notas?: string },
+): Promise<SupplierRef> {
+  const res = await apiFetch(`${BASE_URL}/api/supplier-refs/${id}`, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!res.ok) throw await supplierRefError(res, `Error al actualizar la referencia #${id}.`);
+  const body: ApiItemResponse<SupplierRef> = await res.json();
+  return body.data;
+}
+
+async function supplierRefError(res: Response, fallback: string): Promise<Error> {
+  const body = (await res.json().catch(() => null)) as { message?: string } | null;
+  if (res.status === 404) return new Error(body?.message ?? 'La referencia de proveedor no existe.');
+  if (res.status === 400) return new Error(body?.message ?? 'Datos inválidos.');
+  return new Error(body?.message ?? `${fallback} (HTTP ${res.status})`);
 }

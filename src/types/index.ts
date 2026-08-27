@@ -21,7 +21,10 @@ export interface Subcategoria {
 export interface SupplierRef {
   id: number;
   autoPartId: number;
-  proveedor: string;
+  supplierId: number;
+  // Solo viene poblado en GET /api/supplier-refs — create/update devuelven
+  // el mismo shape pero sin recargar la relación tras guardar.
+  supplier?: { id: number; nombre: string; rif: string | null };
   referenciaProveedor: string | null;
   precioCompra: number | null;
   notas: string | null;
