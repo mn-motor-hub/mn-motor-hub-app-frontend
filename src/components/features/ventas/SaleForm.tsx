@@ -10,17 +10,17 @@ import {
   useWatch,
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Search, X } from 'lucide-react';
+import { AlertTriangle, Search, X } from 'lucide-react';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
 import {
   createSaleAction,
-  getTasaEfectivaAction,
+  getContextoTasaAction,
   searchAutoPartsAction,
 } from '@/app/(dashboard)/ventas/actions';
 import { createSaleSchema, type CreateSaleFormData } from '@/lib/schemas/sale.schema';
 import { formatBs, formatCurrencyUsd } from '@/lib/utils/format';
-import type { AutoPart, TasaEfectivaPreview } from '@/types';
+import type { AutoPart, TasaContexto } from '@/types';
 import styles from './SaleForm.module.css';
 
 function roundTwo(n: number): number {
@@ -51,6 +51,8 @@ const DEFAULT_VALUES: CreateSaleFormData = {
   clienteTelefono: '',
   formaPago: 'usd',
   montoEnFormaPago: 0,
+  descuentoUsd: 0,
+  notas: '',
   items: [],
 };
 
@@ -104,6 +106,7 @@ export function SaleForm() {
       <form onSubmit={onSubmit} noValidate className={styles.form}>
         <ClienteSection />
         <ItemsSection />
+        <DescuentoSection />
         <FormaPagoSection />
 
         {submitError && (
@@ -194,7 +197,7 @@ function ItemsSection() {
     });
   }
 
-  const totalUsd = items.reduce(
+  const subtotalUsd = items.reduce(
     (sum, item) => sum + item.cantidad * (item.precioVentaUsd ?? 0),
     0,
   );
@@ -243,8 +246,8 @@ function ItemsSection() {
       )}
 
       <div className={styles.totalRow}>
-        <span className={styles.totalLabel}>Total estimado (USD)</span>
-        <span className={styles.totalValue}>{formatCurrencyUsd(totalUsd)}</span>
+        <span className={styles.totalLabel}>Subtotal (USD)</span>
+        <span className={styles.totalValue}>{formatCurrencyUsd(subtotalUsd)}</span>
       </div>
     </section>
   );
@@ -352,6 +355,70 @@ function AutoPartSearch({
   );
 }
 
+// ── Descuento ────────────────────────────────────────────────────────────────
+
+function DescuentoSection() {
+  const {
+    register,
+    control,
+    formState: { errors },
+  } = useFormContext<CreateSaleFormData>();
+
+  const items = useWatch({ control, name: 'items' }) ?? [];
+  const descuentoUsd = useWatch({ control, name: 'descuentoUsd' }) ?? 0;
+
+  const subtotalUsd = items.reduce(
+    (sum, item) => sum + item.cantidad * (item.precioVentaUsd ?? 0),
+    0,
+  );
+  const totalUsd = roundTwo(
+    subtotalUsd - (Number.isFinite(descuentoUsd) ? descuentoUsd : 0),
+  );
+  const notasRequeridas = descuentoUsd > 0;
+
+  return (
+    <section className={styles.section}>
+      <h2 className={styles.sectionTitle}>Descuento</h2>
+
+      <div className={styles.totalRow}>
+        <span className={styles.totalLabel}>Subtotal (USD)</span>
+        <span className={styles.totalValue}>{formatCurrencyUsd(subtotalUsd)}</span>
+      </div>
+
+      <Input
+        label="Descuento (USD)"
+        type="number"
+        step="0.01"
+        min="0"
+        max={subtotalUsd}
+        helper="Descuento comercial — no es un ajuste de tasa"
+        error={errors.descuentoUsd?.message}
+        {...register('descuentoUsd', { valueAsNumber: true })}
+      />
+
+      <div className={styles.totalRow}>
+        <span className={styles.totalLabel}>Total (USD)</span>
+        <span className={styles.totalValue}>{formatCurrencyUsd(totalUsd)}</span>
+      </div>
+
+      <div className={styles.field}>
+        <label htmlFor="sale-notas" className={styles.fieldLabel}>
+          Notas
+          {notasRequeridas ? <span className={styles.required}> *</span> : ' (opcional)'}
+        </label>
+        <textarea
+          id="sale-notas"
+          rows={2}
+          className={styles.textarea}
+          placeholder={notasRequeridas ? 'Justificá el descuento aplicado' : undefined}
+          {...register('notas')}
+        />
+        {errors.notas && <span className={styles.fieldError}>{errors.notas.message}</span>}
+      </div>
+    </section>
+  );
+}
+
 // ── Forma de pago ────────────────────────────────────────────────────────────
 
 function FormaPagoSection() {
@@ -364,12 +431,16 @@ function FormaPagoSection() {
 
   const formaPago = useWatch({ control, name: 'formaPago' });
   const items = useWatch({ control, name: 'items' }) ?? [];
-  const totalUsd = items.reduce(
+  const descuentoUsd = useWatch({ control, name: 'descuentoUsd' }) ?? 0;
+  const subtotalUsd = items.reduce(
     (sum, item) => sum + item.cantidad * (item.precioVentaUsd ?? 0),
     0,
   );
+  const totalUsd = roundTwo(
+    subtotalUsd - (Number.isFinite(descuentoUsd) ? descuentoUsd : 0),
+  );
 
-  const [tasaPreview, setTasaPreview] = useState<TasaEfectivaPreview | null>(null);
+  const [tasaContexto, setTasaContexto] = useState<TasaContexto | null>(null);
   const [tasaLoading, setTasaLoading] = useState(false);
   const [tasaError, setTasaError] = useState<string | null>(null);
   // El usuario puede ajustar el monto a mano: una vez que lo toca, dejamos de
@@ -383,14 +454,14 @@ function FormaPagoSection() {
     setTasaLoading(true);
     setTasaError(null);
 
-    getTasaEfectivaAction().then((result) => {
+    getContextoTasaAction().then((result) => {
       if (cancelled) return;
       if (result.ok) {
-        setTasaPreview(result.data);
+        setTasaContexto(result.data);
         if (!montoTouchedRef.current) {
           setValue(
             'montoEnFormaPago',
-            roundTwo(totalUsd * result.data.tasaVentaEfectiva),
+            roundTwo(totalUsd * result.data.tasaValor),
             { shouldValidate: true },
           );
         }
@@ -448,13 +519,21 @@ function FormaPagoSection() {
               {tasaError}
             </p>
           )}
-          {tasaPreview && !tasaLoading && (
-            <p className={styles.bsPreviewText}>
-              Referencia: {formatBs(totalUsd * tasaPreview.tasaVentaEfectiva)}{' '}
-              <span className={styles.bsPreviewRate}>
-                (1 USD ≈ {formatBs(tasaPreview.tasaVentaEfectiva)})
-              </span>
-            </p>
+          {tasaContexto && !tasaLoading && (
+            <>
+              <p className={styles.bsPreviewText}>
+                Referencia: {formatBs(totalUsd * tasaContexto.tasaValor)}{' '}
+                <span className={styles.bsPreviewRate}>
+                  (1 USD ≈ {formatBs(tasaContexto.tasaValor)})
+                </span>
+              </p>
+              {tasaContexto.stale && (
+                <p className={styles.staleWarning} role="alert">
+                  <AlertTriangle size={14} aria-hidden="true" />
+                  La tasa BCV puede estar desactualizada — verificá antes de cobrar.
+                </p>
+              )}
+            </>
           )}
         </div>
       )}

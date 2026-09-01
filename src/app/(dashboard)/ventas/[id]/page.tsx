@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { FileText } from 'lucide-react';
+import { AlertTriangle, FileText } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
 import { AnularSaleButton } from '@/components/features/ventas/AnularSaleButton';
@@ -36,6 +36,13 @@ export default async function VentaDetailPage({ params }: PageProps) {
       />
 
       <div className={styles.content}>
+        {sale.ventaBajoCosto && (
+          <p className={styles.bajoCostoWarning} role="alert">
+            <AlertTriangle size={16} aria-hidden="true" />
+            Esta venta se registró por debajo del costo del repuesto.
+          </p>
+        )}
+
         <div className={styles.headerRow}>
           <SaleEstadoBadge estado={sale.estado} />
           <div className={styles.headerActions}>
@@ -82,6 +89,9 @@ export default async function VentaDetailPage({ params }: PageProps) {
             <h2 className={styles.sectionTitle}>Totales (USD)</h2>
             <dl className={styles.fieldGrid}>
               <Field label="Subtotal" value={formatCurrencyUsd(sale.subtotalUsd)} mono />
+              {sale.descuentoUsd > 0 ? (
+                <Field label="Descuento" value={`-${formatCurrencyUsd(sale.descuentoUsd)}`} mono />
+              ) : null}
               <Field label="Total" value={formatCurrencyUsd(sale.totalUsd)} mono />
               <Field label="Costo total" value={formatCurrencyUsd(sale.costoTotalUsd)} mono />
             </dl>

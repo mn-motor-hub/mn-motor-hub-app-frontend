@@ -5,7 +5,7 @@ import type {
   PaginationMeta,
   Sale,
   SaleEstado,
-  TasaEfectivaPreview,
+  TasaContexto,
 } from '@/types';
 
 export interface CreateSalePayload {
@@ -15,6 +15,10 @@ export interface CreateSalePayload {
   createdBy: string;
   formaPago: 'usd' | 'bs';
   montoEnFormaPago: number;
+  // Descuento comercial a nivel venta — reemplaza al viejo override manual de tasa.
+  descuentoUsd?: number;
+  // Obligatorio en el backend cuando descuentoUsd > 0 (ver CreateSaleDto).
+  notas?: string;
   items: { autoPartId: number; cantidad: number }[];
 }
 
@@ -78,18 +82,18 @@ export async function confirmarSale(id: number): Promise<Sale> {
 }
 
 /**
- * Preview de tasa para el formulario de carga (formaPago = 'bs'). Solo para
- * mostrar en pantalla: nunca se manda `tasaVentaEfectiva` de vuelta al POST,
- * el backend recalcula todo internamente al confirmar la venta.
+ * Contexto de tasa para el formulario de carga (formaPago = 'bs'). Solo para
+ * mostrar en pantalla: nunca se manda de vuelta al POST, el backend
+ * recalcula todo internamente al confirmar la venta.
  *
  * `no-store`: el usuario dispara esta llamada al elegir "bs" en el momento de
  * cobrar — mostrar un valor con hasta 5 minutos de desfasaje (como el resto de
  * las tasas, ver tasas.ts) no tiene sentido para una decisión de cobro puntual.
  */
-export async function getTasaEfectiva(): Promise<TasaEfectivaPreview> {
-  const res = await apiFetch(`${BASE_URL}/api/sales/tasa-efectiva`, { cache: 'no-store' });
+export async function getContextoTasa(): Promise<TasaContexto> {
+  const res = await apiFetch(`${BASE_URL}/api/sales/contexto-tasa`, { cache: 'no-store' });
   if (!res.ok) throw new Error('Error al obtener la tasa de cambio.');
-  const body: ApiItemResponse<TasaEfectivaPreview> = await res.json();
+  const body: ApiItemResponse<TasaContexto> = await res.json();
   return body.data;
 }
 

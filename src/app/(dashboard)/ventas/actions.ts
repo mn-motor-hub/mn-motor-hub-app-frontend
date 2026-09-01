@@ -4,10 +4,10 @@ import { cookies } from 'next/headers';
 import { revalidatePath } from 'next/cache';
 import { unstable_rethrow } from 'next/navigation';
 import { getAutoParts } from '@/lib/api/auto-parts';
-import { anularSale, confirmarSale, createSale, getTasaEfectiva } from '@/lib/api/sales';
+import { anularSale, confirmarSale, createSale, getContextoTasa } from '@/lib/api/sales';
 import { USER_NAME_COOKIE } from '@/lib/api/client';
 import type { CreateSaleFormData } from '@/lib/schemas/sale.schema';
-import type { ActionResult, AutoPart, Sale, TasaEfectivaPreview } from '@/types';
+import type { ActionResult, AutoPart, Sale, TasaContexto } from '@/types';
 
 /**
  * Estas acciones existen porque el token vive en una cookie httpOnly: el
@@ -34,6 +34,8 @@ export async function createSaleAction(
       createdBy,
       formaPago: data.formaPago,
       montoEnFormaPago: data.montoEnFormaPago,
+      descuentoUsd: data.descuentoUsd || undefined,
+      notas: data.notas || undefined,
       items: data.items.map((item) => ({
         autoPartId: item.autoPartId,
         cantidad: item.cantidad,
@@ -76,9 +78,9 @@ export async function confirmarSaleAction(id: number): Promise<ActionResult<Sale
   }
 }
 
-export async function getTasaEfectivaAction(): Promise<ActionResult<TasaEfectivaPreview>> {
+export async function getContextoTasaAction(): Promise<ActionResult<TasaContexto>> {
   try {
-    return { ok: true, data: await getTasaEfectiva() };
+    return { ok: true, data: await getContextoTasa() };
   } catch (err) {
     unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al obtener la tasa de cambio.') };

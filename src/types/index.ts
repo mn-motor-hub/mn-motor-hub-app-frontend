@@ -190,13 +190,13 @@ export interface Sale {
   clienteDocumento: string;
   clienteTelefono: string | null;
   subtotalUsd: number;
+  // Descuento comercial en USD a nivel venta — reemplaza al viejo override manual de tasa.
+  descuentoUsd: number;
   totalUsd: number;
-  tasaEurValor: number;
-  descuentoTasaVentaPctAplicado: number;
-  tasaVentaEfectiva: number;
-  tasaFueOverride: boolean;
   totalBs: number;
   costoTotalUsd: number;
+  // true si totalUsd < costoTotalUsd — advertencia, nunca bloqueó la venta.
+  ventaBajoCosto: boolean;
   formaPago: FormaPago;
   montoEnFormaPago: number;
   estado: SaleEstado;
@@ -206,11 +206,42 @@ export interface Sale {
   items: SaleItem[];
 }
 
-/** Preview de tasa para el formulario de carga — nunca se manda de vuelta al POST. */
-export interface TasaEfectivaPreview {
-  tasaEurValor: number;
-  descuentoTasaVentaPctAplicado: number;
-  tasaVentaEfectiva: number;
+/**
+ * Contexto de tasa para el formulario de carga (GET /api/sales/contexto-tasa)
+ * — nunca se manda de vuelta al POST, el backend recalcula todo internamente
+ * al confirmar la venta. Toda venta se factura siempre a tasaClave = 'USD_BCV'.
+ */
+export interface TasaContexto {
+  tasaClave: string;
+  tasaValor: number;
+  // true si el cron de tasas.service.ts no logró refrescar el valor recientemente.
+  stale: boolean;
+}
+
+// ─── Brecha cambiaria (BCV vs P2P) ────────────────────────────
+export interface BrechaStatus {
+  tasaBcv: number;
+  // Informativa — null si el scraper P2P no tenía valor disponible.
+  tasaP2p: number | null;
+  brechaPct: number | null;
+  factorKConfigurado: number;
+  // (factorKConfigurado - 1) * 100 — la brecha que K asume implícitamente.
+  brechaImplicitaK: number;
+  // null si brechaPct es null (sin dato P2P) — no asumir false.
+  dentroDeBanda: boolean | null;
+  bandaMin: number;
+  bandaMax: number;
+  diasConsecutivosFueraDeBanda: number;
+  ultimaRevision: string;
+  proximaRevision: string;
+}
+
+export interface BrechaHistoricoPoint {
+  fecha: string;
+  tasaBcv: number;
+  tasaP2p: number | null;
+  brechaPct: number | null;
+  factorKConfigurado: number;
 }
 
 // ─── Configuración del sistema ──────────────────────────────
