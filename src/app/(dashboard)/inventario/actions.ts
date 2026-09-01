@@ -2,9 +2,9 @@
 
 import { revalidatePath } from 'next/cache';
 import { unstable_rethrow } from 'next/navigation';
-import { updateAutoPart } from '@/lib/api/auto-parts';
+import { getPrecioSugerido, updateAutoPart } from '@/lib/api/auto-parts';
 import { updateSupplierRef } from '@/lib/api/supplier-refs';
-import type { ActionResult, AutoPart, SupplierRef } from '@/types';
+import type { ActionResult, AutoPart, PrecioSugerido, SupplierRef } from '@/types';
 
 export async function updateAutoPartAction(
   id: number,
@@ -24,6 +24,15 @@ export async function updateAutoPartAction(
   } catch (err) {
     unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al actualizar el repuesto.') };
+  }
+}
+
+export async function getPrecioSugeridoAction(id: number): Promise<ActionResult<PrecioSugerido>> {
+  try {
+    return { ok: true, data: await getPrecioSugerido(id) };
+  } catch (err) {
+    unstable_rethrow(err);
+    return { ok: false, error: message(err, 'Error al obtener el precio sugerido.') };
   }
 }
 

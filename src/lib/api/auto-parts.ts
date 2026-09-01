@@ -1,5 +1,5 @@
 import { BASE_URL, apiFetch } from './client';
-import type { AutoPart, ApiListResponse, ApiItemResponse, PaginationMeta } from '@/types';
+import type { AutoPart, ApiListResponse, ApiItemResponse, PaginationMeta, PrecioSugerido } from '@/types';
 
 export async function getAutoParts(params?: {
   page?: number;
@@ -50,6 +50,20 @@ export async function updateAutoPart(
   });
   if (!res.ok) throw await autoPartError(res, `Error al actualizar el repuesto #${id}.`);
   const body: ApiItemResponse<AutoPart> = await res.json();
+  return body.data;
+}
+
+/**
+ * El usuario dispara esta llamada al abrir el modal de edición — `no-store`
+ * mismo criterio que getTasaEfectiva: el costo/margen/K pueden haber
+ * cambiado desde el último revalidate y es una decisión puntual de edición.
+ */
+export async function getPrecioSugerido(id: number): Promise<PrecioSugerido> {
+  const res = await apiFetch(`${BASE_URL}/api/auto-parts/${id}/precio-sugerido`, {
+    cache: 'no-store',
+  });
+  if (!res.ok) throw await autoPartError(res, `Error al obtener el precio sugerido del repuesto #${id}.`);
+  const body: ApiItemResponse<PrecioSugerido> = await res.json();
   return body.data;
 }
 

@@ -54,6 +54,22 @@ export interface AutoPart {
   supplierRefs?: SupplierRef[];
 }
 
+/**
+ * GET /api/auto-parts/:id/precio-sugerido — de solo lectura, nunca escribe
+ * precio_venta. costoUsd sale del supplier_ref activo del repuesto; si no hay
+ * uno con precio_compra, precioSugeridoUsd y desviacionPct vienen en null
+ * (margenAplicado/kAplicado igual se resuelven desde configuraciones).
+ */
+export interface PrecioSugerido {
+  precioSugeridoUsd: number | null;
+  // Passthrough de auto_parts.precio_venta — mismo caso que AutoPart.precioVenta:
+  // convertir con Number() en el punto de uso.
+  precioActual: string | null;
+  desviacionPct: number | null;
+  margenAplicado: number;
+  kAplicado: number;
+}
+
 export interface PaginationMeta {
   total: number;
   page: number;

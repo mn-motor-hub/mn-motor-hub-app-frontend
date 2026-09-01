@@ -1,17 +1,21 @@
 'use client'; // Modal + react-hook-form
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { Pencil } from 'lucide-react';
+import { Pencil, Sparkles } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
 import { Input } from '@/components/ui/Input/Input';
 import { Button } from '@/components/ui/Button/Button';
 import { SearchableSelect } from '@/components/ui/Select/Select';
-import { updateAutoPartAction } from '@/app/(dashboard)/inventario/actions';
+import {
+  getPrecioSugeridoAction,
+  updateAutoPartAction,
+} from '@/app/(dashboard)/inventario/actions';
 import { editAutoPartSchema, type EditAutoPartFormData } from '@/lib/schemas/auto-part.schema';
-import type { AutoPart, Categoria, Subcategoria } from '@/types';
+import { formatCurrencyUsd } from '@/lib/utils/format';
+import type { AutoPart, Categoria, PrecioSugerido, Subcategoria } from '@/types';
 import styles from './EditAutoPartButton.module.css';
 
 export interface EditAutoPartButtonProps {
@@ -54,11 +58,40 @@ export function EditAutoPartButton({ part, categorias, subcategorias }: EditAuto
     defaultValues: defaultsFrom(part),
   });
 
+  const precioVenta = useWatch({ control, name: 'precioVenta' });
+
+  const [precioSugerido, setPrecioSugerido] = useState<PrecioSugerido | null>(null);
+  const [precioSugeridoLoading, setPrecioSugeridoLoading] = useState(false);
+  const [precioSugeridoError, setPrecioSugeridoError] = useState<string | null>(null);
+  const precioSugeridoFetchedRef = useRef(false);
+
+  // Se pide recién al abrir el modal (no en el mount de la card) — es una
+  // llamada de solo lectura por edición puntual, no algo que valga precargar
+  // para cada fila del listado.
+  useEffect(() => {
+    if (!open || precioSugeridoFetchedRef.current) return;
+    precioSugeridoFetchedRef.current = true;
+    setPrecioSugeridoLoading(true);
+
+    getPrecioSugeridoAction(part.id).then((result) => {
+      if (result.ok) {
+        setPrecioSugerido(result.data);
+      } else {
+        setPrecioSugeridoError(result.error);
+      }
+      setPrecioSugeridoLoading(false);
+    });
+  }, [open, part.id]);
+
   function handleClose() {
     setOpen(false);
     setSubmitError(null);
     setCategoriaId(subcategorias.find((s) => s.id === part.subcategoriaId)?.categoriaId ?? '');
     reset(defaultsFrom(part));
+    // Reabrir vuelve a pedir el precio sugerido — costo/margen/K pudieron cambiar.
+    precioSugeridoFetchedRef.current = false;
+    setPrecioSugerido(null);
+    setPrecioSugeridoError(null);
   }
 
   const onSubmit = handleSubmit(async (data) => {
@@ -189,6 +222,56 @@ export function EditAutoPartButton({ part, categorias, subcategorias }: EditAuto
             error={errors.precioVenta?.message}
             {...register('precioVenta', { valueAsNumber: true })}
           />
+
+          <div className={styles.precioSugerido}>
+            {precioSugeridoLoading && (
+              <p className={styles.precioSugeridoHint}>Calculando precio sugerido…</p>
+            )}
+            {precioSugeridoError && (
+              <p className={styles.precioSugeridoError} role="alert">
+                {precioSugeridoError}
+              </p>
+            )}
+            {precioSugerido && !precioSugeridoLoading && (
+              <>
+                {precioSugerido.precioSugeridoUsd != null ? (
+                  <div className={styles.precioSugeridoRow}>
+                    <span className={styles.precioSugeridoText}>
+                      Sugerido: <strong>{formatCurrencyUsd(precioSugerido.precioSugeridoUsd)}</strong>{' '}
+                      <span className={styles.precioSugeridoDetail}>
+                        (margen {precioSugerido.margenAplicado}% · K {precioSugerido.kAplicado})
+                      </span>
+                      {precioSugerido.desviacionPct != null && (
+                        <span className={styles.precioSugeridoDetail}>
+                          {' '}
+                          — desviación vs. precio actual: {precioSugerido.desviacionPct > 0 ? '+' : ''}
+                          {precioSugerido.desviacionPct.toFixed(1)}%
+                        </span>
+                      )}
+                    </span>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      disabled={precioVenta === precioSugerido.precioSugeridoUsd}
+                      onClick={() =>
+                        setValue('precioVenta', precioSugerido.precioSugeridoUsd as number, {
+                          shouldValidate: true,
+                        })
+                      }
+                    >
+                      <Sparkles size={14} aria-hidden="true" />
+                      Usar sugerido
+                    </Button>
+                  </div>
+                ) : (
+                  <p className={styles.precioSugeridoHint}>
+                    Sin proveedor activo con precio de costo — no se puede sugerir un precio.
+                  </p>
+                )}
+              </>
+            )}
+          </div>
 
           {submitError && (
             <p className={styles.modalError} role="alert">

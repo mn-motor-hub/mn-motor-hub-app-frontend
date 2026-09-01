@@ -92,6 +92,42 @@
   color: var(--color-danger);
 }
 
+.precioSugerido {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.precioSugeridoRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  background-color: var(--color-info-dim);
+  border: 1px solid var(--color-info);
+  border-radius: var(--radius-md);
+}
+
+.precioSugeridoText {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+}
+
+.precioSugeridoDetail {
+  color: var(--color-on-surface-variant);
+}
+
+.precioSugeridoHint {
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.precioSugeridoError {
+  font-size: var(--text-xs);
+  color: var(--color-danger);
+}
+
 .modalError {
   font-size: var(--text-sm);
   color: var(--color-danger);
