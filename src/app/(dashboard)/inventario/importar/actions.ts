@@ -1,5 +1,6 @@
 'use server';
 
+import { unstable_rethrow } from 'next/navigation';
 import {
   classifySubcategorias,
   confirmImport,
@@ -35,6 +36,9 @@ export async function parseInvoiceAction(
   try {
     return { ok: true, data: await parseInvoice(archivo) };
   } catch (err) {
+    unstable_rethrow(err);
+    // eslint-disable-next-line no-console -- diagnóstico server-side, ver lib/api/stock-imports.ts
+    console.error('[parseInvoiceAction] falló el parseo de factura:', err);
     return { ok: false, error: message(err, 'Error al procesar la factura.') };
   }
 }
@@ -45,6 +49,7 @@ export async function confirmImportAction(
   try {
     return { ok: true, data: await confirmImport(payload) };
   } catch (err) {
+    unstable_rethrow(err);
     // instanceof no sobrevive el límite servidor→cliente: se manda un code.
     if (err instanceof DuplicateInvoiceError) {
       return {
@@ -63,6 +68,7 @@ export async function classifySubcategoriasAction(
   try {
     return { ok: true, data: await classifySubcategorias(items) };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al sugerir subcategorías con IA.') };
   }
 }
@@ -71,6 +77,7 @@ export async function listSuppliersAction(): Promise<ActionResult<Supplier[]>> {
   try {
     return { ok: true, data: await getSuppliers() };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al obtener la lista de proveedores.') };
   }
 }
@@ -82,6 +89,7 @@ export async function createSupplierAction(data: {
   try {
     return { ok: true, data: await createSupplier(data) };
   } catch (err) {
+    unstable_rethrow(err);
     return { ok: false, error: message(err, 'Error al crear el proveedor.') };
   }
 }

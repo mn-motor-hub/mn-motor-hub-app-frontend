@@ -67,6 +67,9 @@ export function FileUploadStep({ onSuccess }: FileUploadStepProps) {
       onSuccess(result.data);
       return;
     }
+    // Visible en DevTools además del banner en pantalla — mismo mensaje, para
+    // no tener que reproducir el fallo de nuevo solo para verlo con detalle.
+    console.error(`[FileUploadStep] falló el parseo de "${file.name}":`, result.error);
     setError(result.error);
     setUploading(false);
   }

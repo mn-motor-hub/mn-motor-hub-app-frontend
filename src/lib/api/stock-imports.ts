@@ -10,8 +10,11 @@ import type {
 const PARSE_ERROR_MESSAGES: Record<number, string> = {
   400: 'El archivo enviado no es válido o está mal formado.',
   422: 'No se pudo extraer información de la factura. Verificá que el archivo sea legible y corresponda a una factura real.',
+  429: 'El servicio de extracción con IA está saturado (límite de solicitudes). Esperá un momento y reintentá.',
+  500: 'El servicio de extracción con IA falló al procesar este archivo.',
   502: 'El servicio de extracción con IA no está disponible en este momento. Intentá de nuevo en unos minutos.',
-  504: 'La extracción tardó demasiado tiempo. El archivo puede ser demasiado complejo.',
+  503: 'El servicio de extracción con IA no está disponible en este momento. Intentá de nuevo en unos minutos.',
+  504: 'La extracción tardó demasiado tiempo. El archivo puede ser demasiado complejo (muchas páginas o ítems).',
 };
 
 export async function parseInvoice(file: File): Promise<StockImportParseResponse> {
@@ -24,10 +27,29 @@ export async function parseInvoice(file: File): Promise<StockImportParseResponse
   });
 
   if (!res.ok) {
-    throw new Error(
-      PARSE_ERROR_MESSAGES[res.status] ??
-        `Error inesperado al procesar la factura (HTTP ${res.status}).`
+    // El body puede traer detalle real (ej. el proveedor de IA rechazando la
+    // solicitud por saldo/cuota) — antes se descartaba y solo se mostraba un
+    // mensaje genérico por status, así que un 500 real era indistinguible de
+    // cualquier otro fallo. Se loguea completo server-side (Server Action) y
+    // se antepone al usuario cuando el backend lo da.
+    const body = (await res.json().catch(() => null)) as
+      | { message?: string; error?: string }
+      | null;
+    const backendMessage = body?.message ?? body?.error;
+
+    console.error(
+      `[stock-imports.parseInvoice] HTTP ${res.status} al parsear "${file.name}" ` +
+        `(${file.size} bytes, ${file.type}):`,
+      backendMessage ?? '(el backend no devolvió mensaje)',
     );
+
+    const generic = PARSE_ERROR_MESSAGES[res.status];
+    const friendly =
+      generic && backendMessage
+        ? `${generic} Detalle: ${backendMessage}`
+        : (backendMessage ?? generic ?? `Error inesperado al procesar la factura (HTTP ${res.status}).`);
+
+    throw new Error(friendly);
   }
 
   return res.json();
