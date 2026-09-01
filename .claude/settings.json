@@ -1,0 +1,46 @@
+{
+    "hooks": {
+      "PreToolUse": [
+        {
+          "matcher": "Edit|Write",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "FILE=$(jq -r '.tool_input.file_path // empty') && if echo \"$FILE\" | grep -qE '(^|/)\\.env|tsconfig\\.json$'; then echo 'BLOQUEADO: .env y tsconfig.json son archivos protegidos. Si el cambio es necesario, proponelo y que lo aplique el usuario a mano.' >&2; exit 2; fi"
+            },
+            {
+              "type": "command",
+              "command": "NEW=$(jq -r '.tool_input.new_string // .tool_input.content // empty') && if echo \"$NEW\" | grep -qE \"dynamic[[:space:]]*=[[:space:]]*['\\\"]force-dynamic['\\\"]\"; then echo 'BLOQUEADO: force-dynamic esta prohibido. Usa next: { revalidate: N }, revalidatePath()/revalidateTag() tras mutaciones, o cache: no-store solo si esta justificado.' >&2; exit 2; fi"
+            }
+          ]
+        },
+        {
+          "matcher": "Bash",
+          "hooks": [
+            {
+              "type": "command",
+              "command": "CMD=$(jq -r '.tool_input.command // empty') && if echo \"$CMD\" | grep -qE '(npm|pnpm|yarn)[[:space:]]+(run[[:space:]]+)?(dev|start|serve)|next[[:space:]]+(dev|start)'; then echo 'BLOQUEADO: no se levantan servidores en sesiones de agente. Verifica con tsc --noEmit, eslint y next build.' >&2; exit 2; fi"
+            },
+            {
+              "type": "command",
+              "command": "CMD=$(jq -r '.tool_input.command // empty') && if echo \"$CMD\" | grep -qE 'rm[[:space:]]+-rf[[:space:]]+/'; then echo 'BLOQUEADO: comando destructivo.' >&2; exit 2; fi"
+            },
+            {
+              "type": "command",
+              "command": "CMD=$(jq -r '.tool_input.command // empty') && if echo \"$CMD\" | grep -qE 'git[[:space:]]+push'; then printf '%s' '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":\"El deploy lo ejecuta el usuario, y backend y frontend suben coordinados. Confirmar antes de pushear.\"}}'; fi"
+            }
+          ]
+        }
+      ],
+      "SessionStart": [
+        {
+          "hooks": [
+            {
+              "type": "command",
+              "command": "echo '--- Ultimos commits ---'; git log --oneline -8; echo '--- Estado ---'; git status --short"
+            }
+          ]
+        }
+      ]
+    }
+  }
