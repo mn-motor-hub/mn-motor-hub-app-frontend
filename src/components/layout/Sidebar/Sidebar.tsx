@@ -22,6 +22,7 @@ import { ExchangeRatesWidget } from './ExchangeRatesWidget';
 import styles from './Sidebar.module.css';
 
 const navItems = [
+  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
   { href: '/inventario', label: 'Inventario', icon: Package },
   { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
   { href: '/finanzas', label: 'Finanzas', icon: Wallet },
