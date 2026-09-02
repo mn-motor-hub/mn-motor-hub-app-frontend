@@ -139,3 +139,62 @@
   gap: var(--space-sm);
   padding-top: var(--space-xs);
 }
+
+/* ── Acceso al motor de precios ─────────────────────────────── */
+/* Fila destacada por encima de la lista genérica de claves: es un flujo con
+   pantalla propia, no una clave más que se edita en un modal. */
+.featureLink {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-md);
+  min-height: 44px;
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+  color: var(--color-on-surface);
+  text-decoration: none;
+}
+
+.featureLink:hover,
+.featureLink:focus-visible {
+  border-color: var(--color-primary);
+}
+
+.featureLink:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+.featureIcon {
+  flex-shrink: 0;
+  color: var(--color-primary-dim);
+}
+
+.featureText {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+
+.featureTitle {
+  font-family: var(--font-oswald);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.featureDescription {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.featureChevron {
+  flex-shrink: 0;
+  color: var(--color-on-surface-variant);
+}

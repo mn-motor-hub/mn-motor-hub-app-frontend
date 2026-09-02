@@ -1,0 +1,103 @@
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-lg);
+  padding: var(--space-md);
+}
+
+.section {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-md);
+}
+
+.sectionTitle {
+  margin: 0;
+  font-family: var(--font-oswald);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface);
+}
+
+.error {
+  margin: 0;
+  padding: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+}
+
+/* ── Skeletons ──────────────────────────────────────────────── */
+/* Misma estructura que el contenido final para no generar layout shift */
+.skeletonHeader {
+  height: 340px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+.skeletonReadout {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.skeletonTasa {
+  height: 86px;
+  border-radius: var(--radius-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+/* Mismo alto que el wrapper del gráfico, en los dos breakpoints. */
+.skeletonChart {
+  height: 260px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeletonHeader,
+  .skeletonTasa,
+  .skeletonChart {
+    animation: none;
+  }
+}
+
+@media (min-width: 768px) {
+  .content {
+    padding: var(--space-lg);
+  }
+
+  .skeletonHeader {
+    height: 208px;
+  }
+
+  .skeletonReadout {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .skeletonTasa {
+    flex: 1 1 14rem;
+  }
+
+  .skeletonChart {
+    height: 320px;
+  }
+}
