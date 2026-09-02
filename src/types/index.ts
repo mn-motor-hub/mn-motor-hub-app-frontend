@@ -284,29 +284,90 @@ export interface TasaContexto {
 }
 
 // ─── Brecha cambiaria (BCV vs P2P) ────────────────────────────
+// Espejo de los tipos exportados por el backend en
+// src/modules/pricing/brecha.service.ts. Fechas como `string`, que es lo que
+// sobrevive al JSON.
+
+/** Espejo de BrechaStatus. */
 export interface BrechaStatus {
   tasaBcv: number;
   // Informativa — null si el scraper P2P no tenía valor disponible.
   tasaP2p: number | null;
+  // null por DOS motivos distintos: sin dato P2P, o tasaBcvStale. No los
+  // colapses en un solo mensaje — mirá tasaBcvStale para distinguirlos.
   brechaPct: number | null;
   factorKConfigurado: number;
   // (factorKConfigurado - 1) * 100 — la brecha que K asume implícitamente.
   brechaImplicitaK: number;
-  // null si brechaPct es null (sin dato P2P) — no asumir false.
+  // null si brechaPct es null — no asumir false.
   dentroDeBanda: boolean | null;
   bandaMin: number;
   bandaMax: number;
   diasConsecutivosFueraDeBanda: number;
   ultimaRevision: string;
   proximaRevision: string;
+  // true si la tasa BCV en uso viene de un fetch vencido. Con esto en true el
+  // backend devuelve brechaPct y dentroDeBanda en null a propósito: no calcula
+  // una brecha contra un dato viejo. La UI muestra "tasa desactualizada",
+  // nunca un cero ni un guion que parezca dato faltante genérico.
+  tasaBcvStale: boolean;
 }
 
+/** Espejo de BrechaSnapshotPlain — una fila del histórico diario. */
 export interface BrechaHistoricoPoint {
   fecha: string;
   tasaBcv: number;
   tasaP2p: number | null;
+  // null = "no se pudo calcular", NUNCA 0. Graficarlo como 0 dibuja una caída
+  // que no ocurrió: el punto se omite o se marca como sin dato.
   brechaPct: number | null;
   factorKConfigurado: number;
+  // null = fila anterior al fix de zona horaria del scraper BCV, procedencia
+  // dudosa. El backend las excluye de la muestra de K; cualquier cálculo del
+  // lado del cliente sobre el histórico tiene que excluirlas igual.
+  tasaBcvFetchedAt: string | null;
+}
+
+/** Por qué un snapshot no entró en la muestra de K sugerido. */
+export interface SnapshotExcluido {
+  fecha: string;
+  // 'sin_brecha': brechaPct null — o el P2P no respondió, o el BCV venía
+  // vencido. 'pre_fix': fila anterior al fix del scraper (tasaBcvFetchedAt null).
+  motivo: 'sin_brecha' | 'pre_fix';
+}
+
+/** Espejo de KSugerido — resultado de GET /api/pricing/k-sugerido. */
+export interface KSugerido {
+  // null cuando muestraSuficiente es false: el backend nunca devuelve una
+  // sugerencia que aparente un respaldo estadístico que no tiene. Ese es el
+  // estado normal al inicio, no un error.
+  kSugerido: number | null;
+  kActual: number;
+  metodo: 'mediana';
+  diasUsados: number;
+  diasObjetivo: number;
+  muestraSuficiente: boolean;
+  // Se devuelve aunque la muestra sea insuficiente — es informativa y permite
+  // mostrar "mediana de 2 días" en vez de dejar el panel vacío.
+  brechaMediana: number | null;
+  bandaObjetivo: { min: number; max: number; centro: number };
+  variacionPctCatalogo: number | null;
+  // true si 1 + mediana/100 cayó fuera del rango válido de K y hubo que
+  // clampear. Siempre boolean, nunca undefined. Se muestra: el recorte no
+  // puede pasar en silencio.
+  fueraDeRangoValido: boolean;
+  snapshotsExcluidos: SnapshotExcluido[];
+}
+
+/**
+ * Espejo de KAplicado — respuesta de POST /api/pricing/aplicar-k.
+ * OJO: es un subconjunto de BrechaStatus. Alcanza para confirmar el K aplicado
+ * al instante, pero brechaImplicitaK, dentroDeBanda y proximaRevision no vienen
+ * acá: esos se refrescan con router.refresh().
+ */
+export interface KAplicado {
+  factorReposicionCambiaria: number;
+  ultimaRevisionK: string;
 }
 
 // ─── Configuración del sistema ──────────────────────────────
