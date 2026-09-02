@@ -12,6 +12,16 @@
   gap: var(--space-md);
 }
 
+/* En mobile el botón va debajo del título y ocupa su propia línea; el orden es
+   el mismo que el del DOM, así que no hace falta `order`. */
+.saludHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+}
+
 .saludGrid {
   display: flex;
   flex-direction: column;
@@ -121,6 +131,12 @@
 @media (min-width: 768px) {
   .content {
     padding: var(--space-lg);
+  }
+
+  .saludHeader {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
   }
 
   /* Las tarjetas de salud pasan a fila recién acá: en mobile van apiladas. */

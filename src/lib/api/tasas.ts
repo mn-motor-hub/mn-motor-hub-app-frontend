@@ -18,9 +18,17 @@ interface GetTasasResponse {
  * después de que el BCV publica, y solo reintenta cada hora mientras alguna
  * tasa siga fallando (ver tasas.scheduler.ts en el backend). Con esa cadencia
  * un revalidate de 5 minutos ya es más granular de lo que el dato puede cambiar.
+ *
+ * El tag existe para el único caso que sí puede adelantarse al cron: el botón
+ * de "Actualizar tasas ahora" invalida esta entrada con revalidateTag para que
+ * el widget del sidebar no siga mostrando el valor viejo hasta 5 minutos.
  */
+export const TASAS_TAG = 'tasas';
+
 export async function getTasas(): Promise<Tasa[]> {
-  const res = await apiFetch(`${BASE_URL}/api/tasas`, { next: { revalidate: 300 } });
+  const res = await apiFetch(`${BASE_URL}/api/tasas`, {
+    next: { revalidate: 300, tags: [TASAS_TAG] },
+  });
   if (!res.ok) throw new Error('Error al obtener las tasas de cambio.');
   const body: GetTasasResponse = await res.json();
   return body.data;

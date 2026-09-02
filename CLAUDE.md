@@ -76,6 +76,9 @@ src/
 │       │   ├── page.tsx              # Listado paginado con filtros
 │       │   ├── [id]/page.tsx         # Detalle + supplier_refs
 │       │   └── importar/page.tsx     # Importación de facturas de proveedor
+│       ├── tasas/
+│       │   ├── page.tsx              # Salud de las tasas + historial de intentos
+│       │   └── actions.ts            # 'use server' — refreshTasasAction (POST /fetch)
 │       ├── proveedores/page.tsx
 │       └── categorias/
 │           ├── page.tsx
@@ -99,6 +102,10 @@ src/
 │       │       ├── InvoiceItemsPreview.tsx
 │       │       ├── SupplierSelector.tsx
 │       │       └── ImportSuccessView.tsx
+│       ├── tasas/
+│       │   ├── TasaSaludCard.tsx     # Semáforo por tasa — se calcula en el front
+│       │   ├── HistorialFilters.tsx  HistorialTable.tsx
+│       │   └── RefreshTasasButton.tsx
 │       ├── proveedores/SupplierRefList.tsx
 │       └── landing/
 │           ├── Hero/  FeaturedProducts/  WhyUs/  CTABanner/
@@ -106,13 +113,14 @@ src/
 │   ├── api/                          # Funciones de fetch al backend
 │   │   ├── client.ts                 # BASE_URL
 │   │   ├── auto-parts.ts  categorias.ts  suppliers.ts
-│   │   ├── supplier-refs.ts  stock-imports.ts
+│   │   ├── supplier-refs.ts  stock-imports.ts  tasas.ts
 │   ├── schemas/                      # Schemas Zod
 │   │   ├── auto-part.schema.ts  supplier-ref.schema.ts
 │   │   └── stock-import.schema.ts
 │   └── utils/format.ts               # Moneda (USD/Bs), fechas, códigos
 ├── hooks/                            # Solo para Client Components
-│   ├── useAutoPartFilters.ts
+│   ├── useUrlFilters.ts              # Base: la URL como fuente de verdad
+│   ├── useAutoPartFilters.ts  useTasaFilters.ts
 │   └── usePagination.ts
 └── types/index.ts                    # Tipos globales — fuente de verdad
 ```
@@ -271,8 +279,21 @@ Hero, FeaturedProducts, WhyUs y CTABanner — todas implementadas en `src/compon
 | `/inventario` | Tabla de repuestos con filtros y paginación | ✅ |
 | `/inventario/[id]` | Detalle + referencias de proveedores | ✅ |
 | `/inventario/importar` | Importación de facturas: upload, preview editable, selector de proveedor, confirmación con `requiere_revision` | ✅ |
+| `/tasas` | Salud de las tasas de cambio + historial de intentos del scraper, con refresco manual | ✅ |
 | `/proveedores` | supplier_refs agrupadas por proveedor | ✅ |
 | `/categorias` | Listado y gestión de categorías | ✅ |
+
+#### Nota sobre `/tasas`
+
+`POST /api/tasas/fetch` sale **únicamente** de `refreshTasasAction`, disparada por
+el click en "Actualizar tasas ahora". Nunca en el montaje de un componente ni en
+el render de la page: el scrapeo tarda hasta 25 s si una fuente está caída y sale
+de una sola IP contra el BCV. La pantalla se dibuja leyendo de la base
+(`/salud` e `/historial`), que es instantáneo.
+
+`ultimoIntento` y `ultimoExito` se muestran siempre separados y no se colapsan en
+un solo "última actualización": el job puede seguir intentando cada hora mientras
+el último éxito queda días atrás, y con un solo campo esa caída es invisible.
 
 Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la entrada al array `navItems` de `Sidebar.tsx`.
 

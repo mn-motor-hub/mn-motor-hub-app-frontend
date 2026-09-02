@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { HistorialFilters } from '@/components/features/tasas/HistorialFilters';
 import { HistorialTable } from '@/components/features/tasas/HistorialTable';
+import { RefreshTasasButton } from '@/components/features/tasas/RefreshTasasButton';
 import { TasaSaludCard } from '@/components/features/tasas/TasaSaludCard';
 import { Pagination } from '@/components/ui/Pagination/Pagination';
 import { getTasas, getTasasHistorial, getTasasSalud } from '@/lib/api/tasas';
@@ -31,9 +32,18 @@ export default async function TasasPage({ searchParams }: PageProps) {
     <>
       <Navbar title="Tasas" breadcrumb={[{ label: 'Dashboard' }, { label: 'Tasas' }]} />
       <div className={styles.content}>
-        <Suspense fallback={<SaludSkeleton />}>
-          <SaludSection />
-        </Suspense>
+        <section className={styles.saludSection} aria-label="Estado de las tasas">
+          <div className={styles.saludHeader}>
+            <h2 className={styles.sectionTitle}>Estado de las tasas</h2>
+            {/* Fuera del Suspense: el botón no depende de los datos y así está
+                disponible incluso si /salud tarda o falla. */}
+            <RefreshTasasButton />
+          </div>
+
+          <Suspense fallback={<SaludSkeleton />}>
+            <SaludSection />
+          </Suspense>
+        </section>
 
         <section className={styles.historialSection}>
           <h2 className={styles.sectionTitle}>Historial de intentos</h2>
@@ -59,13 +69,11 @@ async function SaludSection() {
   }
 
   return (
-    <section className={styles.saludSection} aria-label="Estado de las tasas">
-      <div className={styles.saludGrid}>
-        {salud.map((t) => (
-          <TasaSaludCard key={t.clave} salud={t} />
-        ))}
-      </div>
-    </section>
+    <div className={styles.saludGrid}>
+      {salud.map((t) => (
+        <TasaSaludCard key={t.clave} salud={t} />
+      ))}
+    </div>
   );
 }
 
