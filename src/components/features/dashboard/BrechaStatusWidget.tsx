@@ -55,13 +55,25 @@ export function BrechaStatusWidget({ initialStatus }: BrechaStatusWidgetProps) {
     );
   }
 
-  const sinDatoP2p = status.brechaPct == null;
+  // brechaPct viene null por DOS motivos distintos y no se pueden colapsar: o
+  // el scraper P2P no tenía valor, o la tasa BCV está vencida y el backend se
+  // niega a calcular una brecha contra un dato viejo. Decir "Sin dato P2P"
+  // cuando lo que pasa es lo segundo manda a revisar la fuente equivocada.
+  const tasaVencida = status.tasaBcvStale;
+  const sinDatoP2p = !tasaVencida && status.brechaPct == null;
 
   return (
     <section className={styles.widget}>
       <div className={styles.header}>
         <h2 className={styles.title}>Brecha cambiaria (BCV vs P2P)</h2>
-        {sinDatoP2p ? (
+        {tasaVencida ? (
+          <Badge variant="danger">
+            <span className={styles.badgeContent}>
+              <AlertTriangle size={12} aria-hidden="true" />
+              Tasa BCV desactualizada
+            </span>
+          </Badge>
+        ) : sinDatoP2p ? (
           <Badge variant="neutral">Sin dato P2P</Badge>
         ) : status.dentroDeBanda ? (
           <Badge variant="success">
@@ -82,8 +94,15 @@ export function BrechaStatusWidget({ initialStatus }: BrechaStatusWidgetProps) {
 
       <div className={styles.stats}>
         <StatCard
-          value={sinDatoP2p ? 'Sin dato P2P' : `${status.brechaPct!.toFixed(2)}%`}
+          value={
+            tasaVencida
+              ? 'Tasa desactualizada'
+              : sinDatoP2p
+                ? 'Sin dato P2P'
+                : `${status.brechaPct!.toFixed(2)}%`
+          }
           label="Brecha actual"
+          variant={tasaVencida ? 'danger' : undefined}
         />
         <StatCard value={`K = ${status.factorKConfigurado.toFixed(2)}`} label="Factor K configurado" />
         <StatCard value={`${status.bandaMin}% – ${status.bandaMax}%`} label="Banda objetivo" />
