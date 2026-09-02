@@ -1,13 +1,15 @@
 import { Suspense } from 'react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { BrechaHistoricoChart } from '@/components/charts/BrechaHistoricoChart/BrechaHistoricoChart';
+import { AjustesAvanzados } from '@/components/features/pricing/AjustesAvanzados';
 import { KSugeridoPanel } from '@/components/features/pricing/KSugeridoPanel';
 import { MotorPreciosHeader } from '@/components/features/pricing/MotorPreciosHeader';
 import { TasasReadout } from '@/components/features/pricing/TasasReadout';
+import { listConfiguraciones } from '@/lib/api/configuraciones';
 import { getBrechaHistorico, getBrechaStatus } from '@/lib/api/pricing';
 import { getTasasSalud } from '@/lib/api/tasas';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { BrechaHistoricoPoint, BrechaStatus, TasaSalud } from '@/types';
+import type { BrechaHistoricoPoint, BrechaStatus, Configuracion, TasaSalud } from '@/types';
 import styles from './motor-de-precios.module.css';
 
 export default async function MotorDePreciosPage() {
@@ -54,6 +56,10 @@ export default async function MotorDePreciosPage() {
           </p>
           <KSugeridoPanel />
         </section>
+
+        <Suspense fallback={<AjustesSkeleton />}>
+          <AjustesSection />
+        </Suspense>
       </div>
     </>
   );
@@ -96,6 +102,15 @@ async function GraficoSection() {
       bandaMax={status?.bandaMax}
     />
   );
+}
+
+async function AjustesSection() {
+  const configuraciones = await withFallback<Configuracion[]>(listConfiguraciones(), []);
+  return <AjustesAvanzados configuraciones={configuraciones} />;
+}
+
+function AjustesSkeleton() {
+  return <div className={styles.skeletonAjustes} aria-hidden="true" />;
 }
 
 function HeaderSkeleton() {

@@ -91,7 +91,12 @@ src/
 │       ├── tasas/
 │       │   ├── page.tsx              # Salud de las tasas + historial de intentos
 │       │   └── actions.ts            # 'use server' — refreshTasasAction (POST /fetch)
-│       ├── configuracion/            # page.tsx + actions.ts — claves de `configuraciones`
+│       ├── configuracion/
+│       │   ├── page.tsx  actions.ts  # Lista genérica de claves de `configuraciones`
+│       │   ├── EditarConfiguracionButton.tsx   # Editor por clave, reusado por pricing
+│       │   └── motor-de-precios/
+│       │       ├── page.tsx          # Factor K: estado, brecha, cálculo y aplicación
+│       │       └── actions.ts        # 'use server' — calcularKSugerido / aplicarK
 │       ├── proveedores/page.tsx
 │       └── categorias/
 │           ├── page.tsx  actions.ts  CategoriasTabs.tsx  NuevaCategoriaButton.tsx
@@ -101,6 +106,8 @@ src/
 │   ├── ui/                           # Genéricos reutilizables (named exports)
 │   │   ├── Button/  Input/  Select/  Table/  Badge/  Modal/
 │   │   └── Pagination/  StatCard/  InfoPopover/  ScrollToBottomButton/
+│   ├── charts/                       # Gráficos compartidos entre módulos
+│   │   └── BrechaHistoricoChart/     # Recharts — brecha vs. banda, nulls sin conectar
 │   ├── layout/
 │   │   ├── Sidebar/
 │   │   │   ├── Sidebar.tsx           # navItems hardcodeado — editar al sumar módulos
@@ -122,7 +129,11 @@ src/
 │       ├── finanzas/
 │       │   ├── MovementsTable.tsx  MovementFilters.tsx  MovementFormModal.tsx
 │       │   └── NewMovementButton.tsx  MonthSelector.tsx  ExpensesByCategoryChart.tsx
-│       ├── dashboard/BrechaStatusWidget.tsx  BrechaHistoricoChart.tsx
+│       ├── dashboard/BrechaStatusWidget.tsx
+│       ├── pricing/
+│       │   ├── MotorPreciosHeader.tsx    # Semáforo de K — se calcula en el front
+│       │   ├── TasasReadout.tsx  KSugeridoPanel.tsx
+│       │   └── AjustesAvanzados.tsx      # Edición manual, colapsada
 │       ├── tasas/
 │       │   ├── TasaSaludCard.tsx     # Semáforo por tasa — se calcula en el front
 │       │   ├── HistorialFilters.tsx  HistorialTable.tsx
@@ -327,6 +338,7 @@ Hero, FeaturedProducts, WhyUs y CTABanner — todas implementadas en `src/compon
 | `/categorias` | Listado y gestión de categorías, con pestaña de subcategorías | ✅ |
 | `/categorias/[id]` | Detalle de categoría + activar/desactivar | ✅ |
 | `/configuracion` | Edición de las claves de `configuraciones` | ✅ |
+| `/configuracion/motor-de-precios` | Factor K: estado vs. banda, tasas del día, cálculo del K sugerido y aplicación con confirmación | ✅ |
 
 Fuera del route group: `/` es la landing pública, `/login` monta la cookie de
 sesión y `/ventas/[id]/comprobante` es el comprobante imprimible, que a
@@ -343,6 +355,26 @@ de una sola IP contra el BCV. La pantalla se dibuja leyendo de la base
 `ultimoIntento` y `ultimoExito` se muestran siempre separados y no se colapsan en
 un solo "última actualización": el job puede seguir intentando cada hora mientras
 el último éxito queda días atrás, y con un solo campo esa caída es invisible.
+
+#### Nota sobre `/configuracion/motor-de-precios`
+
+`GET /api/pricing/k-sugerido` sale **solo** del botón "Calcular K sugerido", no
+del render: es un cómputo que el usuario pide, y meterlo en la carga de la
+pantalla lo cobraría sin que nadie lo haya pedido. `POST /aplicar-k` reescala los
+precios sugeridos del catálogo, así que pide confirmación mostrando el delta
+explícito y el impacto, nunca un "¿confirmar?" genérico.
+
+Cinco estados de datos tienen tratamiento propio y ninguno cae en un fallback
+genérico: `kSugerido` null con `muestraSuficiente` false (es el estado normal
+mientras falta historial, no un error), `brechaPct` null en el histórico (se
+corta la línea, nunca se grafica como 0), `tasaBcvStale` (se dice "tasa
+desactualizada", no "sin dato P2P" — son causas distintas del mismo null),
+`fueraDeRangoValido` (el recorte se avisa, si no la aritmética no cierra) y
+`snapshotsExcluidos` (desglosado por motivo).
+
+Los mínimos y umbrales del cálculo viven en el backend y no se duplican acá.
+`K_MUESTRA_MINIMA` no viene en la respuesta, así que el copy habla de días
+usados contra la ventana objetivo en vez de hardcodear el número.
 
 Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la entrada al array `navItems` de `Sidebar.tsx`.
 
