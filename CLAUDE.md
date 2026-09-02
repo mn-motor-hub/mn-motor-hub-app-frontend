@@ -69,59 +69,88 @@ src/
 │   ├── page.tsx                      # Landing pública
 │   ├── globals.css                   # Tokens del design system + reset
 │   ├── icon.svg                      # Favicon
+│   ├── login/                        # page.tsx + actions.ts — cookie de sesión
+│   ├── ventas/[id]/comprobante/      # Comprobante imprimible — fuera del dashboard
 │   └── (dashboard)/                  # Route group — área privada de gestión
 │       ├── layout.tsx                # Sidebar + main
 │       ├── DashboardShell.tsx        # Client wrapper — provee SidebarContext
+│       ├── actions.ts                # Acciones compartidas del área privada
+│       ├── dashboard/page.tsx        # Home privada — widgets de brecha cambiaria
 │       ├── inventario/
 │       │   ├── page.tsx              # Listado paginado con filtros
-│       │   ├── [id]/page.tsx         # Detalle + supplier_refs
-│       │   └── importar/page.tsx     # Importación de facturas de proveedor
+│       │   ├── actions.ts
+│       │   ├── [id]/page.tsx         # Detalle editable + supplier_refs
+│       │   └── importar/             # page.tsx + actions.ts — facturas de proveedor
+│       ├── ventas/
+│       │   ├── page.tsx  actions.ts  # Listado con filtros
+│       │   ├── nueva/page.tsx        # Formulario de carga
+│       │   └── [id]/page.tsx         # Detalle + confirmar / anular
+│       ├── finanzas/
+│       │   ├── page.tsx  actions.ts  # Resumen mensual
+│       │   └── movimientos/page.tsx  # Listado paginado con filtros
 │       ├── tasas/
 │       │   ├── page.tsx              # Salud de las tasas + historial de intentos
 │       │   └── actions.ts            # 'use server' — refreshTasasAction (POST /fetch)
+│       ├── configuracion/            # page.tsx + actions.ts — claves de `configuraciones`
 │       ├── proveedores/page.tsx
 │       └── categorias/
-│           ├── page.tsx
-│           ├── actions.ts            # 'use server' — createCategoriaAction
-│           └── NuevaCategoriaButton.tsx
+│           ├── page.tsx  actions.ts  CategoriasTabs.tsx  NuevaCategoriaButton.tsx
+│           ├── [id]/page.tsx         # Detalle + activar/desactivar
+│           └── subcategorias/page.tsx
 ├── components/
 │   ├── ui/                           # Genéricos reutilizables (named exports)
-│   │   ├── Button/  Input/  Table/  Badge/  Modal/
+│   │   ├── Button/  Input/  Select/  Table/  Badge/  Modal/
+│   │   └── Pagination/  StatCard/  InfoPopover/  ScrollToBottomButton/
 │   ├── layout/
 │   │   ├── Sidebar/
 │   │   │   ├── Sidebar.tsx           # navItems hardcodeado — editar al sumar módulos
-│   │   │   └── SidebarContext.tsx    # Estado de apertura en mobile
+│   │   │   ├── SidebarContext.tsx    # Estado de apertura en mobile
+│   │   │   └── ExchangeRatesWidget.tsx  # Tasas vigentes, polling cada 7 min
 │   │   └── Navbar/
 │   └── features/                     # Componentes por módulo de negocio
 │       ├── inventario/
 │       │   ├── AutoPartCard.tsx  AutoPartTable.tsx  AutoPartFilters.tsx
+│       │   ├── EditAutoPartButton.tsx
 │       │   └── stock-import/         # Flujo de importación de facturas
 │       │       ├── StockImportFlow.tsx      # Orquestador — máquina de estados
-│       │       ├── FileUploadStep.tsx
-│       │       ├── InvoiceHeaderSummary.tsx
-│       │       ├── InvoiceItemsPreview.tsx
-│       │       ├── SupplierSelector.tsx
+│       │       ├── FileUploadStep.tsx  InvoiceHeaderSummary.tsx
+│       │       ├── InvoiceItemsPreview.tsx  SupplierSelector.tsx
 │       │       └── ImportSuccessView.tsx
+│       ├── ventas/
+│       │   ├── SaleForm.tsx  SalesTable.tsx  SaleFilters.tsx
+│       │   └── SaleEstadoBadge.tsx  ConfirmarSaleButton.tsx  AnularSaleButton.tsx
+│       ├── finanzas/
+│       │   ├── MovementsTable.tsx  MovementFilters.tsx  MovementFormModal.tsx
+│       │   └── NewMovementButton.tsx  MonthSelector.tsx  ExpensesByCategoryChart.tsx
+│       ├── dashboard/BrechaStatusWidget.tsx  BrechaHistoricoChart.tsx
 │       ├── tasas/
 │       │   ├── TasaSaludCard.tsx     # Semáforo por tasa — se calcula en el front
 │       │   ├── HistorialFilters.tsx  HistorialTable.tsx
 │       │   └── RefreshTasasButton.tsx
+│       ├── categorias/SubcategoriasTable.tsx  NuevaSubcategoriaButton.tsx
 │       ├── proveedores/SupplierRefList.tsx
 │       └── landing/
 │           ├── Hero/  FeaturedProducts/  WhyUs/  CTABanner/
 ├── lib/
 │   ├── api/                          # Funciones de fetch al backend
-│   │   ├── client.ts                 # BASE_URL
-│   │   ├── auto-parts.ts  categorias.ts  suppliers.ts
-│   │   ├── supplier-refs.ts  stock-imports.ts  tasas.ts
+│   │   ├── client.ts                 # BASE_URL, apiFetch, getAuthHeaders, cookies
+│   │   ├── auto-parts.ts  categorias.ts  subcategorias.ts  suppliers.ts
+│   │   ├── supplier-refs.ts  stock-imports.ts  pricing.ts
+│   │   ├── sales.ts  financial-movements.ts  financial-categories.ts
+│   │   └── configuraciones.ts  tasas.ts
 │   ├── schemas/                      # Schemas Zod
-│   │   ├── auto-part.schema.ts  supplier-ref.schema.ts
-│   │   └── stock-import.schema.ts
-│   └── utils/format.ts               # Moneda (USD/Bs), fechas, códigos
+│   │   ├── auto-part.schema.ts  categoria.schema.ts  subcategoria.schema.ts
+│   │   ├── supplier-ref.schema.ts  stock-import.schema.ts
+│   │   └── sale.schema.ts  financial-movement.schema.ts  configuracion.schema.ts
+│   ├── constants/company.ts          # Datos fijos de la empresa — comprobante
+│   └── utils/
+│       ├── format.ts                 # Moneda (USD/Bs), fechas, códigos
+│       └── with-fallback.ts          # Fallback que deja pasar redirect / notFound
 ├── hooks/                            # Solo para Client Components
-│   ├── useUrlFilters.ts              # Base: la URL como fuente de verdad
-│   ├── useAutoPartFilters.ts  useTasaFilters.ts
-│   └── usePagination.ts
+│   ├── useUrlFilters.ts              # Base: la URL como única fuente de verdad
+│   ├── useAutoPartFilters.ts  useMovementFilters.ts  useSaleFilters.ts
+│   ├── useSubcategoriaFilters.ts  useTasaFilters.ts
+│   └── usePagination.ts              # Sin usar — ver deuda técnica
 └── types/index.ts                    # Tipos globales — fuente de verdad
 ```
 
@@ -262,7 +291,15 @@ Para formularios de varias secciones o con listas de ítems, usar `FormProvider`
 
 Única excepción admitida: estado local para un input de texto que se aplica en submit y no en cada tecla, sincronizado con `useEffect` cuando cambia la URL.
 
-Referencia: `hooks/useAutoPartFilters.ts` + `components/features/inventario/AutoPartFilters.tsx`. Ojo al reusarlo: hoy tiene la ruta `/inventario` hardcodeada — parametrizar el `basePath` al extenderlo a otro módulo.
+La base es `hooks/useUrlFilters.ts`, que recibe el `basePath` y las claves; cada
+módulo lo envuelve en un hook de una línea (`useAutoPartFilters`,
+`useMovementFilters`, `useSaleFilters`, `useTasaFilters`). Al sumar un módulo,
+escribir ese wrapper — no copiar la lógica. El array de claves va como constante
+a nivel de módulo, nunca inline: se usa como dependencia de los memos.
+
+Referencia de la pantalla completa: `finanzas/movimientos/page.tsx` +
+`components/features/finanzas/MovementFilters.tsx` — filtros y paginación por
+URL, `<Suspense>` con `key` en los params y `<Pagination>` compartido.
 
 ---
 
@@ -276,12 +313,24 @@ Hero, FeaturedProducts, WhyUs y CTABanner — todas implementadas en `src/compon
 
 | Ruta | Descripción | Estado |
 |---|---|---|
+| `/dashboard` | Home privada — widget de brecha cambiaria e histórico | ✅ |
 | `/inventario` | Tabla de repuestos con filtros y paginación | ✅ |
-| `/inventario/[id]` | Detalle + referencias de proveedores | ✅ |
+| `/inventario/[id]` | Detalle editable + referencias de proveedores | ✅ |
 | `/inventario/importar` | Importación de facturas: upload, preview editable, selector de proveedor, confirmación con `requiere_revision` | ✅ |
+| `/ventas` | Listado de ventas con filtros | ✅ |
+| `/ventas/nueva` | Carga de venta contra `contexto-tasa` + descuento comercial | ✅ |
+| `/ventas/[id]` | Detalle con confirmar y anular | ✅ |
+| `/finanzas` | Resumen mensual: ingresos, gastos y gastos por categoría | ✅ |
+| `/finanzas/movimientos` | Listado paginado con filtros de tipo, categoría, estado y fechas | ✅ |
 | `/tasas` | Salud de las tasas de cambio + historial de intentos del scraper, con refresco manual | ✅ |
 | `/proveedores` | supplier_refs agrupadas por proveedor | ✅ |
-| `/categorias` | Listado y gestión de categorías | ✅ |
+| `/categorias` | Listado y gestión de categorías, con pestaña de subcategorías | ✅ |
+| `/categorias/[id]` | Detalle de categoría + activar/desactivar | ✅ |
+| `/configuracion` | Edición de las claves de `configuraciones` | ✅ |
+
+Fuera del route group: `/` es la landing pública, `/login` monta la cookie de
+sesión y `/ventas/[id]/comprobante` es el comprobante imprimible, que a
+propósito no lleva el chrome del dashboard.
 
 #### Nota sobre `/tasas`
 
@@ -317,9 +366,9 @@ Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la ent
 Registrada acá para no volver a reportarla como hallazgo nuevo en cada auditoría. No corregir de forma oportunista: cada punto se aborda en su propio cambio.
 
 - **Fetch en Client Component.** `components/features/inventario/stock-import/SupplierSelector.tsx` llama a `getSuppliers()` desde un `useEffect`, violando la prohibición de arriba. La regla se mantiene vigente; este es el único caso existente y está pendiente de corrección.
-- **Sin autenticación.** Todo `(dashboard)` es públicamente accesible. `/inventario/importar` permite modificar el catálogo sin sesión — ver el TODO al inicio de su `page.tsx`.
-- **Sin `error.tsx` ni `loading.tsx`** en ningún route segment. Los `<Suspense>` existentes (en `inventario/page.tsx`) van sin `fallback`.
-- **Media queries en `max-width`** — pendientes de migrar a mobile-first: `Sidebar.module.css`, `Navbar.module.css`, `inventario/[id]/detail.module.css`.
+- **Sin `middleware.ts` que proteja las rutas.** Ya hay sesión (`/login` monta la cookie httpOnly `mn_session`, `apiFetch` redirige a `/login` ante un 401), pero la protección es indirecta: depende de que cada fetch reciba el 401. Un segmento que no pidiera datos se renderizaría igual. El TODO al inicio de `inventario/importar/page.tsx` sigue vigente por el mismo motivo, más el rol que todavía no se chequea.
+- **Sin `error.tsx` ni `loading.tsx`** en ningún route segment. Un throw de `lib/api/` sube hasta el error boundary global. Los `<Suspense>` de `inventario/page.tsx` además van sin `fallback` — el resto de las pantallas ya usa skeletons.
+- **Media queries en `max-width`** — pendientes de migrar a mobile-first: `Sidebar.module.css`, `Navbar.module.css`, `inventario/[id]/detail.module.css`. Son los tres únicos casos que quedan.
 - **Sin `.env.example`.** Además, `.gitignore` ignora `.env*` sin excepción: al crearlo hay que agregar `!.env.example`.
-- **`hooks/usePagination.ts` no lo usa nadie.** La paginación real está inline en `inventario/page.tsx`; falta un `PaginationControls` compartido.
-- **Sin componentes `Card` / `StatCard` genéricos.** Hay un `StatCard` privado al final de `ImportSuccessView.tsx` que sirve como base para promover a `components/ui/`.
+- **`hooks/usePagination.ts` no lo usa nadie.** El componente compartido es `components/ui/Pagination/` (lo usan ventas, finanzas y tasas); `inventario/page.tsx` sigue con su `PaginationControls` propio inline. Falta unificar y borrar el hook muerto.
+- **`useUrlFilters` con `basePath` por wrapper.** Cada módulo tiene su hook de una línea (`useAutoPartFilters`, `useMovementFilters`, `useSaleFilters`, `useTasaFilters`). Funciona, pero son cuatro archivos que solo fijan una ruta y un array de claves.
