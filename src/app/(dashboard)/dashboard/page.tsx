@@ -1,6 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { BrechaStatusWidget } from '@/components/features/dashboard/BrechaStatusWidget';
-import { BrechaHistoricoChart } from '@/components/features/dashboard/BrechaHistoricoChart';
+import { BrechaHistoricoChart } from '@/components/charts/BrechaHistoricoChart/BrechaHistoricoChart';
 import { getBrechaStatus, getBrechaHistorico } from '@/lib/api/pricing';
 import { withFallback } from '@/lib/utils/with-fallback';
 import type { BrechaHistoricoPoint, BrechaStatus } from '@/types';
