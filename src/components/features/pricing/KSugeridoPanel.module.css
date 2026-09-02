@@ -1,0 +1,238 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-md);
+}
+
+.actionRow {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.error {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+}
+
+/* ── Confirmación de que se aplicó ──────────────────────────── */
+.applied {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-success-dim);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+}
+
+.appliedIcon {
+  flex-shrink: 0;
+  margin-top: 2px;
+  color: var(--color-success);
+}
+
+/* ── Desglose ───────────────────────────────────────────────── */
+.desglose {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+}
+
+.pasos {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.paso {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.pasoLabel {
+  margin: 0;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-on-surface-variant);
+}
+
+.pasoValue {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--color-on-surface);
+  font-variant-numeric: tabular-nums;
+}
+
+.pasoHint {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.warning {
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--color-warning-dim);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+}
+
+.warning svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--color-warning);
+}
+
+/* ── Días excluidos ─────────────────────────────────────────── */
+.excluidos {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.excluidosSummary {
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  color: var(--color-primary-dim);
+}
+
+.excluidosSummary:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  border-radius: var(--radius-sm);
+}
+
+.excluidosList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  margin: 0;
+  padding-left: var(--space-lg);
+}
+
+/* ── Aplicar / muestra insuficiente ─────────────────────────── */
+.aplicarRow {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  gap: var(--space-sm);
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+.impacto {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.insuficiente {
+  margin: 0;
+  padding: var(--space-md);
+  background-color: var(--color-surface-low);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+/* ── Modal de confirmación ──────────────────────────────────── */
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--space-md);
+}
+
+.confirmText {
+  margin: 0;
+  font-size: var(--text-base);
+  color: var(--color-on-surface);
+}
+
+.confirmDelta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  margin: 0;
+  padding: var(--space-md);
+  background-color: var(--color-surface-low);
+  border-radius: var(--radius-md);
+  font-family: var(--font-mono);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+}
+
+.confirmDeltaFrom {
+  color: var(--color-on-surface-variant);
+  text-decoration: line-through;
+}
+
+.confirmDeltaTo {
+  font-weight: 600;
+  color: var(--color-primary-dim);
+}
+
+.confirmImpact {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+}
+
+.confirmNote {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.confirmActions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .pasos {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  .paso {
+    flex: 1 1 12rem;
+  }
+
+  .aplicarRow {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}

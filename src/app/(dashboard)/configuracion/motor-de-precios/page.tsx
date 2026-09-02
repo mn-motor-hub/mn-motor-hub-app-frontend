@@ -1,6 +1,7 @@
 import { Suspense } from 'react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { BrechaHistoricoChart } from '@/components/charts/BrechaHistoricoChart/BrechaHistoricoChart';
+import { KSugeridoPanel } from '@/components/features/pricing/KSugeridoPanel';
 import { MotorPreciosHeader } from '@/components/features/pricing/MotorPreciosHeader';
 import { TasasReadout } from '@/components/features/pricing/TasasReadout';
 import { getBrechaHistorico, getBrechaStatus } from '@/lib/api/pricing';
@@ -38,6 +39,20 @@ export default async function MotorDePreciosPage() {
           <Suspense fallback={<ChartSkeleton />}>
             <GraficoSection />
           </Suspense>
+        </section>
+
+        {/*
+          Sin Suspense y sin fetch en el server: el cálculo lo dispara el
+          usuario con un botón. Pedirlo en el render metería el cómputo en el
+          camino de carga de la pantalla sin que nadie lo haya pedido.
+        */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Factor K sugerido</h2>
+          <p className={styles.sectionIntro}>
+            Calcula el K a partir de la mediana de la brecha de los últimos días. El valor no se
+            aplica hasta que lo confirmes.
+          </p>
+          <KSugeridoPanel />
         </section>
       </div>
     </>

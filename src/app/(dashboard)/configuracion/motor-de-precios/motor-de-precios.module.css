@@ -101,3 +101,10 @@
     height: 320px;
   }
 }
+
+.sectionIntro {
+  margin: 0;
+  max-width: 62ch;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
