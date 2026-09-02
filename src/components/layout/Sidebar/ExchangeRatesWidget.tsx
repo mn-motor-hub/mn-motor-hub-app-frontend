@@ -11,7 +11,8 @@ interface ExchangeRatesWidgetProps {
   collapsed: boolean;
 }
 
-// El backend refresca por cron cada 1 hora (tasas.service.ts#fetchOnline); este
+// El backend refresca por cron una vez al día a las 17:00 hora de Venezuela, con
+// reintento horario solo mientras alguna tasa falle (tasas.scheduler.ts); este
 // intervalo solo evita que el widget quede desactualizado en una sesión larga.
 const REFRESH_MS = 7 * 60 * 1000;
 

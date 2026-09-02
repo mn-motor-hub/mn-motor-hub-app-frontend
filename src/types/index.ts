@@ -162,8 +162,14 @@ export interface FinancialSummary {
 }
 
 // ─── Tasas de cambio ──────────────────────────────────────────
+// Espejo de los tipos exportados por el backend en
+// src/modules/tasas/tasas.service.ts (TasaPlain, TasaSaludPlain,
+// TasaFetchLogPlain). Única diferencia: las fechas son `string`, que es lo que
+// sobrevive al JSON — nunca `Date`.
 export type TasaTipo = 'automatica' | 'manual';
 export type TasaFuente = 'online' | 'manual';
+export type TasaResultado = 'exito' | 'fallo';
+export type TasaOrigen = 'programado' | 'manual';
 
 export interface Tasa {
   id: string;
@@ -179,6 +185,49 @@ export interface Tasa {
   fuente: TasaFuente;
   activo: boolean;
   orden: number;
+  // true si tipo='automatica' y el último fetch exitoso tiene más de 24h, o si
+  // nunca se completó uno. Las tasas manuales nunca son stale.
+  stale: boolean;
+}
+
+/** Una fila por tasa activa: estado actual + salud del scraper que la alimenta. */
+export interface TasaSalud {
+  clave: string;
+  label: string;
+  tipo: TasaTipo;
+  valorEfectivo: number | null;
+  fetchedAt: string | null;
+  stale: boolean;
+  // ultimoIntento y ultimoExito NO son lo mismo y no deben colapsarse en un
+  // solo "última actualización": el job puede seguir intentando cada hora
+  // mientras el último éxito queda clavado días atrás. Esa distinción es la
+  // razón de ser de la pantalla de tasas.
+  ultimoIntento: string | null;
+  ultimoExito: string | null;
+  // Intentos seguidos fallando; 0 si el último salió bien.
+  fallosConsecutivos: number;
+  // Solo presente si fallosConsecutivos > 0.
+  ultimoError: { codigo: string | null; motivo: string | null; fecha: string } | null;
+  // Días enteros desde el último éxito. null si nunca hubo uno.
+  diasSinActualizar: number | null;
+}
+
+/** Un registro por intento de actualización y por tasa, falle o no. */
+export interface TasaFetchLog {
+  id: string;
+  tasaClave: string;
+  providerId: string | null;
+  resultado: TasaResultado;
+  valor: number | null;
+  valorAnterior: number | null;
+  errorCodigo: string | null;
+  errorMotivo: string | null;
+  duracionMs: number | null;
+  origen: TasaOrigen;
+  actorId: number | null;
+  // Resuelto por JOIN al leer; ya viene como '—' si no aplica.
+  actorNombre: string;
+  createdAt: string;
 }
 
 // ─── Ventas ───────────────────────────────────────────────────
