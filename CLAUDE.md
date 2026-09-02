@@ -376,6 +376,27 @@ Los mínimos y umbrales del cálculo viven en el backend y no se duplican acá.
 `K_MUESTRA_MINIMA` no viene en la respuesta, así que el copy habla de días
 usados contra la ventana objetivo en vez de hardcodear el número.
 
+**Ajustes avanzados** es un `<details>` colapsado que reutiliza
+`EditarConfiguracionButton` de `/configuracion` sobre una lista explícita de
+cuatro claves — la lista vive en `CLAVES_PRICING`, en `AjustesAvanzados.tsx`:
+
+| Clave | Qué es |
+|---|---|
+| `factor_reposicion_cambiaria` | El K. Rango 1.00–2.00, máximo 2 decimales |
+| `brecha_banda_min` | Piso de la banda objetivo, en % |
+| `brecha_banda_max` | Techo de la banda objetivo, en % |
+| `margen_ganancia_default` | Margen por defecto del catálogo, en % |
+
+Es una lista y no un match por prefijo a propósito: `ultima_revision_k` también
+es del motor de precios, pero guarda una fecha `YYYY-MM-DD` y el editor genérico
+la abriría como número. Queda afuera porque además se escribe sola al aplicar un
+K. Al sumar una clave de pricing nueva, agregarla a ese array — y solo si el
+editor numérico genérico le sirve.
+
+`updateConfiguracionAction` invalida `PRICING_TAG` y ambas rutas para cualquier
+clave, no solo estas cuatro: el costo es un refetch, y filtrar ahí duplicaría la
+lista en un segundo lugar.
+
 Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la entrada al array `navItems` de `Sidebar.tsx`.
 
 ---
