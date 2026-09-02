@@ -1,0 +1,141 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  /* La franja lateral repite el estado del badge: en una grilla de tarjetas
+     deja ver de un vistazo cuál está roja sin leer cada badge. */
+  border-left: 3px solid var(--color-outline);
+  border-radius: var(--radius-lg);
+}
+
+.success { border-left-color: var(--color-success); }
+.warning { border-left-color: var(--color-warning); }
+.danger  { border-left-color: var(--color-danger); }
+.neutral { border-left-color: var(--color-outline); }
+
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-sm);
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.label {
+  margin: 0;
+  font-family: var(--font-oswald);
+  font-size: var(--text-base);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--color-on-surface);
+}
+
+.clave {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.valor {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--color-primary-dim);
+}
+
+.timestamps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  gap: var(--space-sm) var(--space-lg);
+  margin: 0;
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+.timestamp {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 2px;
+  min-width: 0;
+  /* Las dos fechas comparten el ancho: en 360px entran una al lado de la otra
+     sin que la más larga empuje a la otra fuera de la tarjeta. */
+  flex: 1 1 45%;
+}
+
+.timestampLabel {
+  margin: 0;
+  font-size: var(--text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--color-on-surface-variant);
+}
+
+.timestampValue {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  margin: 0;
+}
+
+.relative {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+}
+
+.absolute {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.never {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.failure {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  background-color: var(--color-danger-dim);
+  border-radius: var(--radius-md);
+}
+
+.failureCount {
+  margin: 0;
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--color-on-surface);
+}
+
+.failureReason {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.errorCode {
+  display: inline-block;
+  margin-left: var(--space-xs);
+  padding: 1px var(--space-xs);
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-sm);
+}

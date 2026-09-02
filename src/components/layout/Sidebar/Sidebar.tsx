@@ -15,6 +15,7 @@ import {
   LogOut,
   X,
   ShoppingCart,
+  Coins,
 } from 'lucide-react';
 import { logoutAction } from '@/app/login/actions';
 import { useSidebar } from './SidebarContext';
@@ -26,6 +27,7 @@ const navItems = [
   { href: '/inventario', label: 'Inventario', icon: Package },
   { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
   { href: '/finanzas', label: 'Finanzas', icon: Wallet },
+  { href: '/tasas', label: 'Tasas', icon: Coins },
   { href: '/proveedores', label: 'Proveedores', icon: Users },
   { href: '/categorias', label: 'Categorías', icon: Tag },
   { href: '/configuracion', label: 'Configuración', icon: Settings },
