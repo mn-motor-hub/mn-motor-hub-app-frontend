@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { AlertTriangle, Calculator, CheckCircle2 } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { Modal } from '@/components/ui/Modal/Modal';
 import {
   aplicarKAction,
@@ -66,7 +66,7 @@ export function KSugeridoPanel() {
   return (
     <section className={styles.panel} aria-label="Cálculo del factor K sugerido">
       <div className={styles.actionRow}>
-        <Button type="button" onClick={handleCalcular} loading={calculando}>
+        <Button variant="accent" type="button" onClick={handleCalcular} loading={calculando}>
           {!calculando && <Calculator size={16} aria-hidden="true" />}
           {calculando ? 'Calculando…' : 'Calcular K sugerido'}
         </Button>
@@ -146,7 +146,7 @@ export function KSugeridoPanel() {
               >
                 Cancelar
               </Button>
-              <Button type="button" onClick={handleAplicar} loading={aplicando}>
+              <Button variant="accent" type="button" onClick={handleAplicar} loading={aplicando}>
                 {aplicando ? 'Aplicando…' : `Aplicar K ${resultado.kSugerido.toFixed(2)}`}
               </Button>
             </div>
@@ -239,7 +239,7 @@ function Desglose({
               <strong>{formatVariacion(resultado.variacionPctCatalogo)}</strong>.
             </p>
           )}
-          <Button type="button" onClick={onAplicar}>
+          <Button variant="accent" type="button" onClick={onAplicar}>
             Aplicar K {kSugerido.toFixed(2)}
           </Button>
         </div>

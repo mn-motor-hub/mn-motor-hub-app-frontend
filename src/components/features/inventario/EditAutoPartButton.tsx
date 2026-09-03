@@ -6,8 +6,7 @@ import { Controller, useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil, Sparkles } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import { SearchableSelect } from '@/components/ui/Select/Select';
 import {
   getPrecioSugeridoAction,
@@ -283,7 +282,7 @@ export function EditAutoPartButton({ part, categorias, subcategorias }: EditAuto
             <Button type="button" variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" loading={isSubmitting} disabled={!isValid}>
+            <Button variant="accent" type="submit" loading={isSubmitting} disabled={!isValid}>
               Guardar cambios
             </Button>
           </div>

@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Power } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { updateCategoriaAction } from '../actions';
 import styles from './detail.module.css';
 
@@ -34,7 +34,7 @@ export function ActivarDesactivarButton({ categoriaId, activo }: ActivarDesactiv
     <div className={styles.toggleWrapper}>
       <Button
         type="button"
-        variant={activo ? 'danger' : 'primary'}
+        variant={activo ? 'danger' : 'accent'}
         size="sm"
         loading={loading}
         onClick={handleClick}

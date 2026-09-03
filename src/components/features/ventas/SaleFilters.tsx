@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { useSaleFilters } from '@/hooks/useSaleFilters';
 import styles from './SaleFilters.module.css';
 
@@ -74,7 +74,7 @@ export function SaleFilters({ rightSlot }: SaleFiltersProps) {
             />
           </label>
 
-          <Button type="submit" variant="secondary" size="sm">
+          <Button type="submit" variant="primary" size="sm">
             Buscar
           </Button>
 

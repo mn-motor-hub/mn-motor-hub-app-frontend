@@ -1,7 +1,7 @@
 'use client'; // useTasaFilters lee y escribe la URL con hooks de navegación
 
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { useTasaFilters } from '@/hooks/useTasaFilters';
 import type { Tasa } from '@/types';
 import styles from './HistorialFilters.module.css';

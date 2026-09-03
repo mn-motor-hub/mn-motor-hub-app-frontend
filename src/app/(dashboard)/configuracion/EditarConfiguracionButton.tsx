@@ -6,8 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil, Check } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import { updateConfiguracionAction } from './actions';
 import {
   createConfiguracionFormSchema,
@@ -110,7 +109,7 @@ export function EditarConfiguracionButton({ configuracion }: EditarConfiguracion
             <Button type="button" variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" loading={isSubmitting} disabled={!isValid}>
+            <Button variant="accent" type="submit" loading={isSubmitting} disabled={!isValid}>
               Guardar
             </Button>
           </div>

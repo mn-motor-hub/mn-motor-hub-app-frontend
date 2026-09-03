@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { CheckCircle2 } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { confirmarSaleAction } from '@/app/(dashboard)/ventas/actions';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import type { Sale } from '@/types';
@@ -51,7 +51,7 @@ export function ConfirmarSaleButton({ sale, variant = 'button' }: ConfirmarSaleB
           <CheckCircle2 size={16} aria-hidden="true" />
         </button>
       ) : (
-        <Button type="button" onClick={() => setOpen(true)}>
+        <Button variant="accent" type="button" onClick={() => setOpen(true)}>
           <CheckCircle2 size={16} aria-hidden="true" />
           Confirmar venta
         </Button>
@@ -87,7 +87,7 @@ export function ConfirmarSaleButton({ sale, variant = 'button' }: ConfirmarSaleB
             <Button type="button" variant="ghost" onClick={() => setOpen(false)} disabled={busy}>
               Cancelar
             </Button>
-            <Button type="button" loading={busy} onClick={handleConfirmar}>
+            <Button variant="accent" type="button" loading={busy} onClick={handleConfirmar}>
               Confirmar venta
             </Button>
           </div>

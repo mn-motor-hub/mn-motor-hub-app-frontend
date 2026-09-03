@@ -11,8 +11,7 @@ import {
 } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { AlertTriangle, Search, X } from 'lucide-react';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import {
   createSaleAction,
   getContextoTasaAction,
@@ -124,7 +123,7 @@ export function SaleForm() {
           >
             Cancelar
           </Button>
-          <Button type="submit" loading={submitting} disabled={hasErrors}>
+          <Button variant="accent" type="submit" loading={submitting} disabled={hasErrors}>
             Registrar venta
           </Button>
         </div>

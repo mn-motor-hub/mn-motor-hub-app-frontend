@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import type { SaleEstado } from '@/types';
 
 const LABELS: Record<SaleEstado, string> = {

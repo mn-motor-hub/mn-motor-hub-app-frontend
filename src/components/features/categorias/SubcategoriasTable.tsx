@@ -2,9 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import { Search, X } from 'lucide-react';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
-import { Button } from '@/components/ui/Button/Button';
+import { Badge, Button, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { NuevaSubcategoriaButton } from './NuevaSubcategoriaButton';
 import { useSubcategoriaFilters } from '@/hooks/useSubcategoriaFilters';
 import { formatDate } from '@/lib/utils/format';

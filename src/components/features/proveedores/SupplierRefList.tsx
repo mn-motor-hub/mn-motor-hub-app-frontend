@@ -5,8 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Pencil, Check, X } from 'lucide-react';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { formatCurrencyUsd } from '@/lib/utils/format';
 import { updateSupplierRefAction } from '@/app/(dashboard)/inventario/actions';
 import {

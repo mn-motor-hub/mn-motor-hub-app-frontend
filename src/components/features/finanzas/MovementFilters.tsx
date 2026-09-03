@@ -1,7 +1,7 @@
 'use client';
 
 import { X } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { useMovementFilters } from '@/hooks/useMovementFilters';
 import type { FinancialCategory } from '@/types';
 import styles from './MovementFilters.module.css';

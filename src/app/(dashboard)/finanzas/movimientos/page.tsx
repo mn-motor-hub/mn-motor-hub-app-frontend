@@ -2,7 +2,7 @@ import { Suspense } from 'react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { MovementFilters } from '@/components/features/finanzas/MovementFilters';
 import { MovementsTable } from '@/components/features/finanzas/MovementsTable';
-import { Pagination } from '@/components/ui/Pagination/Pagination';
+import { Pagination } from '@mn/design-system/ui';
 import { getFinancialMovements } from '@/lib/api/financial-movements';
 import { getFinancialCategories } from '@/lib/api/financial-categories';
 import type { FinancialCategory, FinancialMovementStatus, FinancialType } from '@/types';

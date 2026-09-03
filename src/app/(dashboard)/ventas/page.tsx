@@ -4,7 +4,7 @@ import { Plus } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { SaleFilters } from '@/components/features/ventas/SaleFilters';
 import { SalesTable } from '@/components/features/ventas/SalesTable';
-import { Pagination } from '@/components/ui/Pagination/Pagination';
+import { Pagination } from '@mn/design-system/ui';
 import { getSales } from '@/lib/api/sales';
 import type { SaleEstado } from '@/types';
 import styles from './ventas.module.css';

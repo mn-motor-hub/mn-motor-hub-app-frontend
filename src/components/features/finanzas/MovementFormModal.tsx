@@ -7,8 +7,7 @@ import { Controller, FormProvider, useForm, useFormContext } from 'react-hook-fo
 import { zodResolver } from '@hookform/resolvers/zod';
 import { X } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import {
   createFinancialCategoryAction,
   createMovementAction,
@@ -118,7 +117,7 @@ export function MovementFormModal({
             >
               Cancelar
             </Button>
-            <Button type="submit" loading={submitting} disabled={!form.formState.isValid}>
+            <Button variant="accent" type="submit" loading={submitting} disabled={!form.formState.isValid}>
               {isEdit ? 'Guardar cambios' : 'Registrar movimiento'}
             </Button>
           </div>
@@ -394,7 +393,7 @@ function CategorySelect({
             <Button type="button" variant="ghost" size="sm" onClick={closeCreateForm}>
               Cancelar
             </Button>
-            <Button type="button" size="sm" loading={creating} onClick={handleCreate}>
+            <Button variant="accent" type="button" size="sm" loading={creating} onClick={handleCreate}>
               Crear categoría
             </Button>
           </div>

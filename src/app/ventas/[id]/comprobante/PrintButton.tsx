@@ -1,12 +1,12 @@
 'use client'; // window.print()
 
 import { Printer } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import styles from './comprobante.module.css';
 
 export function PrintButton() {
   return (
-    <Button
+    <Button variant="accent"
       type="button"
       onClick={() => window.print()}
       className={styles.noPrint}

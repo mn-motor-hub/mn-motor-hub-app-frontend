@@ -1,4 +1,4 @@
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import { formatBs, formatDateTime, formatTimeAgo } from '@/lib/utils/format';
 import type { TasaSalud } from '@/types';
 import styles from './TasaSaludCard.module.css';

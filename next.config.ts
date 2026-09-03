@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // El design system se distribuye como fuente (.tsx + CSS Modules).
+  // Next no transpila node_modules por defecto.
+  transpilePackages: ["@mn/design-system"],
 };
 
 export default nextConfig;

@@ -2,8 +2,7 @@
 
 import { Fragment, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { formatBs, formatDateTime } from '@/lib/utils/format';
 import type { TasaFetchLog } from '@/types';
 import styles from './HistorialTable.module.css';

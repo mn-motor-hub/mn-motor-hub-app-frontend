@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Ban } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { anularSaleAction } from '@/app/(dashboard)/ventas/actions';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import type { Sale } from '@/types';

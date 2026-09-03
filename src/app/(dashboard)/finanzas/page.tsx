@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { MonthSelector } from '@/components/features/finanzas/MonthSelector';
 import { ExpensesByCategoryChart } from '@/components/features/finanzas/ExpensesByCategoryChart';
 import { NewMovementButton } from '@/components/features/finanzas/NewMovementButton';
-import { StatCard } from '@/components/ui/StatCard/StatCard';
+import { StatCard } from '@mn/design-system/ui';
 import { getFinancialSummary } from '@/lib/api/financial-movements';
 import { getFinancialCategories } from '@/lib/api/financial-categories';
 import { formatCurrencyUsd } from '@/lib/utils/format';

@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { CheckCircle2, ArrowRight, RotateCcw } from 'lucide-react';
-import { StatCard } from '@/components/ui/StatCard/StatCard';
+import { StatCard } from '@mn/design-system/ui';
 import type { StockImportConfirmResponse } from '@/types';
 import styles from './ImportSuccessView.module.css';
 

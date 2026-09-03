@@ -9,8 +9,7 @@ import {
 } from '@tanstack/react-table';
 import Link from 'next/link';
 import { Eye } from 'lucide-react';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { formatCurrencyUsd } from '@/lib/utils/format';
 import type { AutoPart, Categoria } from '@/types';
 import styles from './AutoPartTable.module.css';

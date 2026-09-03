@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import { SubcategoriasTable } from '@/components/features/categorias/SubcategoriasTable';
 import { getCategoria } from '@/lib/api/categorias';
 import { listSubcategorias } from '@/lib/api/subcategorias';

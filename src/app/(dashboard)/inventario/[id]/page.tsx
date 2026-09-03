@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import { SupplierRefList } from '@/components/features/proveedores/SupplierRefList';
 import { EditAutoPartButton } from '@/components/features/inventario/EditAutoPartButton';
 import { getAutoPart } from '@/lib/api/auto-parts';

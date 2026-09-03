@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { useAutoPartFilters } from '@/hooks/useAutoPartFilters';
 import type { Categoria, Subcategoria } from '@/types';
 import styles from './AutoPartFilters.module.css';

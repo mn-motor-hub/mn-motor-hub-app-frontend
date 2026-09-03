@@ -1,7 +1,6 @@
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { getSuppliers } from '@/lib/api/suppliers';
-import { Badge } from '@/components/ui/Badge/Badge';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
+import { Badge, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
 import type { Supplier } from '@/types';

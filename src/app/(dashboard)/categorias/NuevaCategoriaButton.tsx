@@ -6,8 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Plus } from 'lucide-react';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import { createCategoriaAction } from './actions';
 import { createCategoriaSchema, type CreateCategoriaData } from '@/lib/schemas/categoria.schema';
 import styles from './categorias.module.css';
@@ -81,7 +80,7 @@ export function NuevaCategoriaButton() {
             <Button type="button" variant="ghost" onClick={handleClose} disabled={isSubmitting}>
               Cancelar
             </Button>
-            <Button type="submit" loading={isSubmitting} disabled={!isValid}>
+            <Button variant="accent" type="submit" loading={isSubmitting} disabled={!isValid}>
               Crear categoría
             </Button>
           </div>

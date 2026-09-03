@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { useRouter } from 'next/navigation';
 import { RefreshCw } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { refreshTasasAction } from '@/app/(dashboard)/tasas/actions';
 import type { TasaFetchFallo, TasaFetchResult } from '@/types';
 import styles from './RefreshTasasButton.module.css';
@@ -128,7 +128,7 @@ export function RefreshTasasButton() {
     <div className={styles.wrapper}>
       <Button
         type="button"
-        variant="secondary"
+        variant="primary"
         size="sm"
         onClick={handleClick}
         loading={inFlight}

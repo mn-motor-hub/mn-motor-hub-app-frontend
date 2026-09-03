@@ -7,8 +7,7 @@ import {
   createSupplierAction,
   listSuppliersAction,
 } from '@/app/(dashboard)/inventario/importar/actions';
-import { Input } from '@/components/ui/Input/Input';
-import { Button } from '@/components/ui/Button/Button';
+import { Button, Input } from '@mn/design-system/ui';
 import type { ConfirmFormData } from '@/lib/schemas/stock-import.schema';
 import type { Supplier } from '@/types';
 import styles from './SupplierSelector.module.css';
@@ -170,7 +169,7 @@ export function SupplierSelector({ supplierMatch }: SupplierSelectorProps) {
             <Button type="button" variant="ghost" size="sm" onClick={closeCreateForm}>
               Cancelar
             </Button>
-            <Button type="button" size="sm" loading={creating} onClick={handleCreate}>
+            <Button variant="accent" type="button" size="sm" loading={creating} onClick={handleCreate}>
               Crear proveedor
             </Button>
           </div>

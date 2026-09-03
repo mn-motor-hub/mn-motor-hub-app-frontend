@@ -1,5 +1,5 @@
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import { formatDate } from '@/lib/utils/format';
 import type { BrechaStatus } from '@/types';
 import styles from './MotorPreciosHeader.module.css';

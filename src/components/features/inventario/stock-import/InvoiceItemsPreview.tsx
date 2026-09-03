@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Controller, useFormContext, useWatch } from 'react-hook-form';
 import { AlertTriangle, Sparkles } from 'lucide-react';
-import { Button } from '@/components/ui/Button/Button';
+import { Button } from '@mn/design-system/ui';
 import { SearchableSelect } from '@/components/ui/Select/Select';
 import { classifySubcategoriasAction } from '@/app/(dashboard)/inventario/importar/actions';
 import type { ConfirmFormData } from '@/lib/schemas/stock-import.schema';
@@ -98,7 +98,7 @@ export function InvoiceItemsPreview({
       <div className={styles.suggestBar}>
         <Button
           type="button"
-          variant="secondary"
+          variant="primary"
           size="md"
           className={styles.suggestButtonGlobal}
           loading={busy === 'all'}

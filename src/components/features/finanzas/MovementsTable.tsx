@@ -9,10 +9,8 @@ import {
   useReactTable,
 } from '@tanstack/react-table';
 import { Pencil, Trash2 } from 'lucide-react';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge, Button, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { Modal } from '@/components/ui/Modal/Modal';
-import { Button } from '@/components/ui/Button/Button';
 import { MovementFormModal } from './MovementFormModal';
 import { deleteMovementAction } from '@/app/(dashboard)/finanzas/actions';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
@@ -202,7 +200,7 @@ export function MovementsTable({ data, categorias }: MovementsTableProps) {
             >
               Cancelar
             </Button>
-            <Button type="button" loading={deletingBusy} onClick={handleDelete}>
+            <Button variant="accent" type="button" loading={deletingBusy} onClick={handleDelete}>
               Eliminar
             </Button>
           </div>

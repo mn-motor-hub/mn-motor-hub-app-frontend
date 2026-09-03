@@ -5,7 +5,7 @@ import { HistorialFilters } from '@/components/features/tasas/HistorialFilters';
 import { HistorialTable } from '@/components/features/tasas/HistorialTable';
 import { RefreshTasasButton } from '@/components/features/tasas/RefreshTasasButton';
 import { TasaSaludCard } from '@/components/features/tasas/TasaSaludCard';
-import { Pagination } from '@/components/ui/Pagination/Pagination';
+import { Pagination } from '@mn/design-system/ui';
 import { getTasas, getTasasHistorial, getTasasSalud } from '@/lib/api/tasas';
 import { withFallback } from '@/lib/utils/with-fallback';
 import type {

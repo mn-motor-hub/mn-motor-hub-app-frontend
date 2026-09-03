@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { AlertTriangle, CheckCircle2 } from 'lucide-react';
-import { Badge } from '@/components/ui/Badge/Badge';
-import { StatCard } from '@/components/ui/StatCard/StatCard';
+import { Badge, StatCard } from '@mn/design-system/ui';
 import { getBrechaStatusAction } from '@/app/(dashboard)/actions';
 import { formatDate } from '@/lib/utils/format';
 import type { BrechaStatus } from '@/types';

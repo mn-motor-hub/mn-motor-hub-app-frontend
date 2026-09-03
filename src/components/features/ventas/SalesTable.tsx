@@ -7,7 +7,7 @@ import {
   getCoreRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@mn/design-system/ui';
 import { AnularSaleButton } from './AnularSaleButton';
 import { ConfirmarSaleButton } from './ConfirmarSaleButton';
 import { SaleEstadoBadge } from './SaleEstadoBadge';

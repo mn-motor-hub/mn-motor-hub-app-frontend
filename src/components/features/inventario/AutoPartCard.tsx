@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Badge } from '@/components/ui/Badge/Badge';
+import { Badge } from '@mn/design-system/ui';
 import { formatCurrencyUsd } from '@/lib/utils/format';
 import type { AutoPart } from '@/types';
 import styles from './AutoPartCard.module.css';

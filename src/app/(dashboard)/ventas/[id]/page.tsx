@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { AlertTriangle, FileText } from 'lucide-react';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
-import { Table, Thead, Tbody, Tr, Th, Td } from '@/components/ui/Table/Table';
+import { Table, Thead, Tbody, Tr, Th, Td } from '@mn/design-system/ui';
 import { AnularSaleButton } from '@/components/features/ventas/AnularSaleButton';
 import { ConfirmarSaleButton } from '@/components/features/ventas/ConfirmarSaleButton';
 import { SaleEstadoBadge } from '@/components/features/ventas/SaleEstadoBadge';
