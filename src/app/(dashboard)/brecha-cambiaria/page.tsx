@@ -1,12 +1,12 @@
 import { Navbar } from '@/components/layout/Navbar/Navbar';
-import { BrechaStatusWidget } from '@/components/features/dashboard/BrechaStatusWidget';
+import { BrechaStatusWidget } from '@/components/features/brecha/BrechaStatusWidget';
 import { BrechaHistoricoChart } from '@/components/charts/BrechaHistoricoChart/BrechaHistoricoChart';
 import { getBrechaStatus, getBrechaHistorico } from '@/lib/api/pricing';
 import { withFallback } from '@/lib/utils/with-fallback';
 import type { BrechaHistoricoPoint, BrechaStatus } from '@/types';
-import styles from './home.module.css';
+import styles from './brecha-cambiaria.module.css';
 
-export default async function DashboardHomePage() {
+export default async function BrechaCambiariaPage() {
   const [status, historico] = await Promise.all([
     withFallback<BrechaStatus | null>(getBrechaStatus(), null),
     withFallback<BrechaHistoricoPoint[]>(getBrechaHistorico(), []),

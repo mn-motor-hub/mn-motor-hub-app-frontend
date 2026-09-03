@@ -27,10 +27,11 @@ import styles from './Sidebar.module.css';
  * La navegación agrupada por afinidad: catálogo, operación diaria y ajustes.
  * Al sumar un módulo, va dentro del grupo que le corresponde — no al final.
  *
- * "Brecha cambiaria" es `/dashboard`. La pantalla muestra el estado de la brecha
- * y su histórico de 30 días, y nada más: llamarla "Dashboard" prometía un
- * resumen general que no existe. La ruta queda como está; lo que se corrige es
- * el nombre que ve el usuario.
+ * "Brecha cambiaria" vive en `/brecha-cambiaria` y no en `/dashboard`: la
+ * pantalla muestra el estado de la brecha y su histórico de 30 días, y nada
+ * más. `/dashboard` queda libre a propósito, reservado para la pantalla general
+ * de la empresa que todavía no existe — ocuparla con esto obligaba a mudarla
+ * después, con los favoritos ya repartidos.
  */
 const navGroups = [
   [
@@ -42,7 +43,7 @@ const navGroups = [
     { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
     { href: '/finanzas', label: 'Finanzas', icon: Wallet },
     { href: '/tasas', label: 'Tasas', icon: Coins },
-    { href: '/dashboard', label: 'Brecha cambiaria', icon: LineChart },
+    { href: '/brecha-cambiaria', label: 'Brecha cambiaria', icon: LineChart },
   ],
   [{ href: '/configuracion', label: 'Configuración', icon: Settings }],
 ];

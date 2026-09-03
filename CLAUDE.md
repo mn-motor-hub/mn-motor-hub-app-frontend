@@ -75,7 +75,7 @@ src/
 │       ├── layout.tsx                # Sidebar + main
 │       ├── DashboardShell.tsx        # Client wrapper — provee SidebarContext
 │       ├── actions.ts                # Acciones compartidas del área privada
-│       ├── dashboard/page.tsx        # Home privada — widgets de brecha cambiaria
+│       ├── brecha-cambiaria/page.tsx   # Estado de la brecha + histórico de 30 días
 │       ├── inventario/
 │       │   ├── page.tsx              # Listado paginado con filtros
 │       │   ├── actions.ts
@@ -129,7 +129,7 @@ src/
 │       ├── finanzas/
 │       │   ├── MovementsTable.tsx  MovementFilters.tsx  MovementFormModal.tsx
 │       │   └── NewMovementButton.tsx  MonthSelector.tsx  ExpensesByCategoryChart.tsx
-│       ├── dashboard/BrechaStatusWidget.tsx
+│       ├── brecha/BrechaStatusWidget.tsx
 │       ├── pricing/
 │       │   ├── MotorPreciosHeader.tsx    # Semáforo de K — se calcula en el front
 │       │   ├── TasasReadout.tsx  KSugeridoPanel.tsx
@@ -324,7 +324,8 @@ Hero, FeaturedProducts, WhyUs y CTABanner — todas implementadas en `src/compon
 
 | Ruta | Descripción | Estado |
 |---|---|---|
-| `/dashboard` | Brecha cambiaria: estado actual e histórico de 30 días. En el sidebar se llama **Brecha cambiaria**, no "Dashboard" | ✅ |
+| `/brecha-cambiaria` | Estado de la brecha vs. la banda + histórico de 30 días | ✅ |
+| `/dashboard` | **Libre y reservado.** Pantalla general de la empresa, todavía sin implementar. No ocupar con otra cosa | ⬜ |
 | `/inventario` | Tabla de repuestos con filtros y paginación | ✅ |
 | `/inventario/[id]` | Detalle editable + referencias de proveedores | ✅ |
 | `/inventario/importar` | Importación de facturas: upload, preview editable, selector de proveedor, confirmación con `requiere_revision` | ✅ |
@@ -446,10 +447,19 @@ agrupamiento. `navItems` se deriva aplanando esos grupos y marcando el primer
 ítem de cada uno, que es lo que dibuja el separador.
 
 El label del sidebar dice lo que la pantalla muestra, no cómo se llama la ruta.
-`/dashboard` se llama **Brecha cambiaria** porque es lo único que renderiza;
-llamarla "Dashboard" prometía un resumen general que nunca existió. Ojo: la
-raíz `Dashboard` de los breadcrumbs es otra cosa —nombra al panel privado, va
-sin `href`— y esa sí se queda.
+La pantalla de brecha vive en `/brecha-cambiaria` y se llama **Brecha
+cambiaria** porque es lo único que renderiza.
+
+**`/dashboard` está libre a propósito.** Antes la ocupaba la pantalla de
+brecha bajo el nombre "Dashboard", que prometía un resumen general que no
+existía. Queda reservada para esa pantalla general —la información más
+relevante de la empresa—, todavía sin implementar. No ocuparla con otra cosa:
+mudarla después, con los favoritos ya repartidos, sale más caro que dejarla
+vacía ahora.
+
+El route group `(dashboard)/` sigue llamándose así y **no** es esa ruta: no
+aparece en la URL, nombra al área privada y está en los imports de 16
+componentes (`@/app/(dashboard)/…/actions`).
 
 ---
 
