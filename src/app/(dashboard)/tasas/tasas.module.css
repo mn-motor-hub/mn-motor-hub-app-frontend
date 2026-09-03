@@ -83,6 +83,20 @@
   color: var(--color-on-surface-variant);
 }
 
+/*
+  Un filtro inválido o una clave inexistente son 400/404 con mensaje propio del
+  backend, no un "no hay datos": van en tono de error y no como estado vacío.
+*/
+.historialError {
+  margin: 0;
+  padding: var(--space-md);
+  font-size: var(--text-sm);
+  color: var(--color-danger);
+  background-color: var(--color-danger-dim);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-lg);
+}
+
 /* ── Skeletons ──────────────────────────────────────────────── */
 /* Misma estructura que el contenido final para no generar layout shift */
 .skeletonCard {

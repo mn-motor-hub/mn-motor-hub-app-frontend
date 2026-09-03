@@ -1,4 +1,5 @@
 import { Suspense } from 'react';
+import { unstable_rethrow } from 'next/navigation';
 import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { HistorialFilters } from '@/components/features/tasas/HistorialFilters';
 import { HistorialTable } from '@/components/features/tasas/HistorialTable';
@@ -7,7 +8,7 @@ import { TasaSaludCard } from '@/components/features/tasas/TasaSaludCard';
 import { Pagination } from '@/components/ui/Pagination/Pagination';
 import { getTasas, getTasasHistorial, getTasasSalud } from '@/lib/api/tasas';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { Tasa, TasaResultado, TasaSalud } from '@/types';
+import type { PaginationMeta, Tasa, TasaFetchLog, TasaResultado, TasaSalud } from '@/types';
 import styles from './tasas.module.css';
 
 interface PageProps {
@@ -88,12 +89,38 @@ async function FiltersSection() {
 }
 
 async function HistorialSection({ params }: { params: Awaited<PageProps['searchParams']> }) {
-  const { data, meta } = await getTasasHistorial({
-    page: parsePage(params.page),
-    limit: 20,
-    clave: params.clave || undefined,
-    resultado: parseResultado(params.resultado),
-  });
+  let historial: { data: TasaFetchLog[]; meta: PaginationMeta };
+
+  try {
+    historial = await getTasasHistorial({
+      page: parsePage(params.page),
+      limit: 20,
+      clave: params.clave || undefined,
+      resultado: parseResultado(params.resultado),
+    });
+  } catch (err) {
+    /*
+      El backend valida los filtros: 400 si no entiende uno, 404 si la clave no
+      existe. Antes devolvía una lista vacía y el typo era invisible.
+
+      Como los filtros salen de la URL, cualquiera puede escribir `?clave=typo` a
+      mano: sin este catch el throw sube hasta el error boundary global —este
+      segmento todavía no tiene error.tsx— y se lleva puesta también la sección
+      de salud, que no tiene nada que ver. Se muestra el mensaje del backend,
+      que dice cuál es el filtro malo.
+
+      No se usa withFallback a propósito: caer a una lista vacía diría "no hay
+      intentos con estos filtros", que ahora es una afirmación distinta y falsa.
+    */
+    unstable_rethrow(err);
+    return (
+      <p className={styles.historialError} role="alert">
+        {err instanceof Error ? err.message : 'No se pudo obtener el historial de intentos.'}
+      </p>
+    );
+  }
+
+  const { data, meta } = historial;
 
   return (
     <div className={styles.tableSection}>

@@ -2,7 +2,7 @@
 
 import { revalidatePath, updateTag } from 'next/cache';
 import { TASAS_TAG, fetchTasasOnline } from '@/lib/api/tasas';
-import type { ActionResult, Tasa } from '@/types';
+import type { ActionResult, TasaFetchResult } from '@/types';
 
 /**
  * Refresco manual de las tasas contra las fuentes en vivo.
@@ -14,7 +14,7 @@ import type { ActionResult, Tasa } from '@/types';
  * un click, nunca de un montaje ni de un render. El scrapeo tarda hasta 25 s si
  * una fuente está caída y sale de una sola IP contra el BCV.
  */
-export async function refreshTasasAction(): Promise<ActionResult<Tasa[]>> {
+export async function refreshTasasAction(): Promise<ActionResult<TasaFetchResult>> {
   try {
     const data = await fetchTasasOnline();
 
