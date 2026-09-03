@@ -16,13 +16,16 @@ export default async function BrechaCambiariaPage() {
     <>
       {/*
         El título dice lo que la pantalla muestra —brecha y su histórico— y no
-        "Dashboard", que prometía un resumen general que nunca existió. El
-        breadcrumb queda con la misma forma que el de las otras pantallas: la
-        raíz "Dashboard" nombra al panel privado, no a esta página.
+        "Dashboard", que prometía un resumen general que nunca existió y que
+        ahora tiene `/dashboard` reservada para cuando se construya.
+
+        La raíz del breadcrumb es "Panel" por lo mismo: nombra al área privada,
+        va sin `href`, y decirle "Dashboard" iba a chocar de frente con la
+        pantalla que viene.
       */}
       <Navbar
         title="Brecha cambiaria"
-        breadcrumb={[{ label: 'Dashboard' }, { label: 'Brecha cambiaria' }]}
+        breadcrumb={[{ label: 'Panel' }, { label: 'Brecha cambiaria' }]}
       />
 
       <div className={styles.content}>

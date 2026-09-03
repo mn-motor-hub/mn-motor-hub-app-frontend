@@ -14,7 +14,7 @@ export default async function ProveedoresPage() {
     <>
       <Navbar
         title="Proveedores"
-        breadcrumb={[{ label: 'Dashboard' }, { label: 'Proveedores' }]}
+        breadcrumb={[{ label: 'Panel' }, { label: 'Proveedores' }]}
       />
 
       <div className={styles.content}>

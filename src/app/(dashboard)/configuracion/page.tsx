@@ -14,7 +14,7 @@ export default async function ConfiguracionPage() {
     <>
       <Navbar
         title="Configuración"
-        breadcrumb={[{ label: 'Dashboard' }, { label: 'Configuración' }]}
+        breadcrumb={[{ label: 'Panel' }, { label: 'Configuración' }]}
       />
 
       <div className={styles.content}>

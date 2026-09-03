@@ -461,6 +461,10 @@ El route group `(dashboard)/` sigue llamándose así y **no** es esa ruta: no
 aparece en la URL, nombra al área privada y está en los imports de 16
 componentes (`@/app/(dashboard)/…/actions`).
 
+La raíz de todos los breadcrumbs es **`{ label: 'Panel' }`**, sin `href`.
+Nombra al área privada, no a ninguna pantalla — por eso no dice "Dashboard",
+que a partir de ahora es una ruta concreta y sin construir.
+
 ---
 
 ## Prohibiciones explícitas

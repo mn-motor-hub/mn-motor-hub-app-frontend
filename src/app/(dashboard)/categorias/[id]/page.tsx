@@ -30,7 +30,7 @@ export default async function CategoriaDetailPage({ params }: PageProps) {
       <Navbar
         title={categoria.nombre}
         breadcrumb={[
-          { label: 'Dashboard' },
+          { label: 'Panel' },
           { label: 'Categorías', href: '/categorias' },
           { label: categoria.nombre },
         ]}

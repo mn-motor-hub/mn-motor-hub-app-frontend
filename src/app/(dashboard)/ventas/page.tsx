@@ -24,7 +24,7 @@ export default async function VentasPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Navbar title="Ventas" breadcrumb={[{ label: 'Dashboard' }, { label: 'Ventas' }]} />
+      <Navbar title="Ventas" breadcrumb={[{ label: 'Panel' }, { label: 'Ventas' }]} />
       <div className={styles.content}>
         <SaleFilters
           rightSlot={

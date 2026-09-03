@@ -51,7 +51,7 @@ export default async function InventarioPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Navbar title="Inventario" breadcrumb={[{ label: 'Dashboard' }, { label: 'Inventario' }]} />
+      <Navbar title="Inventario" breadcrumb={[{ label: 'Panel' }, { label: 'Inventario' }]} />
       <div className={styles.content}>
         <Suspense>
           <AutoPartFilters

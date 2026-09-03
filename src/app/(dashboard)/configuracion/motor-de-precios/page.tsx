@@ -18,7 +18,7 @@ export default async function MotorDePreciosPage() {
       <Navbar
         title="Motor de precios"
         breadcrumb={[
-          { label: 'Dashboard' },
+          { label: 'Panel' },
           { label: 'Configuración', href: '/configuracion' },
           { label: 'Motor de precios' },
         ]}

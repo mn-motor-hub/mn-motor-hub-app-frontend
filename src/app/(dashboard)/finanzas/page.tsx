@@ -32,7 +32,7 @@ export default async function FinanzasPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Navbar title="Finanzas" breadcrumb={[{ label: 'Dashboard' }, { label: 'Finanzas' }]} />
+      <Navbar title="Finanzas" breadcrumb={[{ label: 'Panel' }, { label: 'Finanzas' }]} />
       <div className={styles.content}>
         <div className={styles.header}>
           <MonthSelector month={month} year={year} basePath="/finanzas" searchParams={params} />

@@ -29,7 +29,7 @@ export default async function CategoriasPage() {
     <>
       <Navbar
         title="Categorías"
-        breadcrumb={[{ label: 'Dashboard' }, { label: 'Categorías' }]}
+        breadcrumb={[{ label: 'Panel' }, { label: 'Categorías' }]}
       />
 
       <div className={styles.content}>

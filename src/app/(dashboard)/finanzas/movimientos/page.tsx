@@ -28,7 +28,7 @@ export default async function MovimientosPage({ searchParams }: PageProps) {
       <Navbar
         title="Movimientos"
         breadcrumb={[
-          { label: 'Dashboard' },
+          { label: 'Panel' },
           { label: 'Finanzas', href: '/finanzas' },
           { label: 'Movimientos' },
         ]}

@@ -39,7 +39,7 @@ export default async function TasasPage({ searchParams }: PageProps) {
 
   return (
     <>
-      <Navbar title="Tasas" breadcrumb={[{ label: 'Dashboard' }, { label: 'Tasas' }]} />
+      <Navbar title="Tasas" breadcrumb={[{ label: 'Panel' }, { label: 'Tasas' }]} />
       <div className={styles.content}>
         <section className={styles.saludSection} aria-label="Estado de las tasas">
           <div className={styles.saludHeader}>

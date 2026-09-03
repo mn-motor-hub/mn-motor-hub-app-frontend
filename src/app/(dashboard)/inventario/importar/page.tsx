@@ -27,7 +27,7 @@ export default async function ImportarFacturaPage() {
       <Navbar
         title="Importar factura"
         breadcrumb={[
-          { label: 'Dashboard' },
+          { label: 'Panel' },
           { label: 'Inventario', href: '/inventario' },
           { label: 'Importar factura' },
         ]}

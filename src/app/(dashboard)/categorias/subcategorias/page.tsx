@@ -17,7 +17,7 @@ export default async function SubcategoriasPage() {
     <>
       <Navbar
         title="Subcategorías"
-        breadcrumb={[{ label: 'Dashboard' }, { label: 'Categorías', href: '/categorias' }, { label: 'Subcategorías' }]}
+        breadcrumb={[{ label: 'Panel' }, { label: 'Categorías', href: '/categorias' }, { label: 'Subcategorías' }]}
       />
 
       <div className={styles.content}>
