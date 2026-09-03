@@ -15,9 +15,9 @@
   inset: 0;
   background: linear-gradient(
     135deg,
-    rgba(26, 26, 46, 0.92) 0%,
-    rgba(22, 33, 62, 0.75) 60%,
-    rgba(233, 69, 96, 0.15) 100%
+    rgba(var(--color-surface-lowest-rgb), 0.92) 0%,
+    rgba(var(--color-surface-low-rgb), 0.75) 60%,
+    rgba(var(--color-primary-rgb), 0.15) 100%
   );
 }
 
@@ -50,7 +50,7 @@
 .subtitle {
   font-size: var(--text-lg);
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.75);
+  color: rgba(var(--color-on-surface-rgb), 0.75);
   margin-bottom: var(--space-xl);
   max-width: 540px;
 }
@@ -84,7 +84,7 @@
   padding: var(--space-md) var(--space-xl);
   background-color: transparent;
   color: var(--color-on-surface);
-  border: 2px solid rgba(255, 255, 255, 0.4);
+  border: 2px solid rgba(var(--color-on-surface-rgb), 0.4);
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--text-base);
@@ -93,5 +93,5 @@
 
 .ctaSecondary:hover {
   border-color: var(--color-on-surface);
-  background-color: rgba(255, 255, 255, 0.08);
+  background-color: rgba(var(--color-on-surface-rgb), 0.08);
 }

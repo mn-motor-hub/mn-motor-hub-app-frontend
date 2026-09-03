@@ -21,7 +21,7 @@
   color: var(--color-on-primary);
   font-weight: 600;
   text-transform: uppercase;
-  font-size: 0.7rem;
+  font-size: var(--text-xs);
   letter-spacing: 0.05em;
 }
 
@@ -42,5 +42,5 @@
 }
 
 tbody .tr:hover {
-  background-color: rgba(26, 26, 46, 0.03);
+  background-color: rgba(var(--color-surface-lowest-rgb), 0.03);
 }

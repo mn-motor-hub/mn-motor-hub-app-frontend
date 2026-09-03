@@ -46,7 +46,7 @@
 .textInput:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 87, 26, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
 }
 
 .textInput::placeholder {
@@ -74,7 +74,7 @@
 
 .searchIcon:hover {
   color: var(--color-primary);
-  background-color: rgba(255, 87, 26, 0.08);
+  background-color: rgba(var(--color-primary-rgb), 0.08);
 }
 
 .inputWrapper:focus-within .searchIcon {

@@ -56,7 +56,7 @@
   width: 48px;
   height: 48px;
   border-radius: var(--radius-md);
-  background-color: rgba(233, 69, 96, 0.1);
+  background-color: rgba(var(--color-primary-rgb), 0.1);
   color: var(--color-accent);
   display: flex;
   align-items: center;

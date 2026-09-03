@@ -79,7 +79,7 @@
 /* Revision cards must be impossible to miss */
 .cardRevision {
   border: 2px solid var(--color-warning);
-  background-color: rgba(240, 168, 69, 0.05);
+  background-color: rgba(var(--color-warning-rgb), 0.05);
 }
 
 /* ── Card header ────────────────────────────────────────────── */
@@ -256,7 +256,7 @@
 .select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 87, 26, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
 }
 
 .inputError {
@@ -264,7 +264,7 @@
 }
 
 .inputError:focus {
-  box-shadow: 0 0 0 2px rgba(240, 82, 82, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--color-danger-rgb), 0.2);
 }
 
 .fieldError {
@@ -330,7 +330,7 @@
 }
 
 .candidatoChipActive {
-  background-color: rgba(255, 87, 26, 0.12);
+  background-color: rgba(var(--color-primary-rgb), 0.12);
   border-color: var(--color-primary);
   color: var(--color-primary-dim);
 }
@@ -357,7 +357,7 @@
   flex-direction: column;
   gap: var(--space-sm);
   padding: var(--space-md);
-  background-color: rgba(240, 168, 69, 0.1);
+  background-color: rgba(var(--color-warning-rgb), 0.1);
   border-top: 2px solid var(--color-warning);
   border-radius: 0 0 var(--radius-md) var(--radius-md);
   margin: calc(-1 * var(--space-md));

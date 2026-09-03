@@ -50,7 +50,7 @@
 .select:focus {
   outline: none;
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 2px rgba(255, 87, 26, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--color-primary-rgb), 0.2);
 }
 
 .select:disabled {
@@ -63,7 +63,7 @@
 }
 
 .selectError:focus {
-  box-shadow: 0 0 0 2px rgba(240, 82, 82, 0.2);
+  box-shadow: 0 0 0 2px rgba(var(--color-danger-rgb), 0.2);
 }
 
 .error {

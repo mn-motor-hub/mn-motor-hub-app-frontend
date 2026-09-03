@@ -23,7 +23,7 @@
   align-items: flex-start;
   gap: var(--space-md);
   padding: var(--space-md);
-  background-color: rgba(240, 82, 82, 0.18);
+  background-color: rgba(var(--color-danger-rgb), 0.18);
   border: 2px solid var(--color-danger);
   border-radius: var(--radius-md);
 }

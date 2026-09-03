@@ -4,7 +4,7 @@
   gap: 2px;
   padding: var(--space-sm);
   margin: 0 var(--space-sm);
-  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 1px solid rgba(var(--color-on-surface-rgb), 0.06);
 }
 
 .row {
@@ -18,7 +18,7 @@
 
 .label {
   font-size: var(--text-sm);
-  color: rgba(229, 226, 225, 0.5);
+  color: rgba(var(--color-on-surface-rgb), 0.5);
 }
 
 .value {
