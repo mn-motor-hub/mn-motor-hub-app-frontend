@@ -164,18 +164,30 @@ export interface FinancialSummary {
 // ─── Tasas de cambio ──────────────────────────────────────────
 // Espejo de los tipos exportados por el backend en
 // src/modules/tasas/tasas.service.ts (TasaPlain, TasaSaludPlain,
-// TasaFetchLogPlain). Única diferencia: las fechas son `string`, que es lo que
-// sobrevive al JSON — nunca `Date`.
+// TasaFetchLogPlain, FetchFallo). Única diferencia: las fechas son `string`, que
+// es lo que sobrevive al JSON — nunca `Date`.
 export type TasaTipo = 'automatica' | 'manual';
 export type TasaFuente = 'online' | 'manual';
 export type TasaResultado = 'exito' | 'fallo';
 export type TasaOrigen = 'programado' | 'manual';
+
+/**
+ * Unidad de FETCH: un request HTTP, no una tasa. El BCV sirve USD y EUR en una
+ * sola llamada, así que un fallo suyo es UNO y no dos — al armar un mensaje de
+ * error hay que deduplicar por acá, o dice "falló BCV" dos veces.
+ *
+ * No confundir con `TasaFuente` ('online' | 'manual'), que es otra cosa: de
+ * dónde salió el valor vigente de la fila. Por eso el campo se llama
+ * `fuenteFetch` y no `fuente`.
+ */
+export type TasaFuenteFetch = 'BCV' | 'BINANCE';
 
 export interface Tasa {
   id: string;
   clave: string;
   label: string;
   tipo: TasaTipo;
+  /** Qué tasa es (BCV_USD, BCV_EUR, BINANCE_USDT). null si tipo='manual'. */
   providerId: string | null;
   valorAutomatico: number | null;
   valorManual: number | null;
@@ -185,8 +197,17 @@ export interface Tasa {
   fuente: TasaFuente;
   activo: boolean;
   orden: number;
-  // true si tipo='automatica' y el último fetch exitoso tiene más de 24h, o si
-  // nunca se completó uno. Las tasas manuales nunca son stale.
+  /**
+   * true si tipo='automatica' y el último fetch exitoso quedó más viejo que el
+   * umbral, o si nunca se completó uno. Las tasas manuales nunca son stale.
+   *
+   * El umbral NO es fijo: el backend lo deriva de la cadencia diaria más
+   * `tasas_stale_margen_horas` (30h con el default). Acá no se replica el
+   * número — se consume el booleano ya resuelto. Ojo con el copy: `stale`
+   * también es true cuando el backend no pudo leer esa clave de configuración
+   * y degradó hacia "vencida", así que afirmar "hace más de 30h" sería inventar
+   * un dato que no medimos.
+   */
   stale: boolean;
 }
 
@@ -195,7 +216,20 @@ export interface TasaSalud {
   clave: string;
   label: string;
   tipo: TasaTipo;
+  /** Granularidad de TASA (BCV_USD, BCV_EUR…). null si tipo='manual'. */
+  providerId: string | null;
+  /**
+   * Granularidad de REQUEST. BCV_USD y BCV_EUR comparten `fuenteFetch: 'BCV'`.
+   * null si tipo='manual' (no hay fetch que agrupar).
+   */
+  fuenteFetch: TasaFuenteFetch | null;
   valorEfectivo: number | null;
+  /**
+   * Override manual sobre una tasa automática. Si no es null, `valorEfectivo`
+   * es este valor y el scraper puede estar refrescando en silencio un
+   * automático que nadie usa: sin mostrarlo, las dos situaciones se ven igual.
+   */
+  valorManual: number | null;
   fetchedAt: string | null;
   stale: boolean;
   // ultimoIntento y ultimoExito NO son lo mismo y no deben colapsarse en un
@@ -204,12 +238,40 @@ export interface TasaSalud {
   // razón de ser de la pantalla de tasas.
   ultimoIntento: string | null;
   ultimoExito: string | null;
-  // Intentos seguidos fallando; 0 si el último salió bien.
+  /** Intentos seguidos fallando; 0 si el último salió bien. */
   fallosConsecutivos: number;
-  // Solo presente si fallosConsecutivos > 0.
+  /**
+   * true si la racha llegó al techo de filas que el backend mira hacia atrás:
+   * `fallosConsecutivos` es entonces un PISO, no el total. Sin esto, un 200
+   * pelado se lee como un número exacto.
+   */
+  rachaTruncada: boolean;
+  /** Solo presente si fallosConsecutivos > 0. */
   ultimoError: { codigo: string | null; motivo: string | null; fecha: string } | null;
-  // Días enteros desde el último éxito. null si nunca hubo uno.
+  /**
+   * Desde el último éxito. Las horas redondean hacia abajo y los días hacia
+   * ARRIBA — el backend lo hace a propósito: el número de días dispara la
+   * alarma y un piso subestima justo lo que se quiere ver (47h eran "1 día").
+   * Los dos son null si nunca hubo un éxito.
+   */
+  horasSinActualizar: number | null;
   diasSinActualizar: number | null;
+  /**
+   * Cuándo se vuelve a intentar. null si la tasa es manual, o si el scheduler
+   * no está corriendo en el proceso del backend (vive en memoria y se pierde en
+   * un reinicio, hasta el primer tick).
+   *
+   * OJO: tras abandonar los reintentos NO es null — el ciclo diario sigue. Un
+   * `requiereAtencion: true` con `proximoIntento` presente es el caso normal, no
+   * una contradicción: hay que mostrar los dos.
+   */
+  proximoIntento: string | null;
+  /**
+   * El fallo no se cura solo: o es determinista (CERTS_NOT_LOADED,
+   * PARSE_FAILED…), o se agotaron los reintentos. Es lo único que dice "esto
+   * necesita que una persona toque algo" — `proximoIntento` no lo dice.
+   */
+  requiereAtencion: boolean;
 }
 
 /** Un registro por intento de actualización y por tasa, falle o no. */
@@ -228,6 +290,33 @@ export interface TasaFetchLog {
   // Resuelto por JOIN al leer; ya viene como '—' si no aplica.
   actorNombre: string;
   createdAt: string;
+}
+
+/**
+ * Una tasa que no se pudo refrescar en el intento. Espejo de `FetchFallo`.
+ *
+ * Viene UNA POR TASA, no por fuente: un fallo del BCV llega dos veces —
+ * BCV_USD y BCV_EUR— con el mismo `fuenteFetch`, `errorCodigo` y `errorMotivo`.
+ * Deduplicar por `fuenteFetch` antes de escribir cualquier mensaje.
+ */
+export interface TasaFetchFallo {
+  fuenteFetch: TasaFuenteFetch | null;
+  providerId: string;
+  clave: string;
+  errorCodigo: string;
+  errorMotivo: string;
+}
+
+/**
+ * Resultado del refresco manual (POST /api/tasas/fetch).
+ *
+ * `fallos` vacío con `tasas` poblado es el éxito total; `fallos` con entradas y
+ * un 200 es un éxito PARCIAL, que es el caso normal y no un error de la
+ * request: 2 de 3 actualizadas sigue siendo trabajo hecho.
+ */
+export interface TasaFetchResult {
+  tasas: Tasa[];
+  fallos: TasaFetchFallo[];
 }
 
 // ─── Ventas ───────────────────────────────────────────────────
