@@ -14,7 +14,16 @@ export default async function DashboardHomePage() {
 
   return (
     <>
-      <Navbar title="Dashboard" breadcrumb={[{ label: 'Dashboard' }]} />
+      {/*
+        El título dice lo que la pantalla muestra —brecha y su histórico— y no
+        "Dashboard", que prometía un resumen general que nunca existió. El
+        breadcrumb queda con la misma forma que el de las otras pantallas: la
+        raíz "Dashboard" nombra al panel privado, no a esta página.
+      */}
+      <Navbar
+        title="Brecha cambiaria"
+        breadcrumb={[{ label: 'Dashboard' }, { label: 'Brecha cambiaria' }]}
+      />
 
       <div className={styles.content}>
         <BrechaStatusWidget initialStatus={status} />

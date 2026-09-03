@@ -74,6 +74,18 @@
   gap: 2px;
 }
 
+/*
+  Separador entre grupos de navegación. Va en el primer ítem de cada grupo salvo
+  el primero, así el agrupamiento se ve — sin esto el reordenamiento no cambia
+  nada a la vista. Sobrevive al modo colapsado: la línea sigue separando los
+  íconos aunque las etiquetas no se lean.
+*/
+.navGroupStart {
+  margin-top: var(--space-sm);
+  padding-top: var(--space-sm);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
 .navLink {
   display: flex;
   align-items: center;

@@ -110,7 +110,7 @@ src/
 │   │   └── BrechaHistoricoChart/     # Recharts — brecha vs. banda, nulls sin conectar
 │   ├── layout/
 │   │   ├── Sidebar/
-│   │   │   ├── Sidebar.tsx           # navItems hardcodeado — editar al sumar módulos
+│   │   │   ├── Sidebar.tsx           # navGroups hardcodeado — editar al sumar módulos
 │   │   │   ├── SidebarContext.tsx    # Estado de apertura en mobile
 │   │   │   └── ExchangeRatesWidget.tsx  # Tasas vigentes, polling cada 7 min
 │   │   └── Navbar/
@@ -324,7 +324,7 @@ Hero, FeaturedProducts, WhyUs y CTABanner — todas implementadas en `src/compon
 
 | Ruta | Descripción | Estado |
 |---|---|---|
-| `/dashboard` | Home privada — widget de brecha cambiaria e histórico | ✅ |
+| `/dashboard` | Brecha cambiaria: estado actual e histórico de 30 días. En el sidebar se llama **Brecha cambiaria**, no "Dashboard" | ✅ |
 | `/inventario` | Tabla de repuestos con filtros y paginación | ✅ |
 | `/inventario/[id]` | Detalle editable + referencias de proveedores | ✅ |
 | `/inventario/importar` | Importación de facturas: upload, preview editable, selector de proveedor, confirmación con `requiere_revision` | ✅ |
@@ -438,7 +438,18 @@ editor numérico genérico le sirve.
 clave, no solo estas cuatro: el costo es un refetch, y filtrar ahí duplicaría la
 lista en un segundo lugar.
 
-Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la entrada al array `navItems` de `Sidebar.tsx`.
+Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la
+entrada al grupo que le corresponda en `navGroups` de `Sidebar.tsx` — catálogo
+(inventario, proveedores, categorías), operación diaria (ventas, finanzas,
+tasas, brecha) o ajustes. **No al final de la lista**: el orden ES el
+agrupamiento. `navItems` se deriva aplanando esos grupos y marcando el primer
+ítem de cada uno, que es lo que dibuja el separador.
+
+El label del sidebar dice lo que la pantalla muestra, no cómo se llama la ruta.
+`/dashboard` se llama **Brecha cambiaria** porque es lo único que renderiza;
+llamarla "Dashboard" prometía un resumen general que nunca existió. Ojo: la
+raíz `Dashboard` de los breadcrumbs es otra cosa —nombra al panel privado, va
+sin `href`— y esa sí se queda.
 
 ---
 

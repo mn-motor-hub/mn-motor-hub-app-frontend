@@ -9,6 +9,7 @@ import {
   Tag,
   Wallet,
   LayoutDashboard,
+  LineChart,
   Settings,
   ChevronLeft,
   ChevronRight,
@@ -22,16 +23,39 @@ import { useSidebar } from './SidebarContext';
 import { ExchangeRatesWidget } from './ExchangeRatesWidget';
 import styles from './Sidebar.module.css';
 
-const navItems = [
-  { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/inventario', label: 'Inventario', icon: Package },
-  { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
-  { href: '/finanzas', label: 'Finanzas', icon: Wallet },
-  { href: '/tasas', label: 'Tasas', icon: Coins },
-  { href: '/proveedores', label: 'Proveedores', icon: Users },
-  { href: '/categorias', label: 'Categorías', icon: Tag },
-  { href: '/configuracion', label: 'Configuración', icon: Settings },
+/**
+ * La navegación agrupada por afinidad: catálogo, operación diaria y ajustes.
+ * Al sumar un módulo, va dentro del grupo que le corresponde — no al final.
+ *
+ * "Brecha cambiaria" es `/dashboard`. La pantalla muestra el estado de la brecha
+ * y su histórico de 30 días, y nada más: llamarla "Dashboard" prometía un
+ * resumen general que no existe. La ruta queda como está; lo que se corrige es
+ * el nombre que ve el usuario.
+ */
+const navGroups = [
+  [
+    { href: '/inventario', label: 'Inventario', icon: Package },
+    { href: '/proveedores', label: 'Proveedores', icon: Users },
+    { href: '/categorias', label: 'Categorías', icon: Tag },
+  ],
+  [
+    { href: '/ventas', label: 'Ventas', icon: ShoppingCart },
+    { href: '/finanzas', label: 'Finanzas', icon: Wallet },
+    { href: '/tasas', label: 'Tasas', icon: Coins },
+    { href: '/dashboard', label: 'Brecha cambiaria', icon: LineChart },
+  ],
+  [{ href: '/configuracion', label: 'Configuración', icon: Settings }],
 ];
+
+/**
+ * Se aplana a una sola lista y el separador se dibuja en el primer ítem de cada
+ * grupo salvo el primero. Una `<ul>` por grupo obligaría a ponerles un título a
+ * los tres —copy que nadie pidió— o a dejar tres listas anónimas, que para un
+ * lector de pantalla es peor que una sola.
+ */
+const navItems = navGroups.flatMap((grupo, i) =>
+  grupo.map((item, j) => ({ ...item, startsGroup: i > 0 && j === 0 })),
+);
 
 export function Sidebar() {
   const pathname = usePathname();
@@ -69,10 +93,10 @@ export function Sidebar() {
         {/* Navegación */}
         <nav className={styles.nav}>
           <ul className={styles.navList}>
-            {navItems.map(({ href, label, icon: Icon }) => {
+            {navItems.map(({ href, label, icon: Icon, startsGroup }) => {
               const isActive = pathname.startsWith(href);
               return (
-                <li key={href}>
+                <li key={href} className={startsGroup ? styles.navGroupStart : undefined}>
                   <Link
                     href={href}
                     className={`${styles.navLink} ${isActive ? styles.navLinkActive : ''} ${collapsed ? styles.navLinkCollapsed : ''}`}
