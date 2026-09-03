@@ -17,7 +17,7 @@
 .title {
   font-size: clamp(var(--text-xl), 3vw, var(--text-2xl));
   font-weight: 700;
-  color: #fff;
+  color: var(--color-on-surface);
 }
 
 .subtitle {
@@ -31,7 +31,7 @@
   align-items: center;
   padding: var(--space-md) var(--space-xl);
   background-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-surface);
   border-radius: var(--radius-md);
   font-weight: 600;
   font-size: var(--text-base);

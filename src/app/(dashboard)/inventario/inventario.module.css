@@ -21,7 +21,7 @@
   min-height: 44px;
   padding: var(--space-sm) var(--space-md);
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
   border-radius: var(--radius-md);
   font-size: var(--text-sm);
   font-weight: 500;

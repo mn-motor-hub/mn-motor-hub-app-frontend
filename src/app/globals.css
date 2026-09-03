@@ -1,90 +1,10 @@
-/* ─── MN Motor Hub — Design System Tokens ───────────────────── */
-/* Fuente de verdad: mn-motor-hub-web/design/DESIGN.md           */
-/* Mismo sistema visual en ambas apps. NO inventar valores.       */
+/* ─── MN Motor Hub — Design System ──────────────────────────── */
+/* Los tokens viven en @mn/design-system, compartido con la       */
+/* tienda web. Fuente de verdad: tokens/tokens.json de ese repo.  */
+/* NO redefinir tokens acá: si falta un valor, se agrega allá.    */
 
-:root {
-  /* ── Surfaces (tonal elevation, dark-first) ── */
-  --color-background:           #131313;
-  --color-surface-lowest:       #0e0e0e;
-  --color-surface-low:          #1c1b1b;
-  --color-surface-container:    #201f1f;
-  --color-surface-high:         #2a2a2a;
-  --color-surface-variant:      #353534;
-
-  /* ── Brand / Primary (Ignition Orange) ── */
-  --color-primary:              #ff571a;  /* CTAs, precios, acentos */
-  --color-primary-dim:          #ffb59e;  /* texto/íconos sobre fondo oscuro */
-  --color-primary-hover:        #d63f00;
-  --color-on-primary:           #521300;  /* texto sobre botón naranja */
-
-  /* ── On-surface ── */
-  --color-on-surface:           #e5e2e1;
-  --color-on-surface-variant:   #e6beb2;
-
-  /* ── Outline ── */
-  --color-outline:              #ad897e;
-  --color-outline-variant:      #5c4037;
-
-  /* ── Semantic states (badges, alertas, validaciones) ── */
-  --color-success:              #4caf7d;
-  --color-success-dim:          rgba(76, 175, 125, 0.12);
-  --color-warning:              #f0a845;
-  --color-warning-dim:          rgba(240, 168, 69, 0.12);
-  --color-danger:               #f05252;
-  --color-danger-dim:           rgba(240, 82, 82, 0.12);
-  --color-info:                 #4da6ff;
-  --color-info-dim:             rgba(77, 166, 255, 0.12);
-
-  /* ── Alias de compatibilidad (migrar gradualmente) ── */
-  --color-bg:                   var(--color-background);
-  --color-surface:              var(--color-surface-container);
-  --color-accent:               var(--color-primary-dim);
-  --color-accent-hover:         #e6a08c;
-  --color-border:               var(--color-outline-variant);
-  --color-text:                 var(--color-on-surface);
-  --color-text-muted:           var(--color-outline);
-
-  /* ── Tipografía ── */
-  --font-oswald: 'Oswald', sans-serif;  /* headings, uppercase */
-  --font-inter:  'Inter', sans-serif;   /* body, labels, datos */
-  --font-mono:   'JetBrains Mono', monospace; /* códigos internos */
-  --font-sans:   var(--font-inter);     /* compat alias */
-
-  /* ── Escala tipográfica ── */
-  --text-xs:   0.75rem;    /* 12px */
-  --text-sm:   0.875rem;   /* 14px */
-  --text-base: 1rem;       /* 16px */
-  --text-lg:   1.125rem;   /* 18px */
-  --text-xl:   1.25rem;    /* 20px */
-  --text-2xl:  1.5rem;     /* 24px */
-  --text-3xl:  2rem;       /* 32px */
-
-  /* ── Bordes ── */
-  --radius-sm:   2px;
-  --radius-md:   4px;
-  --radius-lg:   8px;
-  --radius-full: 9999px;
-
-  /* ── Espaciado (escala 8px) ── */
-  --spacing-base:    8px;
-  --spacing-gutter:  24px;
-  --spacing-edge:    clamp(16px, 5vw, 72px);
-  --spacing-section: 80px;
-  --container-max:   1280px;
-
-  /* Escala corta (compat + uso en componentes) */
-  --space-xs:  4px;
-  --space-sm:  8px;
-  --space-md:  16px;
-  --space-lg:  24px;
-  --space-xl:  32px;
-  --space-2xl: 48px;
-
-  /* ── Elevación (sombras profundas sobre fondo oscuro) ── */
-  --shadow-sm: 0 1px 4px rgba(0, 0, 0, 0.45);
-  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.55);
-  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.65);
-}
+@import '@mn/design-system/tokens.css';
+@import '@mn/design-system/recipes.css';
 
 /* ─── Reset ─────────────────────────────────────────────────── */
 *, *::before, *::after {
@@ -147,7 +67,7 @@ ul, ol {
   height: 2px;
   width: 48px;
   background: linear-gradient(90deg, var(--color-primary) 0%, transparent 100%);
-  margin-bottom: var(--spacing-gutter);
+  margin-bottom: var(--space-lg);
 }
 
 .visually-hidden {

@@ -21,7 +21,7 @@
 /* Variants */
 .primary {
   background-color: var(--color-accent);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .primary:hover:not(:disabled) {
@@ -30,7 +30,7 @@
 
 .secondary {
   background-color: var(--color-primary);
-  color: #fff;
+  color: var(--color-on-primary);
 }
 
 .secondary:hover:not(:disabled) {
@@ -39,11 +39,11 @@
 
 .danger {
   background-color: var(--color-danger);
-  color: #fff;
+  color: var(--color-on-danger);
 }
 
 .danger:hover:not(:disabled) {
-  background-color: #c53030;
+  background-color: var(--color-danger-hover);
 }
 
 .ghost {
