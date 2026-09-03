@@ -12,11 +12,45 @@
   color: var(--color-on-surface-variant);
 }
 
+/*
+  Tres tonos y no dos: un refresco donde 2 de 3 fuentes respondieron no es ni un
+  éxito ni un error. Pintarlo verde deja al usuario creyendo que la tasa que
+  falló también se actualizó; pintarlo rojo esconde que algo sí se trajo.
+*/
+.exito,
+.parcial,
 .error {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  max-width: 40ch;
+}
+
+.exito {
+  color: var(--color-success);
+}
+
+.parcial {
+  color: var(--color-warning);
+}
+
+.error {
+  color: var(--color-danger);
+}
+
+.resultadoTitulo {
   margin: 0;
   font-size: var(--text-sm);
-  color: var(--color-danger);
-  max-width: 40ch;
+  font-weight: 500;
+}
+
+/* El motivo crudo de la fuente: secundario, y en el color de texto normal para
+   que el tono del bloque siga siendo el del titular. */
+.resultadoDetalle {
+  margin: 0;
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
 }
 
 @media (min-width: 768px) {
@@ -24,6 +58,8 @@
     align-items: flex-end;
   }
 
+  .exito,
+  .parcial,
   .error,
   .hint {
     text-align: right;
