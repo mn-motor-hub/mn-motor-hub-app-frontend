@@ -19,7 +19,7 @@ interface HistorialFiltersProps {
 export function HistorialFilters({ tasas, rightSlot }: HistorialFiltersProps) {
   const { filters, applyFilters, clearFilters } = useTasaFilters();
 
-  const hasActiveFilters = Boolean(filters.clave || filters.resultado);
+  const hasActiveFilters = Boolean(filters.clave || filters.resultado || filters.origen);
 
   return (
     <div className={styles.container}>
@@ -49,6 +49,23 @@ export function HistorialFilters({ tasas, rightSlot }: HistorialFiltersProps) {
             <option value="">Todos los resultados</option>
             <option value="fallo">Solo fallos</option>
             <option value="exito">Solo éxitos</option>
+          </select>
+
+          {/*
+            "¿Qué refrescos manuales se hicieron y quién los hizo?" es la
+            pregunta que justifica guardar el actor de cada intento. La tabla ya
+            muestra el nombre; sin este filtro había que pasar página por página
+            buscando las filas manuales entre los cientos del ciclo programado.
+          */}
+          <select
+            className={styles.select}
+            value={filters.origen}
+            aria-label="Filtrar por origen"
+            onChange={(e) => applyFilters({ origen: e.target.value })}
+          >
+            <option value="">Todos los orígenes</option>
+            <option value="manual">Solo manuales</option>
+            <option value="programado">Solo programados</option>
           </select>
 
           {hasActiveFilters && (

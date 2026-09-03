@@ -1,6 +1,6 @@
 @AGENTS.md
 
-# CLAUDE.md — mn-motor-hub-web
+# CLAUDE.md — mn-motor-hub-frontend
 
 Documento único de referencia para Claude Code. Leer completo antes de generar cualquier archivo.
 
@@ -353,8 +353,49 @@ de una sola IP contra el BCV. La pantalla se dibuja leyendo de la base
 (`/salud` e `/historial`), que es instantáneo.
 
 `ultimoIntento` y `ultimoExito` se muestran siempre separados y no se colapsan en
-un solo "última actualización": el job puede seguir intentando cada hora mientras
-el último éxito queda días atrás, y con un solo campo esa caída es invisible.
+un solo "última actualización": el job puede seguir intentando mientras el último
+éxito queda días atrás, y con un solo campo esa caída es invisible.
+
+La cadencia real del backend es un intento diario a las 17:00 (hora de
+Venezuela), más backoff **por fuente** ante un fallo transitorio y **ningún**
+reintento ante uno determinista. No es "cada hora" — ese texto describía una
+política que ya no existe.
+
+**Tres campos de `TasaSalud` que la pantalla no puede ignorar:**
+
+| Campo | Por qué |
+|---|---|
+| `requiereAtencion` | Lo único que dice "esto no se arregla solo". Un error determinista lo marca desde el primer intento, con la tasa todavía fresca. Sin él, se pinta igual que un fallo que se cura en 15 min |
+| `rachaTruncada` | `fallosConsecutivos` es un piso cuando llega al techo de filas que mira el backend. Sin el "al menos", un 200 se lee exacto |
+| `valorManual` | Una automática con override se ve idéntica a una sin él, con el scraper refrescando en silencio un valor que nadie usa |
+
+`requiereAtencion: true` **no** implica `proximoIntento: null`: al agotar los
+reintentos la fuente vuelve al ciclo diario. Se muestran los dos juntos —
+mostrar uno solo miente en las dos direcciones. `proximoIntento: null` tampoco
+significa que se abandonó: el estado del scheduler vive en memoria del backend y
+se pierde en un reinicio hasta el primer tick.
+
+`providerId` y `fuenteFetch` son distintos y con granularidad distinta: `BCV_USD`
+es una tasa, `BCV` es el request que sirve USD y EUR juntos. `meta.fallos` de
+`POST /fetch` viene **una entrada por tasa**, así que una caída del BCV llega dos
+veces con el mismo motivo — se agrupa por `fuenteFetch` antes de escribir
+cualquier mensaje, o dice "falló BCV" dos veces.
+
+La antigüedad sale de `horasSinActualizar` / `diasSinActualizar` y no de
+`formatTimeAgo`: los días redondean hacia arriba a propósito (47 h eran "1 día"),
+y mezclar los dos cálculos hace que la misma fecha se lea distinto en dos lugares
+de la misma tarjeta.
+
+El umbral de `stale` se deriva en el backend de la cadencia más
+`tasas_stale_margen_horas`; acá solo se consume el booleano. No hardcodear el
+número ni afirmar "hace más de 30 h": `stale` también se enciende cuando el
+backend no pudo leer esa clave y degradó hacia "vencida".
+
+`GET /historial` valida los filtros: 400 si no entiende uno, 404 si la clave no
+existe. Ya no devuelve lista vacía, así que una lista vacía ahora significa de
+verdad "no hay intentos con estos filtros" y el mensaje del backend se muestra
+tal cual. Como los filtros salen de la URL, `HistorialSection` los atrapa en vez
+de dejar que un `?clave=typo` se lleve puesta también la sección de salud.
 
 #### Nota sobre `/configuracion/motor-de-precios`
 
@@ -419,9 +460,14 @@ Al sumar un módulo nuevo: crear la carpeta bajo `(dashboard)/` y agregar la ent
 Registrada acá para no volver a reportarla como hallazgo nuevo en cada auditoría. No corregir de forma oportunista: cada punto se aborda en su propio cambio.
 
 - **Fetch en Client Component.** `components/features/inventario/stock-import/SupplierSelector.tsx` llama a `getSuppliers()` desde un `useEffect`, violando la prohibición de arriba. La regla se mantiene vigente; este es el único caso existente y está pendiente de corrección.
-- **Sin `middleware.ts` que proteja las rutas.** Ya hay sesión (`/login` monta la cookie httpOnly `mn_session`, `apiFetch` redirige a `/login` ante un 401), pero la protección es indirecta: depende de que cada fetch reciba el 401. Un segmento que no pidiera datos se renderizaría igual. El TODO al inicio de `inventario/importar/page.tsx` sigue vigente por el mismo motivo, más el rol que todavía no se chequea.
+- **El rol todavía no se chequea en ninguna ruta.** `src/proxy.ts` (Next 16 renombró `middleware` a `proxy`) ya rebota a `/login` cualquier ruta que no sea pública si falta la cookie `mn_session`, y `apiFetch` redirige ante un 401. Pero el proxy solo mira que la cookie exista, no que sea válida — la seguridad real la hace el backend validando el JWT. Lo que falta es el permiso por rol: el TODO al inicio de `inventario/importar/page.tsx` sigue vigente por eso.
 - **Sin `error.tsx` ni `loading.tsx`** en ningún route segment. Un throw de `lib/api/` sube hasta el error boundary global. Los `<Suspense>` de `inventario/page.tsx` además van sin `fallback` — el resto de las pantallas ya usa skeletons.
 - **Media queries en `max-width`** — pendientes de migrar a mobile-first: `Sidebar.module.css`, `Navbar.module.css`, `inventario/[id]/detail.module.css`. Son los tres únicos casos que quedan.
 - **Sin `.env.example`.** Además, `.gitignore` ignora `.env*` sin excepción: al crearlo hay que agregar `!.env.example`.
 - **`hooks/usePagination.ts` no lo usa nadie.** El componente compartido es `components/ui/Pagination/` (lo usan ventas, finanzas y tasas); `inventario/page.tsx` sigue con su `PaginationControls` propio inline. Falta unificar y borrar el hook muerto.
 - **`useUrlFilters` con `basePath` por wrapper.** Cada módulo tiene su hook de una línea (`useAutoPartFilters`, `useMovementFilters`, `useSaleFilters`, `useTasaFilters`). Funciona, pero son cuatro archivos que solo fijan una ruta y un array de claves.
+
+## Git — commits
+
+Siempre usar el skill /commit para cualquier commit. Nunca `git commit`
+directo ni mensajes con trailers de atribución de IA.

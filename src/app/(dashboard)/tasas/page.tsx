@@ -8,7 +8,14 @@ import { TasaSaludCard } from '@/components/features/tasas/TasaSaludCard';
 import { Pagination } from '@/components/ui/Pagination/Pagination';
 import { getTasas, getTasasHistorial, getTasasSalud } from '@/lib/api/tasas';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { PaginationMeta, Tasa, TasaFetchLog, TasaResultado, TasaSalud } from '@/types';
+import type {
+  PaginationMeta,
+  Tasa,
+  TasaFetchLog,
+  TasaOrigen,
+  TasaResultado,
+  TasaSalud,
+} from '@/types';
 import styles from './tasas.module.css';
 
 interface PageProps {
@@ -16,6 +23,7 @@ interface PageProps {
     page?: string;
     clave?: string;
     resultado?: string;
+    origen?: string;
   }>;
 }
 
@@ -97,6 +105,7 @@ async function HistorialSection({ params }: { params: Awaited<PageProps['searchP
       limit: 20,
       clave: params.clave || undefined,
       resultado: parseResultado(params.resultado),
+      origen: parseOrigen(params.origen),
     });
   } catch (err) {
     /*
@@ -177,6 +186,18 @@ function parsePage(raw: string | undefined): number {
   return Number.isInteger(n) && n >= 1 ? n : 1;
 }
 
+/*
+  Los dos parsers descartan un valor que no reconocen en vez de reenviarlo. El
+  backend contesta 400 ante un filtro inválido y ese mensaje se muestra, así que
+  reenviarlo también sería defendible; se filtra acá porque un `?resultado=`
+  vacío o pegado de una URL vieja no es un error que valga interrumpir la
+  pantalla. La clave sí viaja tal cual: sus valores válidos los conoce el
+  backend, no este archivo.
+*/
 function parseResultado(raw: string | undefined): TasaResultado | undefined {
   return raw === 'exito' || raw === 'fallo' ? raw : undefined;
+}
+
+function parseOrigen(raw: string | undefined): TasaOrigen | undefined {
+  return raw === 'programado' || raw === 'manual' ? raw : undefined;
 }

@@ -108,8 +108,14 @@ export function HistorialTable({ data }: HistorialTableProps) {
                     <p className={styles.detailText}>
                       {log.errorMotivo ?? 'La fuente no devolvió un motivo.'}
                     </p>
+                    {/*
+                      "Provider" y no "Fuente": BCV_USD es una tasa, y la fuente
+                      del request es BCV, que sirve USD y EUR en una sola
+                      llamada. Llamarle fuente a esto hace contar dos caídas
+                      donde hubo una.
+                    */}
                     <p className={styles.detailMeta}>
-                      {log.providerId && <>Fuente: {log.providerId} · </>}
+                      {log.providerId && <>Provider: {log.providerId} · </>}
                       Código: {log.errorCodigo ?? 'sin código'}
                     </p>
                   </Td>

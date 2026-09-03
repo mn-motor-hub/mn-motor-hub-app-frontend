@@ -7,9 +7,10 @@ import { useUrlFilters } from './useUrlFilters';
 export type TasaFilters = {
   clave: string;
   resultado: string;
+  origen: string;
 };
 
-const KEYS = ['clave', 'resultado'] as const;
+const KEYS = ['clave', 'resultado', 'origen'] as const;
 
 /** Wrapper fino sobre useUrlFilters para el historial de /tasas. */
 export function useTasaFilters() {
