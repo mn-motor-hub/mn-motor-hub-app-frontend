@@ -251,7 +251,7 @@ export function EditAutoPartButton({ part, categorias, subcategorias }: EditAuto
                     <Button
                       type="button"
                       variant="ghost"
-                      size="sm"
+                      size="md"
                       disabled={precioVenta === precioSugerido.precioSugeridoUsd}
                       onClick={() =>
                         setValue('precioVenta', precioSugerido.precioSugeridoUsd as number, {

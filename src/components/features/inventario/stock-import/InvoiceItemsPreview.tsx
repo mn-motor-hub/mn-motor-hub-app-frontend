@@ -352,7 +352,7 @@ function ItemCard({
             <Button
               type="button"
               variant="ghost"
-              size="sm"
+              size="md"
               className={styles.suggestButtonSmall}
               loading={suggestLoading}
               disabled={suggestDisabled}

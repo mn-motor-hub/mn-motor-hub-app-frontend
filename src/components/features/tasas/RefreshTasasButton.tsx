@@ -129,7 +129,7 @@ export function RefreshTasasButton() {
       <Button
         type="button"
         variant="primary"
-        size="sm"
+        size="md"
         onClick={handleClick}
         loading={inFlight}
         aria-label="Actualizar las tasas desde las fuentes ahora"

@@ -166,10 +166,10 @@ export function SupplierSelector({ supplierMatch }: SupplierSelectorProps) {
           )}
 
           <div className={styles.createFormActions}>
-            <Button type="button" variant="ghost" size="sm" onClick={closeCreateForm}>
+            <Button type="button" variant="ghost" size="md" onClick={closeCreateForm}>
               Cancelar
             </Button>
-            <Button variant="accent" type="button" size="sm" loading={creating} onClick={handleCreate}>
+            <Button variant="accent" type="button" size="md" loading={creating} onClick={handleCreate}>
               Crear proveedor
             </Button>
           </div>

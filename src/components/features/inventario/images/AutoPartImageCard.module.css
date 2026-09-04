@@ -175,17 +175,6 @@
   gap: var(--space-xs);
 }
 
-/*
-  El Button del design system trae `min-height: var(--touch-min)`, pero ese
-  token no está definido en el globals.css de este repo, así que la regla no
-  aplica nada — y la variante `sm` encima hace `min-height: auto`. Resultado:
-  24px de alto, por debajo del mínimo táctil de 44px que el proyecto marca como
-  no negociable. Se fuerza acá hasta que se defina --touch-min a nivel global.
-*/
-.acciones button {
-  min-height: 44px;
-}
-
 .mover {
   display: flex;
   gap: var(--space-xs);

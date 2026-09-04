@@ -69,7 +69,7 @@ export function HistorialFilters({ tasas, rightSlot }: HistorialFiltersProps) {
           </select>
 
           {hasActiveFilters && (
-            <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+            <Button type="button" variant="ghost" size="md" onClick={clearFilters}>
               <X size={14} aria-hidden="true" />
               Limpiar
             </Button>

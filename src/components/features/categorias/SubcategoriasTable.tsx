@@ -89,7 +89,7 @@ export function SubcategoriasTable({
           )}
 
           {hasActiveFilters && (
-            <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+            <Button type="button" variant="ghost" size="md" onClick={clearFilters}>
               <X size={14} />
               Limpiar
             </Button>

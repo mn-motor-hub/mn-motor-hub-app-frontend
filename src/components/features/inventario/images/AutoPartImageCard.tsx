@@ -168,7 +168,7 @@ export function AutoPartImageCard({
         <div className={styles.acciones}>
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             disabled={ocupado || imagen.esPrincipal || !imagen.activo}
             loading={enVuelo === 'principal'}
             // Una imagen inactiva no puede ser portada: el backend le quita el
@@ -185,7 +185,7 @@ export function AutoPartImageCard({
 
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             disabled={ocupado}
             onClick={() => inputRef.current?.click()}
           >
@@ -194,7 +194,7 @@ export function AutoPartImageCard({
 
           <Button
             variant="ghost"
-            size="sm"
+            size="md"
             disabled={ocupado || !imagen.activo}
             loading={enVuelo === 'eliminar'}
             // Sin modal: es baja lógica y se revierte con el toggle "Activa".

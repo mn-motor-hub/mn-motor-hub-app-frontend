@@ -74,12 +74,12 @@ export function SaleFilters({ rightSlot }: SaleFiltersProps) {
             />
           </label>
 
-          <Button type="submit" variant="primary" size="sm">
+          <Button type="submit" variant="primary" size="md">
             Buscar
           </Button>
 
           {hasActiveFilters && (
-            <Button type="button" variant="ghost" size="sm" onClick={clearFilters}>
+            <Button type="button" variant="ghost" size="md" onClick={clearFilters}>
               <X size={14} />
               Limpiar
             </Button>

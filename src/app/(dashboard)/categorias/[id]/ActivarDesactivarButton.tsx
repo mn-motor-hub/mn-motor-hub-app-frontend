@@ -35,7 +35,7 @@ export function ActivarDesactivarButton({ categoriaId, activo }: ActivarDesactiv
       <Button
         type="button"
         variant={activo ? 'danger' : 'accent'}
-        size="sm"
+        size="md"
         loading={loading}
         onClick={handleClick}
       >
