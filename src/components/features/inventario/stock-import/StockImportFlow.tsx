@@ -36,6 +36,10 @@ export interface StockImportFlowProps {
 export function StockImportFlow({ categorias, subcategorias, margenDefault }: StockImportFlowProps) {
   const [phase, setPhase] = useState<FlowPhase>('upload');
   const [parseResult, setParseResult] = useState<StockImportParseResponse | null>(null);
+  // El archivo que se parseó en el paso 1, retenido para re-enviarlo al
+  // confirmar: es la única copia que queda del lado del cliente y el backend
+  // lo necesita para archivarlo en Storage.
+  const [archivo, setArchivo] = useState<File | null>(null);
   const [confirmResult, setConfirmResult] = useState<StockImportConfirmResponse | null>(null);
   const [confirmError, setConfirmError] = useState<string | null>(null);
   // Ítems que el clasificador de subcategorías por IA marcó requiere_revision
@@ -57,8 +61,9 @@ export function StockImportFlow({ categorias, subcategorias, margenDefault }: St
   });
 
   const handleParseSuccess = useCallback(
-    (result: StockImportParseResponse) => {
+    (result: StockImportParseResponse, archivoParseado: File) => {
       setParseResult(result);
+      setArchivo(archivoParseado);
       setClassifyRevision({});
       form.reset({
         supplier_id: result.supplier_match?.id ?? 0,
@@ -113,12 +118,15 @@ export function StockImportFlow({ categorias, subcategorias, margenDefault }: St
         return base;
       });
 
-      const result = await confirmImportAction({
-        supplier_id: data.supplier_id,
-        numero_factura: parseResult.numero_factura,
-        fecha_emision: parseResult.fecha_emision,
-        items,
-      });
+      const result = await confirmImportAction(
+        {
+          supplier_id: data.supplier_id,
+          numero_factura: parseResult.numero_factura,
+          fecha_emision: parseResult.fecha_emision,
+          items,
+        },
+        archivo,
+      );
 
       if (result.ok) {
         setConfirmResult(result.data);
@@ -136,6 +144,7 @@ export function StockImportFlow({ categorias, subcategorias, margenDefault }: St
   function resetFlow() {
     setPhase('upload');
     setParseResult(null);
+    setArchivo(null);
     setConfirmResult(null);
     setConfirmError(null);
     setClassifyRevision({});

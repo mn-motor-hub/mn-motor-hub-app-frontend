@@ -23,7 +23,12 @@ function formatSize(bytes: number): string {
 }
 
 export interface FileUploadStepProps {
-  onSuccess: (result: StockImportParseResponse) => void;
+  /**
+   * Devuelve también el File: el paso de confirmación lo re-envía para que el
+   * backend lo archive en Storage. Sin esto el archivo moría acá y la factura
+   * quedaba importada sin su PDF (archivo_path NULL).
+   */
+  onSuccess: (result: StockImportParseResponse, archivo: File) => void;
 }
 
 export function FileUploadStep({ onSuccess }: FileUploadStepProps) {
@@ -64,7 +69,7 @@ export function FileUploadStep({ onSuccess }: FileUploadStepProps) {
 
     const result = await parseInvoiceAction(formData);
     if (result.ok) {
-      onSuccess(result.data);
+      onSuccess(result.data, file);
       return;
     }
     // Visible en DevTools además del banner en pantalla — mismo mensaje, para

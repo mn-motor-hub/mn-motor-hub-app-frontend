@@ -84,10 +84,15 @@ export class DuplicateInvoiceError extends Error {
 }
 
 export async function confirmImport(
-  data: StockImportConfirmRequest
+  data: StockImportConfirmRequest,
+  archivo?: File | null,
 ): Promise<StockImportConfirmResponse> {
   const formData = new FormData();
   formData.append('payload', JSON.stringify(data));
+  // El backend archiva este adjunto en Storage y lo referencia en
+  // factura_imports.archivo_path. Es opcional a propósito: si falta, la
+  // importación igual se registra (sin archivo) en vez de bloquearse.
+  if (archivo) formData.append('archivo', archivo);
 
   const res = await apiFetch(`${BASE_URL}/api/stock-imports/confirm`, {
     method: 'POST',

@@ -45,9 +45,12 @@ export async function parseInvoiceAction(
 
 export async function confirmImportAction(
   payload: StockImportConfirmRequest,
+  // El File cruza el límite cliente→servidor como argumento (React 19 lo
+  // serializa); no hace falta degradar el payload tipado a un FormData.
+  archivo?: File | null,
 ): Promise<ActionResult<StockImportConfirmResponse>> {
   try {
-    return { ok: true, data: await confirmImport(payload) };
+    return { ok: true, data: await confirmImport(payload, archivo) };
   } catch (err) {
     unstable_rethrow(err);
     // instanceof no sobrevive el límite servidor→cliente: se manda un code.
