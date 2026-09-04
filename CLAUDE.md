@@ -103,9 +103,10 @@ src/
 │           ├── [id]/page.tsx         # Detalle + activar/desactivar
 │           └── subcategorias/page.tsx
 ├── components/
-│   ├── ui/                           # Genéricos reutilizables (named exports)
-│   │   ├── Button/  Input/  Select/  Table/  Badge/  Modal/
-│   │   └── Pagination/  StatCard/  InfoPopover/  ScrollToBottomButton/
+│   ├── ui/                           # Genéricos PROPIOS de este repo (named exports)
+│   │   └── Modal/  Select/  InfoPopover/  ScrollToBottomButton/
+│   │                                 # Button, Input, Badge, Table, Pagination y StatCard
+│   │                                 # NO están acá: vienen de @mn/design-system/ui
 │   ├── charts/                       # Gráficos compartidos entre módulos
 │   │   └── BrechaHistoricoChart/     # Recharts — brecha vs. banda, nulls sin conectar
 │   ├── layout/
@@ -174,6 +175,23 @@ Cada componente vive en su carpeta junto a su `.module.css` del mismo nombre.
 Compartido con `mn-motor-hub-web`. Fuente de verdad visual: `mn-motor-hub-web/design/DESIGN.md`.
 
 **Los valores viven en `src/app/globals.css`. Nunca inventar colores, radios ni tipografías, y nunca escribir un valor literal en un componente — siempre `var(--token)`.**
+
+`globals.css` importa `@mn/design-system/tokens.css` y `recipes.css`: los tokens
+**no** se definen acá, se consumen. `--touch-min` (44px) sale de ahí.
+
+### Primitivas: del paquete, no de este repo
+
+`Button`, `Input`, `Badge`, `Table`, `Pagination` y `StatCard` se importan de
+`@mn/design-system/ui`. En `components/ui/` viven solo las que son propias de
+este repo: `Modal`, `Select`, `InfoPopover`, `ScrollToBottomButton`.
+
+**`<Button size="sm">` libera el mínimo táctil a propósito** — su
+`min-height: var(--touch-min)` se anula, y el botón queda en 24px. El propio
+design system lo dice: *"compacto, para tablas densas de escritorio; no usar en
+superficies touch"*. En una app mobile-first eso deja afuera filtros, modales y
+botones de acción: para todo eso va `size="md"`, que respeta los 44px sin que
+haya que forzar nada en CSS. Si un botón necesita `min-height` propio para
+llegar a 44px, el tamaño elegido está mal.
 
 ### Paleta (Industrial Dark — "Onyx")
 
