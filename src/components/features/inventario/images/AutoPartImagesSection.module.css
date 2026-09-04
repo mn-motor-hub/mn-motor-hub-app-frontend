@@ -1,0 +1,151 @@
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/*
+  Flex y no Grid: no hay alineación en dos ejes que resolver, solo cards que
+  envuelven. Mobile apila; desde tablet fluyen en fila.
+*/
+.grilla {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  gap: var(--space-md);
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+@media (min-width: 768px) {
+  .grilla {
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+
+  /* Selector de elemento y no de clase: la clase de la card vive en su propio
+     módulo y acá no está el hash. */
+  .grilla > li {
+    flex: 1 1 240px;
+    max-width: calc(50% - var(--space-md) / 2);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grilla > li {
+    max-width: calc(33.333% - var(--space-md) * 2 / 3);
+  }
+}
+
+.vacio {
+  margin: 0;
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-inter);
+  font-size: var(--text-sm);
+  text-align: center;
+}
+
+.dropzone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  min-height: 120px;
+  padding: var(--space-lg);
+  border: 1px dashed var(--color-outline);
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-low);
+  color: var(--color-on-surface-variant);
+  text-align: center;
+  cursor: pointer;
+}
+
+.dropzone:focus-within {
+  outline: 2px solid var(--color-primary-dim);
+  outline-offset: 2px;
+}
+
+.dropzoneActiva {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dim);
+}
+
+.dropzoneLabel {
+  font-family: var(--font-oswald);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-on-surface);
+}
+
+.dropzoneHint {
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+  max-width: 42ch;
+}
+
+.spinner {
+  animation: girar 900ms linear infinite;
+  color: var(--color-primary);
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.inputOculto {
+  display: none;
+}
+
+.errorGlobal {
+  margin: 0;
+  padding: var(--space-sm) var(--space-md);
+  border: 1px solid var(--color-danger);
+  border-radius: var(--radius-md);
+  background-color: var(--color-danger-dim);
+  color: var(--color-on-surface);
+  font-family: var(--font-inter);
+  font-size: var(--text-sm);
+}
+
+.destinos {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-md);
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.destinosLegend {
+  padding: 0;
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}
+
+.destino {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px; /* área táctil */
+  font-family: var(--font-inter);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface);
+  cursor: pointer;
+}
+
+.destinos:disabled .destino {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

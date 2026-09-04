@@ -118,3 +118,9 @@
   font-size: var(--text-sm);
   color: var(--color-text-muted);
 }
+
+.sectionMeta {
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface-variant);
+}

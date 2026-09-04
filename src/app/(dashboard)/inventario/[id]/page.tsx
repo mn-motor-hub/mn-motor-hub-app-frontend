@@ -3,13 +3,15 @@ import { Navbar } from '@/components/layout/Navbar/Navbar';
 import { Badge } from '@mn/design-system/ui';
 import { SupplierRefList } from '@/components/features/proveedores/SupplierRefList';
 import { EditAutoPartButton } from '@/components/features/inventario/EditAutoPartButton';
+import { AutoPartImagesSection } from '@/components/features/inventario/images/AutoPartImagesSection';
 import { getAutoPart } from '@/lib/api/auto-parts';
+import { getAutoPartImages } from '@/lib/api/auto-part-images';
 import { getCategorias } from '@/lib/api/categorias';
 import { listSubcategorias } from '@/lib/api/subcategorias';
 import { getSupplierRefs } from '@/lib/api/supplier-refs';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { AutoPart, Categoria, Subcategoria, SupplierRef } from '@/types';
+import type { AutoPart, AutoPartImage, Categoria, Subcategoria, SupplierRef } from '@/types';
 import styles from './detail.module.css';
 
 interface PageProps {
@@ -22,13 +24,15 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
 
   if (isNaN(numId)) notFound();
 
-  const [part, categorias, subcategorias, supplierRefs] = await Promise.all([
+  const [part, categorias, subcategorias, supplierRefs, imagenes] = await Promise.all([
     withFallback<AutoPart | null>(getAutoPart(numId), null),
     withFallback<Categoria[]>(getCategorias(), []),
     withFallback<Subcategoria[]>(listSubcategorias(), []),
     // Vía /api/supplier-refs (no part.supplierRefs): es el único endpoint que
     // hoy carga la relación supplier con el nombre del proveedor.
     withFallback<SupplierRef[]>(getSupplierRefs(numId), []),
+    // Sin cache: cada masterUrl es una URL firmada que vence a los 300 s.
+    withFallback<AutoPartImage[]>(getAutoPartImages(numId), []),
   ]);
   if (!part) notFound();
 
@@ -108,6 +112,16 @@ export default async function AutoPartDetailPage({ params }: PageProps) {
             </div>
           </section>
         </div>
+
+        <section className={styles.card}>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>Imágenes</h2>
+            <span className={styles.sectionMeta}>
+              {imagenes.filter((i) => i.activo).length} activas de {imagenes.length}
+            </span>
+          </div>
+          <AutoPartImagesSection autoPartId={part.id} imagenes={imagenes} />
+        </section>
 
         <section className={styles.card}>
           <h2 className={styles.sectionTitle}>Referencias de proveedores</h2>

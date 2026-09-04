@@ -1,0 +1,263 @@
+/* Mobile: fila con miniatura al costado. Grid de cards recién en tablet. */
+.card {
+  display: flex;
+  gap: var(--space-md);
+  padding: var(--space-md);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-lg);
+  list-style: none;
+}
+
+.card:hover .handle {
+  opacity: 1;
+}
+
+/* La baja lógica se ve atenuada, pero legible: hay que poder reactivarla. */
+.inactiva {
+  opacity: 0.55;
+  border-style: dashed;
+}
+
+.arrastrando {
+  opacity: 0.4;
+  border-color: var(--color-primary);
+}
+
+.thumbWrap {
+  position: relative;
+  flex: 0 0 96px;
+  width: 96px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-surface-low);
+}
+
+.thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.sinImagen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+  text-align: center;
+  padding: var(--space-xs);
+}
+
+.handle {
+  position: absolute;
+  top: var(--space-xs);
+  left: var(--space-xs);
+  display: flex;
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-lowest);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  cursor: grab;
+  /* Se insinúa siempre en touch, donde no hay hover que lo revele. */
+  opacity: 0.7;
+}
+
+.posicion {
+  position: absolute;
+  bottom: var(--space-xs);
+  right: var(--space-xs);
+  min-width: 20px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-lowest);
+  border-radius: var(--radius-sm);
+  padding: 0 4px;
+}
+
+.cuerpo {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  min-height: 44px; /* área táctil */
+  padding: 0 var(--space-sm);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+  cursor: pointer;
+}
+
+.toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-primary-dim);
+  outline-offset: 2px;
+}
+
+.toggleOn {
+  border-color: var(--color-primary);
+  color: var(--color-primary-dim);
+}
+
+/*
+  Apagado es un anillo hueco y encendido un punto lleno: la diferencia es de
+  FORMA, no solo de color. Los neutros de la paleta son cálidos
+  (rgb(173,137,126)), así que un punto gris relleno se lee como un naranja
+  mustio al lado del encendido y a tamaño chico los dos se confunden. Con
+  relleno vs. hueco se distingue de un vistazo y también sin ver color.
+*/
+.toggleDot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--radius-full);
+  background-color: transparent;
+  box-shadow: inset 0 0 0 1.5px var(--color-outline);
+}
+
+.toggleOn .toggleDot {
+  background-color: var(--color-primary);
+  box-shadow: none;
+}
+
+.toggleSpinner {
+  width: 10px;
+  height: 10px;
+  border: 2px solid var(--color-outline);
+  border-top-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  animation: girar 700ms linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-xs);
+}
+
+/*
+  El Button del design system trae `min-height: var(--touch-min)`, pero ese
+  token no está definido en el globals.css de este repo, así que la regla no
+  aplica nada — y la variante `sm` encima hace `min-height: auto`. Resultado:
+  24px de alto, por debajo del mínimo táctil de 44px que el proyecto marca como
+  no negociable. Se fuerza acá hasta que se defina --touch-min a nivel global.
+*/
+.acciones button {
+  min-height: 44px;
+}
+
+.mover {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.moverBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-md);
+  background-color: transparent;
+  color: var(--color-on-surface-variant);
+  cursor: pointer;
+}
+
+.moverBtn:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.moverBtn:focus-visible {
+  outline: 2px solid var(--color-primary-dim);
+  outline-offset: 2px;
+}
+
+.error {
+  margin: 0;
+  color: var(--color-danger);
+  font-family: var(--font-inter);
+  font-size: var(--text-xs);
+}
+
+.inputOculto {
+  display: none;
+}
+
+.modalBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.modalArchivo,
+.modalNota {
+  margin: 0;
+  font-family: var(--font-inter);
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+  overflow-wrap: anywhere;
+}
+
+.modalAcciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+}
+
+@media (min-width: 768px) {
+  .card {
+    flex-direction: column;
+  }
+
+  .thumbWrap {
+    flex: none;
+    width: 100%;
+  }
+
+  .handle {
+    opacity: 0;
+    transition: opacity 150ms ease;
+  }
+}

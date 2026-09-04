@@ -104,6 +104,27 @@ export type ActionResult<T> =
   | { ok: true; data: T }
   | { ok: false; error: string; code?: string };
 
+// ─── Imágenes de repuesto ─────────────────────────────────────
+export interface AutoPartImage {
+  id: number;
+  autoPartId: number;
+  /** Base 1. NO es único entre imágenes de un mismo repuesto. */
+  orden: number;
+  esPrincipal: boolean;
+  /** Soft delete: el panel las muestra igual, atenuadas, para reactivarlas. */
+  activo: boolean;
+  destinoCatalogo: boolean;
+  /** Hoy solo se guarda el dato — la sync con Mercado Libre no existe todavía. */
+  destinoMercadoLibre: boolean;
+  masterPath: string;
+  /** Firmada y de vida corta (300 s). Puede venir null si Storage no la firmó. */
+  masterUrl: string | null;
+  catalogoPath: string | null;
+  /** Pública. null mientras no se generó el derivado con marca de agua. */
+  catalogoUrl: string | null;
+  createdAt: string;
+}
+
 // ─── Suppliers ────────────────────────────────────────────────
 export interface Supplier {
   id: number;
