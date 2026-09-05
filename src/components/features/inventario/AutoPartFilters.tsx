@@ -1,6 +1,5 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { Search, X } from 'lucide-react';
 import { Button } from '@mn/design-system/ui';
 import { useAutoPartFilters } from '@/hooks/useAutoPartFilters';
@@ -15,11 +14,6 @@ interface AutoPartFiltersProps {
 
 export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPartFiltersProps) {
   const { filters, applyFilters, clearFilters } = useAutoPartFilters();
-  const [localQ, setLocalQ] = useState(filters.q);
-
-  useEffect(() => {
-    setLocalQ(filters.q);
-  }, [filters.q]);
 
   const hasActiveFilters =
     filters.categoriaId || filters.subcategoriaId || filters.q || filters.stockBajo;
@@ -28,9 +22,17 @@ export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPa
     ? subcategorias.filter((s) => s.categoriaId === filters.categoriaId)
     : [];
 
-  function handleSubmit(e: React.FormEvent) {
+  /*
+    El texto se aplica en submit y no en cada tecla, pero eso NO necesita estado
+    espejo de la URL: el input va sin controlar y el valor se lee del form al
+    enviar. El `key` es lo que lo resincroniza cuando la URL cambia por otra vía
+    —"Limpiar", el botón Atrás—, que era lo único que hacía el useEffect que
+    había acá. Así la URL sigue siendo la única fuente de verdad, sin excepción.
+  */
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    applyFilters({ q: localQ });
+    const q = new FormData(e.currentTarget).get('q');
+    applyFilters({ q: typeof q === 'string' ? q : '' });
   }
 
   return (
@@ -41,10 +43,11 @@ export function AutoPartFilters({ categorias, subcategorias, rightSlot }: AutoPa
         <div className={styles.controls}>
           <div className={styles.inputWrapper}>
             <input
+              key={filters.q}
               type="text"
+              name="q"
               placeholder="Buscar por nombre, código o categoría..."
-              value={localQ}
-              onChange={(e) => setLocalQ(e.target.value)}
+              defaultValue={filters.q}
               className={styles.textInput}
             />
             <button type="submit" className={styles.searchIcon} aria-label="Buscar">

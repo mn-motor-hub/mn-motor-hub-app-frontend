@@ -1,6 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { Button } from '@mn/design-system/ui';
 import { useSaleFilters } from '@/hooks/useSaleFilters';
@@ -12,21 +11,20 @@ interface SaleFiltersProps {
 
 export function SaleFilters({ rightSlot }: SaleFiltersProps) {
   const { filters, applyFilters, clearFilters } = useSaleFilters();
-  const [localCliente, setLocalCliente] = useState(filters.cliente);
-
-  // Único caso admitido de estado local espejo (CLAUDE.md): el texto de
-  // cliente se aplica en submit, no en cada tecla, y se resincroniza cuando
-  // la URL cambia por otra vía (ej. "Limpiar").
-  useEffect(() => {
-    setLocalCliente(filters.cliente);
-  }, [filters.cliente]);
 
   const hasActiveFilters =
     filters.cliente || filters.estado || filters.fechaDesde || filters.fechaHasta;
 
-  function handleSubmit(e: React.FormEvent) {
+  /*
+    El texto de cliente se aplica en submit y no en cada tecla, y para eso no
+    hace falta estado espejo: el input va sin controlar y su valor se lee del
+    form. El `key` lo resincroniza cuando la URL cambia por otra vía —"Limpiar",
+    el botón Atrás—, que era lo único que hacía el useEffect que había acá.
+  */
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    applyFilters({ cliente: localCliente });
+    const cliente = new FormData(e.currentTarget).get('cliente');
+    applyFilters({ cliente: typeof cliente === 'string' ? cliente : '' });
   }
 
   return (
@@ -34,10 +32,11 @@ export function SaleFilters({ rightSlot }: SaleFiltersProps) {
       <form onSubmit={handleSubmit} className={styles.row}>
         <div className={styles.controls}>
           <input
+            key={filters.cliente}
             type="text"
+            name="cliente"
             placeholder="Buscar por cliente..."
-            value={localCliente}
-            onChange={(e) => setLocalCliente(e.target.value)}
+            defaultValue={filters.cliente}
             className={styles.textInput}
             aria-label="Buscar por cliente"
           />

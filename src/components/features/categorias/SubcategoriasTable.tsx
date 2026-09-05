@@ -1,6 +1,6 @@
 'use client'; // filtros URL-driven (búsqueda + dropdown) sobre la lista ya cargada
 
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { Search, X } from 'lucide-react';
 import { Badge, Button, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
 import { NuevaSubcategoriaButton } from './NuevaSubcategoriaButton';
@@ -26,11 +26,6 @@ export function SubcategoriasTable({
   fixedCategoriaId,
 }: SubcategoriasTableProps) {
   const { filters, applyFilters, clearFilters } = useSubcategoriaFilters(basePath);
-  const [localQ, setLocalQ] = useState(filters.q);
-
-  useEffect(() => {
-    setLocalQ(filters.q);
-  }, [filters.q]);
 
   const categoriaNombreById = useMemo(
     () => new Map(categorias.map((cat) => [cat.id, cat.nombre])),
@@ -50,9 +45,16 @@ export function SubcategoriasTable({
 
   const hasActiveFilters = (!fixedCategoriaId && Boolean(filters.categoriaId)) || Boolean(filters.q);
 
-  function handleSubmit(e: React.FormEvent) {
+  /*
+    El texto se aplica en submit y no en cada tecla, y para eso no hace falta
+    estado espejo: el input va sin controlar y su valor se lee del form. El
+    `key` lo resincroniza cuando la URL cambia por otra vía —"Limpiar", el botón
+    Atrás—, que era lo único que hacía el useEffect que había acá.
+  */
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    applyFilters({ q: localQ });
+    const q = new FormData(e.currentTarget).get('q');
+    applyFilters({ q: typeof q === 'string' ? q : '' });
   }
 
   return (
@@ -61,10 +63,11 @@ export function SubcategoriasTable({
         <div className={styles.controls}>
           <div className={styles.inputWrapper}>
             <input
+              key={filters.q}
               type="text"
+              name="q"
               placeholder="Buscar por nombre..."
-              value={localQ}
-              onChange={(e) => setLocalQ(e.target.value)}
+              defaultValue={filters.q}
               className={styles.textInput}
             />
             <button type="submit" className={styles.searchIcon} aria-label="Buscar">

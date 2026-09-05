@@ -345,7 +345,18 @@ Para formularios de varias secciones o con listas de ítems, usar `FormProvider`
 
 **La URL es la única fuente de verdad para filtros y página.** Sin `useState` espejo: un hook lee `useSearchParams()`, y aplicar un filtro reconstruye los params, resetea `page=1` y hace `router.push()`. Así el botón Atrás del browser funciona y el Server Component recibe todo por `searchParams`.
 
-Única excepción admitida: estado local para un input de texto que se aplica en submit y no en cada tecla, sincronizado con `useEffect` cuando cambia la URL.
+**Sin excepciones — tampoco para el input de texto que se aplica en submit.** Ese
+caso no necesita estado: el input va **sin controlar**, con `name`,
+`defaultValue={filters.q}` y `key={filters.q}`, y el submit lee el valor con
+`new FormData(e.currentTarget)`. El `key` es lo que lo resincroniza cuando la URL
+cambia por otra vía ("Limpiar", el botón Atrás).
+
+Antes esto era un `useState` espejo sincronizado con `useEffect`, y estaba
+documentado acá como la única excepción admitida. No lo era: el `setState`
+sincrónico dentro del efecto dispara renders en cascada —lo marca
+`react-hooks/set-state-in-effect`— y además duplicaba una fuente de verdad que
+esta misma sección dice que no se duplica. Ver `AutoPartFilters`, `SaleFilters` o
+`SubcategoriasTable`.
 
 La base es `hooks/useUrlFilters.ts`, que recibe el `basePath` y las claves; cada
 módulo lo envuelve en un hook de una línea (`useAutoPartFilters`,
