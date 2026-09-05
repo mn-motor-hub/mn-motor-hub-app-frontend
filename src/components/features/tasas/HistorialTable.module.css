@@ -17,12 +17,14 @@
 .date,
 .clave,
 .valor,
+.fechaValor,
 .valorAnterior,
 .duracion {
   font-family: var(--font-mono);
   font-size: var(--text-sm);
 }
 
+.fechaValor,
 .valorAnterior,
 .duracion {
   color: var(--color-on-surface-variant);

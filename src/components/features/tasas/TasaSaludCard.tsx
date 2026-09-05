@@ -1,5 +1,5 @@
 import { Badge } from '@mn/design-system/ui';
-import { formatBs, formatDateTime, formatTimeAgo } from '@/lib/utils/format';
+import { formatBs, formatBusinessDay, formatDateTime, formatTimeAgo } from '@/lib/utils/format';
 import type { TasaSalud } from '@/types';
 import styles from './TasaSaludCard.module.css';
 
@@ -75,6 +75,25 @@ export function TasaSaludCard({ salud }: TasaSaludCardProps) {
       <p className={styles.valor}>
         {salud.valorEfectivo != null ? formatBs(salud.valorEfectivo) : 'Sin valor'}
       </p>
+
+      {/*
+        El día de negocio para el que rige la tasa, según lo publica la fuente.
+        Responde una pregunta que la antigüedad de abajo no puede responder: una
+        tasa traída "hace 23 h" puede ser la de hoy publicada anoche —correcta—
+        o una que quedó vieja. Las dos líneas conviven porque son dos preguntas
+        distintas: qué tasa es esta, y hace cuánto que no traemos nada.
+
+        Sin fechaValor no se muestra NADA acá. null es "no se sabe" y nunca
+        "hoy": Binance no publica fecha valor —es precio de mercado vivo—, las
+        manuales tampoco, y las filas viejas la tienen en null hasta el primer
+        fetch con el backend que la trae. Inventar "hoy" afirmaría que una tasa
+        vieja es la del día, que es peor que el bug original: no se nota.
+      */}
+      {salud.fechaValor && (
+        <p className={styles.fechaValor}>
+          Tasa oficial del <strong>{formatBusinessDay(salud.fechaValor)}</strong>
+        </p>
+      )}
 
       {/*
         Un override manual sobre una tasa automática: sin decirlo se ve idéntica

@@ -3,7 +3,7 @@
 import { Fragment, useState } from 'react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { Badge, Table, Tbody, Td, Th, Thead, Tr } from '@mn/design-system/ui';
-import { formatBs, formatDateTime } from '@/lib/utils/format';
+import { formatBs, formatBusinessDay, formatDateTime } from '@/lib/utils/format';
 import type { TasaFetchLog } from '@/types';
 import styles from './HistorialTable.module.css';
 
@@ -36,6 +36,13 @@ export function HistorialTable({ data }: HistorialTableProps) {
           <Th>Tasa</Th>
           <Th>Resultado</Th>
           <Th>Valor</Th>
+          {/*
+            La fecha valor del intento, al lado del valor que trajo. Juntas son
+            lo que delata un scraper atrasado: el valor se repite día tras día y
+            la fecha se queda quieta. En la tarjeta solo se ve la vigente; acá se
+            ve la serie, que es donde el problema se hace evidente.
+          */}
+          <Th>Fecha valor</Th>
           <Th>Anterior</Th>
           <Th>Origen</Th>
           <Th>Duración</Th>
@@ -77,6 +84,15 @@ export function HistorialTable({ data }: HistorialTableProps) {
                 <Td className={styles.valor}>
                   {log.valor != null ? formatBs(log.valor) : <span className={styles.muted}>—</span>}
                 </Td>
+                {/* null = la fuente no publica fecha valor (Binance) o el
+                    intento falló: "—", nunca una fecha inventada. */}
+                <Td className={styles.fechaValor}>
+                  {log.fechaValor != null ? (
+                    formatBusinessDay(log.fechaValor)
+                  ) : (
+                    <span className={styles.muted}>—</span>
+                  )}
+                </Td>
                 <Td className={styles.valorAnterior}>
                   {log.valorAnterior != null ? (
                     formatBs(log.valorAnterior)
@@ -103,7 +119,7 @@ export function HistorialTable({ data }: HistorialTableProps) {
               {/* errorMotivo es texto largo: va acá, a un clic, nunca en la celda. */}
               {isFallo && isOpen && (
                 <Tr className={styles.detailRow}>
-                  <Td colSpan={7}>
+                  <Td colSpan={8}>
                     <p className={styles.detailText}>
                       {log.errorMotivo ?? 'La fuente no devolvió un motivo.'}
                     </p>

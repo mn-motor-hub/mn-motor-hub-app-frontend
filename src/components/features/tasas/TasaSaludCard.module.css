@@ -54,6 +54,21 @@
   color: var(--color-primary-dim);
 }
 
+/* El día de negocio de la tasa. Va pegado al valor y por encima de la
+   antigüedad: es lo primero que hay que poder leer para decidir si la tasa
+   sirve. Solo aparece cuando la fuente publica una. */
+.fechaValor {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
+.fechaValor strong {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--color-on-surface);
+}
+
 .timestamps {
   display: flex;
   flex-wrap: wrap;

@@ -32,8 +32,8 @@ const TIMEZONE = 'America/Caracas';
  * `updatedAt`) y días sueltos 'YYYY-MM-DD' (`Sale.fecha`, `Movement.date`,
  * `BrechaHistoricoPoint.fecha`). Por eso NO lleva `timeZone: TIMEZONE`: un día
  * suelto se parsea como medianoche UTC, y en Caracas (UTC−4) eso retrocede al
- * día anterior. Un día suelto se formatea partiendo el string, sin pasar por
- * `Date`; separar los callers de esta función es tarea aparte.
+ * día anterior. Para un día suelto está `formatBusinessDay`; separar los
+ * callers de esta función es tarea aparte.
  */
 export function formatDate(dateStr: string): string {
   return new Intl.DateTimeFormat('es-VE', {
@@ -58,6 +58,25 @@ export function formatDateTime(dateStr: string): string {
     minute: '2-digit',
     hour12: false,
   }).format(new Date(dateStr));
+}
+
+/**
+ * "04/09/2026" a partir de un día suelto 'YYYY-MM-DD' — un día de negocio, no
+ * un instante. Es el formato de `fechaValor`: el día para el que rige una tasa
+ * según la publica la fuente.
+ *
+ * Parte el string a propósito y NO pasa por `Date`: `new Date('2026-09-04')`
+ * es medianoche UTC, que en Caracas o en Buenos Aires cae el 03/09. Ese es
+ * exactamente el bug de zona horaria que este helper existe para no repetir.
+ *
+ * Devuelve el string tal cual si no tiene la forma esperada: mostrar el dato
+ * crudo del backend es mejor que inventarle una fecha o romper la pantalla.
+ */
+export function formatBusinessDay(day: string): string {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
+  if (!match) return day;
+  const [, year, month, dayOfMonth] = match;
+  return `${dayOfMonth}/${month}/${year}`;
 }
 
 /**
