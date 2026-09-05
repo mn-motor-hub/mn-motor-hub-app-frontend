@@ -110,9 +110,9 @@ export function TasaSaludCard({ salud }: TasaSaludCardProps) {
 
       {/*
         ultimoExito y ultimoIntento van siempre separados y nunca colapsados en
-        un solo "última actualización": el job puede seguir intentando cada hora
-        mientras el último éxito queda clavado días atrás, y con un solo campo
-        ese problema es invisible. Es la razón de ser de esta pantalla.
+        un solo "última actualización": el job puede seguir intentando mientras
+        el último éxito queda clavado días atrás, y con un solo campo ese
+        problema es invisible. Es la razón de ser de esta pantalla.
       */}
       <dl className={styles.timestamps}>
         <div className={styles.timestamp}>

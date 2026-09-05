@@ -375,21 +375,57 @@ de una sola IP contra el BCV. La pantalla se dibuja leyendo de la base
 un solo "última actualización": el job puede seguir intentando mientras el último
 éxito queda días atrás, y con un solo campo esa caída es invisible.
 
-La cadencia real del backend es un intento diario a las 17:00 (hora de
-Venezuela), más backoff **por fuente** ante un fallo transitorio y **ningún**
-reintento ante uno determinista. No es "cada hora" — ese texto describía una
-política que ya no existe.
+La cadencia real del backend son **dos corridas diarias, 08:00 y 17:00 (hora de
+Venezuela)**, más backoff **por fuente** ante un fallo transitorio y **ningún**
+reintento ante uno determinista. Son dos porque el BCV publica después de las
+17:00 la tasa del próximo día bancario: con una sola corrida a esa hora se
+llegaba temprano y se traía el valor que ya se tenía.
 
-**Tres campos de `TasaSalud` que la pantalla no puede ignorar:**
+**No hardcodear la cadencia en ningún texto de UI.** Ya cambió dos veces —
+primero de horaria a diaria, ahora de diaria a dos corridas— y las dos veces el
+front quedó afirmando una política que no existía. La fuente de verdad es
+`proximoIntento` de `GET /api/tasas/salud`.
+
+#### Fechas y horas de esta pantalla
+
+**Toda fecha y hora se formatea desde `lib/utils/format.ts`, nunca con un
+`Intl.DateTimeFormat` armado en el componente.** El negocio opera en Venezuela:
+`formatDateTime` fija `timeZone: 'America/Caracas'` y por eso el mismo instante
+se lee igual en toda la app. Sin fijarla, `Intl` usa la zona del **runtime** —
+el locale `es-VE` solo decide el formato— y el mismo dato salía a 21:00 en la
+tarjeta (Server Component, servidor en UTC) y a 18:00 en el historial (Client
+Component, navegador en UTC−3) para la corrida de las 17:00. Además de mentir,
+eso hidrataba distinto de lo que servía el SSR.
+
+**Un día suelto `'YYYY-MM-DD'` no pasa por `new Date()`.** Se parsea como
+medianoche UTC y en Caracas retrocede al día anterior. Para eso está
+`formatBusinessDay`, que parte el string. Es el caso de `fechaValor`.
+
+**Cuatro campos de `TasaSalud` que la pantalla no puede ignorar:**
 
 | Campo | Por qué |
 |---|---|
 | `requiereAtencion` | Lo único que dice "esto no se arregla solo". Un error determinista lo marca desde el primer intento, con la tasa todavía fresca. Sin él, se pinta igual que un fallo que se cura en 15 min |
 | `rachaTruncada` | `fallosConsecutivos` es un piso cuando llega al techo de filas que mira el backend. Sin el "al menos", un 200 se lee exacto |
 | `valorManual` | Una automática con override se ve idéntica a una sin él, con el scraper refrescando en silencio un valor que nadie usa |
+| `fechaValor` | El día de negocio para el que rige la tasa, según la fuente. Es lo único que distingue una tasa de hoy publicada anoche (correcta) de una que quedó vieja (incorrecta) — "hace 23 h" no lo hace, y esa ambigüedad es lo que dejó operar jornadas enteras con la tasa del día anterior |
+
+**`fechaValor: null` significa "no se sabe", NUNCA "hoy".** Pasa en tres casos
+legítimos: Binance no publica fecha valor (es precio de mercado vivo, no
+referencia diaria), las manuales tampoco, y las filas viejas hasta el primer
+fetch con el backend que la trae. Con null se cae al comportamiento anterior
+—la antigüedad— y no se muestra ninguna fecha. Asumir hoy afirmaría que una
+tasa vieja es la del día, que es peor que el bug original: no se nota.
+
+Viene en tres lugares: `GET /api/tasas`, `GET /api/tasas/salud` y cada fila del
+historial. En la tarjeta se muestra **junto a** la antigüedad, no en su lugar:
+qué tasa es esta y hace cuánto que no traemos nada son dos preguntas distintas,
+y la segunda es la que delata un scraper muerto. En el historial es una columna
+al lado del valor — sobre la serie, un scraper atrasado se ve como un valor que
+se repite mientras la fecha se queda quieta.
 
 `requiereAtencion: true` **no** implica `proximoIntento: null`: al agotar los
-reintentos la fuente vuelve al ciclo diario. Se muestran los dos juntos —
+reintentos la fuente vuelve al ciclo programado. Se muestran los dos juntos —
 mostrar uno solo miente en las dos direcciones. `proximoIntento: null` tampoco
 significa que se abandonó: el estado del scheduler vive en memoria del backend y
 se pierde en un reinicio hasta el primer tick.
@@ -505,6 +541,16 @@ Registrada acá para no volver a reportarla como hallazgo nuevo en cada auditor�
 - **Fetch en Client Component.** `components/features/inventario/stock-import/SupplierSelector.tsx` llama a `getSuppliers()` desde un `useEffect`, violando la prohibición de arriba. La regla se mantiene vigente; este es el único caso existente y está pendiente de corrección.
 - **El rol todavía no se chequea en ninguna ruta.** `src/proxy.ts` (Next 16 renombró `middleware` a `proxy`) ya rebota a `/login` cualquier ruta que no sea pública si falta la cookie `mn_session`, y `apiFetch` redirige ante un 401. Pero el proxy solo mira que la cookie exista, no que sea válida — la seguridad real la hace el backend validando el JWT. Lo que falta es el permiso por rol: el TODO al inicio de `inventario/importar/page.tsx` sigue vigente por eso.
 - **Sin `error.tsx` ni `loading.tsx`** en ningún route segment. Un throw de `lib/api/` sube hasta el error boundary global. Los `<Suspense>` de `inventario/page.tsx` además van sin `fallback` — el resto de las pantallas ya usa skeletons.
+- **`formatDate` corre un día en fechas sin hora.** Sus callers le pasan dos
+  cosas distintas: instantes ISO (`createdAt`, `updatedAt`) y días sueltos
+  `'YYYY-MM-DD'` (`Sale.fecha`, `FinancialMovement.date`,
+  `BrechaHistoricoPoint.fecha`, `proximaRevision`). Un día suelto se parsea
+  como medianoche UTC, así que en un navegador al oeste de Greenwich se muestra
+  el día anterior — ya pasa en `MovementsTable`, `SalesTable` y
+  `BrechaHistoricoChart`, que son Client Components. **No se arregla poniéndole
+  `timeZone: 'America/Caracas'`**: eso lo empeora, porque correría los días
+  sueltos también en el servidor. Hay que separar la función en dos y revisar
+  sus 14 callers uno por uno, usando `formatBusinessDay` donde corresponda.
 - **Media queries en `max-width`** — pendientes de migrar a mobile-first: `Sidebar.module.css`, `Navbar.module.css`, `inventario/[id]/detail.module.css`. Son los tres únicos casos que quedan.
 - **Sin `.env.example`.** Además, `.gitignore` ignora `.env*` sin excepción: al crearlo hay que agregar `!.env.example`.
 - **`hooks/usePagination.ts` no lo usa nadie.** El componente compartido es `components/ui/Pagination/` (lo usan ventas, finanzas y tasas); `inventario/page.tsx` sigue con su `PaginationControls` propio inline. Falta unificar y borrar el hook muerto.

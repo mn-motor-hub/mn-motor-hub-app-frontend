@@ -17,12 +17,14 @@ interface GetTasasResponse {
 }
 
 /**
- * El backend refresca por cron una vez al día a las 17:00 hora de Venezuela,
- * después de que el BCV publica. Ante un fallo transitorio reintenta con
- * backoff (15m, 1h, 4h por default) y SOLO contra la fuente que falló; ante uno
- * determinista —certificados que el build no copió, parser roto— no reintenta y
- * marca la tasa para atención humana. En los dos casos el ciclo diario sigue.
- * Ver tasas.scheduler.ts y tasas.retry-policy.ts en el backend.
+ * El backend refresca por cron dos veces al día, 08:00 y 17:00 hora de
+ * Venezuela. Son dos y no una porque el BCV publica DESPUÉS de las 17:00 la
+ * tasa del próximo día bancario: con una sola corrida a esa hora se llegaba
+ * temprano y se traía el valor que ya se tenía. Ante un fallo transitorio
+ * reintenta con backoff (15m, 1h, 4h por default) y SOLO contra la fuente que
+ * falló; ante uno determinista —certificados que el build no copió, parser
+ * roto— no reintenta y marca la tasa para atención humana. En los dos casos el
+ * ciclo sigue. Ver tasas.scheduler.ts y tasas.retry-policy.ts en el backend.
  *
  * Con esa cadencia un revalidate de 5 minutos ya es más granular de lo que el
  * dato puede cambiar.
