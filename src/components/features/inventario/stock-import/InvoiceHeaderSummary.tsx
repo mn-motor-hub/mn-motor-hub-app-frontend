@@ -2,19 +2,12 @@
 
 import { AlertTriangle } from 'lucide-react';
 import { SupplierSelector } from './SupplierSelector';
+import { formatBusinessDay } from '@/lib/utils/format';
 import type { StockImportParseResponse } from '@/types';
 import styles from './InvoiceHeaderSummary.module.css';
 
 export interface InvoiceHeaderSummaryProps {
   parseResult: StockImportParseResponse;
-}
-
-function formatDate(dateStr: string): string {
-  if (!dateStr) return '—';
-  const parts = dateStr.split('-');
-  if (parts.length !== 3) return dateStr;
-  const [year, month, day] = parts;
-  return `${day}/${month}/${year}`;
 }
 
 export function InvoiceHeaderSummary({ parseResult }: InvoiceHeaderSummaryProps) {
@@ -54,7 +47,11 @@ export function InvoiceHeaderSummary({ parseResult }: InvoiceHeaderSummaryProps)
         </div>
         <div className={styles.field}>
           <span className={styles.fieldLabel}>Fecha de emisión</span>
-          <span className={styles.fieldValue}>{formatDate(fecha_emision)}</span>
+          {/* `fecha_emision` es un día suelto de la factura parseada, y puede
+              venir vacío si el parser no lo encontró. */}
+          <span className={styles.fieldValue}>
+            {fecha_emision ? formatBusinessDay(fecha_emision) : '—'}
+          </span>
         </div>
       </div>
 

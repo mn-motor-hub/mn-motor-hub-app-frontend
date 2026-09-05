@@ -303,6 +303,33 @@ import styles from './Button.module.css';
 - Props tipadas con `interface`, nunca `type`.
 - En `components/ui/`: named exports, nunca `default`.
 
+### Fechas y horas
+
+**Se formatean siempre desde `lib/utils/format.ts`. Nunca con un
+`Intl.DateTimeFormat` armado en el componente ni con un helper local.**
+
+El backend manda fechas de dos formas y son cosas distintas:
+
+| Qué | De dónde | Cómo se formatea |
+|---|---|---|
+| **Instante** (`createdAt`, `updatedAt`, `ultimoExito`) | `timestamp` | `formatDate` / `formatDateTime` — en `America/Caracas` |
+| **Día suelto `'YYYY-MM-DD'`** (`Sale.fecha`, `FinancialMovement.date`, `BrechaSnapshot.fecha`, `fechaValor`, las revisiones de K) | columnas `date` | `formatBusinessDay` — partiendo el string |
+
+Las dos reglas y por qué existen:
+
+1. **Un instante lleva `timeZone: 'America/Caracas'`.** El negocio opera en
+   Venezuela. `Intl.DateTimeFormat('es-VE', …)` **no** alcanza: el locale
+   decide el formato, la zona la decide el runtime. Sin fijarla, el mismo dato
+   salía a 21:00 en un Server Component (servidor en UTC) y a 18:00 en uno
+   Client (navegador en UTC−3) para la corrida de las 17:00 — y encima
+   hidrataba distinto de lo que servía el SSR.
+2. **Un día suelto NO pasa por `new Date()`.** Se parsea como medianoche UTC y
+   en cualquier huso al oeste de Greenwich se muestra el día anterior. Un día
+   no tiene zona que convertir. `formatDate` detecta la forma `'YYYY-MM-DD'` y
+   delega en `formatBusinessDay`, así que el caller no puede equivocarse; aun
+   así, cuando sabés que el dato es un día, llamá a `formatBusinessDay` directo
+   y dejá la intención escrita.
+
 ### Formularios — react-hook-form + zod
 
 ```typescript
@@ -386,20 +413,9 @@ primero de horaria a diaria, ahora de diaria a dos corridas— y las dos veces e
 front quedó afirmando una política que no existía. La fuente de verdad es
 `proximoIntento` de `GET /api/tasas/salud`.
 
-#### Fechas y horas de esta pantalla
-
-**Toda fecha y hora se formatea desde `lib/utils/format.ts`, nunca con un
-`Intl.DateTimeFormat` armado en el componente.** El negocio opera en Venezuela:
-`formatDateTime` fija `timeZone: 'America/Caracas'` y por eso el mismo instante
-se lee igual en toda la app. Sin fijarla, `Intl` usa la zona del **runtime** —
-el locale `es-VE` solo decide el formato— y el mismo dato salía a 21:00 en la
-tarjeta (Server Component, servidor en UTC) y a 18:00 en el historial (Client
-Component, navegador en UTC−3) para la corrida de las 17:00. Además de mentir,
-eso hidrataba distinto de lo que servía el SSR.
-
-**Un día suelto `'YYYY-MM-DD'` no pasa por `new Date()`.** Se parsea como
-medianoche UTC y en Caracas retrocede al día anterior. Para eso está
-`formatBusinessDay`, que parte el string. Es el caso de `fechaValor`.
+Las fechas de esta pantalla siguen la regla general de **Fechas y horas** (ver
+Convenciones de código): los instantes van en hora de Venezuela y `fechaValor`,
+que es un día suelto, se formatea con `formatBusinessDay`.
 
 **Cuatro campos de `TasaSalud` que la pantalla no puede ignorar:**
 
@@ -541,16 +557,6 @@ Registrada acá para no volver a reportarla como hallazgo nuevo en cada auditor�
 - **Fetch en Client Component.** `components/features/inventario/stock-import/SupplierSelector.tsx` llama a `getSuppliers()` desde un `useEffect`, violando la prohibición de arriba. La regla se mantiene vigente; este es el único caso existente y está pendiente de corrección.
 - **El rol todavía no se chequea en ninguna ruta.** `src/proxy.ts` (Next 16 renombró `middleware` a `proxy`) ya rebota a `/login` cualquier ruta que no sea pública si falta la cookie `mn_session`, y `apiFetch` redirige ante un 401. Pero el proxy solo mira que la cookie exista, no que sea válida — la seguridad real la hace el backend validando el JWT. Lo que falta es el permiso por rol: el TODO al inicio de `inventario/importar/page.tsx` sigue vigente por eso.
 - **Sin `error.tsx` ni `loading.tsx`** en ningún route segment. Un throw de `lib/api/` sube hasta el error boundary global. Los `<Suspense>` de `inventario/page.tsx` además van sin `fallback` — el resto de las pantallas ya usa skeletons.
-- **`formatDate` corre un día en fechas sin hora.** Sus callers le pasan dos
-  cosas distintas: instantes ISO (`createdAt`, `updatedAt`) y días sueltos
-  `'YYYY-MM-DD'` (`Sale.fecha`, `FinancialMovement.date`,
-  `BrechaHistoricoPoint.fecha`, `proximaRevision`). Un día suelto se parsea
-  como medianoche UTC, así que en un navegador al oeste de Greenwich se muestra
-  el día anterior — ya pasa en `MovementsTable`, `SalesTable` y
-  `BrechaHistoricoChart`, que son Client Components. **No se arregla poniéndole
-  `timeZone: 'America/Caracas'`**: eso lo empeora, porque correría los días
-  sueltos también en el servidor. Hay que separar la función en dos y revisar
-  sus 14 callers uno por uno, usando `formatBusinessDay` donde corresponda.
 - **Media queries en `max-width`** — pendientes de migrar a mobile-first: `Sidebar.module.css`, `Navbar.module.css`, `inventario/[id]/detail.module.css`. Son los tres únicos casos que quedan.
 - **Sin `.env.example`.** Además, `.gitignore` ignora `.env*` sin excepción: al crearlo hay que agregar `!.env.example`.
 - **`hooks/usePagination.ts` no lo usa nadie.** El componente compartido es `components/ui/Pagination/` (lo usan ventas, finanzas y tasas); `inventario/page.tsx` sigue con su `PaginationControls` propio inline. Falta unificar y borrar el hook muerto.

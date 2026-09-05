@@ -27,16 +27,31 @@ export function formatCurrencyBs(amount: number): string {
  */
 const TIMEZONE = 'America/Caracas';
 
+/** 'YYYY-MM-DD' pelado: un día de negocio, sin hora ni zona. */
+const BUSINESS_DAY = /^(\d{4})-(\d{2})-(\d{2})$/;
+
 /**
- * OJO: sus callers le pasan dos cosas distintas — instantes ISO (`createdAt`,
- * `updatedAt`) y días sueltos 'YYYY-MM-DD' (`Sale.fecha`, `Movement.date`,
- * `BrechaHistoricoPoint.fecha`). Por eso NO lleva `timeZone: TIMEZONE`: un día
- * suelto se parsea como medianoche UTC, y en Caracas (UTC−4) eso retrocede al
- * día anterior. Para un día suelto está `formatBusinessDay`; separar los
- * callers de esta función es tarea aparte.
+ * "04/09/2026". El backend manda fechas de DOS formas y esta función las trata
+ * distinto a propósito, porque son cosas distintas:
+ *
+ * - Un día suelto 'YYYY-MM-DD' —las columnas `date` de Postgres: `Sale.fecha`,
+ *   `FinancialMovement.date`, `BrechaSnapshot.fecha`, las revisiones de K— se
+ *   formatea partiendo el string, vía `formatBusinessDay`. NO se parsea:
+ *   `new Date('2026-09-04')` es medianoche UTC, y en cualquier huso al oeste de
+ *   Greenwich eso cae el 03/09. Es un día, no un instante; no tiene zona que
+ *   convertir.
+ * - Un instante ISO (`createdAt`, `updatedAt`) se formatea en hora de
+ *   Venezuela, igual que `formatDateTime`.
+ *
+ * El caller no elige: las dos formas se distinguen sin ambigüedad y elegir mal
+ * era silencioso —solo se veía al oeste de Greenwich, y como un día menos, no
+ * como un error—. Estuvo vivo en las tablas de ventas, finanzas y brecha.
  */
 export function formatDate(dateStr: string): string {
+  if (BUSINESS_DAY.test(dateStr)) return formatBusinessDay(dateStr);
+
   return new Intl.DateTimeFormat('es-VE', {
+    timeZone: TIMEZONE,
     day: '2-digit',
     month: '2-digit',
     year: 'numeric',
@@ -62,18 +77,17 @@ export function formatDateTime(dateStr: string): string {
 
 /**
  * "04/09/2026" a partir de un día suelto 'YYYY-MM-DD' — un día de negocio, no
- * un instante. Es el formato de `fechaValor`: el día para el que rige una tasa
- * según la publica la fuente.
+ * un instante. Es el formato de `fechaValor` y el de toda columna `date`.
  *
- * Parte el string a propósito y NO pasa por `Date`: `new Date('2026-09-04')`
- * es medianoche UTC, que en Caracas o en Buenos Aires cae el 03/09. Ese es
- * exactamente el bug de zona horaria que este helper existe para no repetir.
+ * Parte el string a propósito y NO pasa por `Date`, por lo explicado en
+ * `formatDate`. Usala directo cuando sabés que el dato es un día: deja la
+ * intención escrita en el call site en vez de depender de la detección.
  *
  * Devuelve el string tal cual si no tiene la forma esperada: mostrar el dato
  * crudo del backend es mejor que inventarle una fecha o romper la pantalla.
  */
 export function formatBusinessDay(day: string): string {
-  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(day);
+  const match = BUSINESS_DAY.exec(day);
   if (!match) return day;
   const [, year, month, dayOfMonth] = match;
   return `${dayOfMonth}/${month}/${year}`;
