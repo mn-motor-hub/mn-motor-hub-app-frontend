@@ -215,6 +215,19 @@ export interface Tasa {
   // manual ?? automatico — lo que debe usar cualquier consumidor
   valorEfectivo: number | null;
   fetchedAt: string | null;
+  /**
+   * Día de negocio al que corresponde `valorAutomatico`, 'YYYY-MM-DD' tal como
+   * lo publica la fuente. Distinto de `fetchedAt`, que es cuándo lo trajimos.
+   *
+   * Es un DÍA, no un instante: no pasarlo por `new Date()` para formatearlo —
+   * se parsea como medianoche UTC y en cualquier huso al oeste retrocede uno.
+   *
+   * null = NO SE SABE, nunca "hoy". Pasa en tres casos legítimos: Binance no
+   * publica fecha valor (es precio de mercado vivo), las manuales tampoco, y
+   * las filas anteriores al despliegue del backend que la trae. Asumir hoy
+   * afirma que una tasa vieja es la del día, que es peor que no decir nada.
+   */
+  fechaValor: string | null;
   fuente: TasaFuente;
   activo: boolean;
   orden: number;
@@ -222,7 +235,7 @@ export interface Tasa {
    * true si tipo='automatica' y el último fetch exitoso quedó más viejo que el
    * umbral, o si nunca se completó uno. Las tasas manuales nunca son stale.
    *
-   * El umbral NO es fijo: el backend lo deriva de la cadencia diaria más
+   * El umbral NO es fijo: el backend lo deriva de la cadencia de corridas más
    * `tasas_stale_margen_horas` (30h con el default). Acá no se replica el
    * número — se consume el booleano ya resuelto. Ojo con el copy: `stale`
    * también es true cuando el backend no pudo leer esa clave de configuración
@@ -252,11 +265,20 @@ export interface TasaSalud {
    */
   valorManual: number | null;
   fetchedAt: string | null;
+  /**
+   * Día de negocio al que corresponde el valor, 'YYYY-MM-DD' según la fuente.
+   * Es lo que permite afirmar "Tasa oficial del 04/09" en vez de "hace 23 h",
+   * que no distingue una tasa de hoy publicada anoche (correcta) de una que
+   * quedó vieja (incorrecta). Mismas reglas que `Tasa.fechaValor`: es un día y
+   * no un instante, y null significa "no se sabe" — con null se cae a la
+   * antigüedad, nunca se asume hoy.
+   */
+  fechaValor: string | null;
   stale: boolean;
   // ultimoIntento y ultimoExito NO son lo mismo y no deben colapsarse en un
-  // solo "última actualización": el job puede seguir intentando cada hora
-  // mientras el último éxito queda clavado días atrás. Esa distinción es la
-  // razón de ser de la pantalla de tasas.
+  // solo "última actualización": el job puede seguir intentando mientras el
+  // último éxito queda clavado días atrás. Esa distinción es la razón de ser
+  // de la pantalla de tasas.
   ultimoIntento: string | null;
   ultimoExito: string | null;
   /** Intentos seguidos fallando; 0 si el último salió bien. */
@@ -306,6 +328,12 @@ export interface TasaFetchLog {
   errorCodigo: string | null;
   errorMotivo: string | null;
   duracionMs: number | null;
+  /**
+   * Fecha valor que traía la fuente en ESTE intento, 'YYYY-MM-DD'. Es lo que
+   * vuelve visible un scraper atrasado a lo largo del historial: el valor se
+   * repite pero la fecha se queda quieta. Mismas reglas que en `Tasa`.
+   */
+  fechaValor: string | null;
   origen: TasaOrigen;
   actorId: number | null;
   // Resuelto por JOIN al leer; ya viene como '—' si no aplica.
