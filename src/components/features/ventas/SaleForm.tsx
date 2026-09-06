@@ -265,12 +265,35 @@ function AutoPartSearch({
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Buscador vía Server Action (no fetch directo desde Client Component) con
-  // debounce: cada tecla no dispara una llamada, solo la última tras 350ms.
-  useEffect(() => {
+  function cancelPendingSearch() {
     if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = null;
+  }
 
-    if (!query.trim()) {
+  /** Vuelve al estado inicial: sin texto, sin resultados y sin búsqueda en vuelo. */
+  function resetSearch() {
+    cancelPendingSearch();
+    setQuery('');
+    setResults([]);
+    setError(null);
+    setLoading(false);
+  }
+
+  /*
+    Buscador vía Server Action (no fetch directo desde Client Component) con
+    debounce: cada tecla no dispara una llamada, solo la última tras 350ms.
+
+    Vive en el handler y no en un useEffect sobre `query` porque no es
+    sincronización con un sistema externo: es la reacción a que el usuario
+    tipeó. El setState de un handler no cascadea, el de un efecto sí — que es
+    lo que marca react-hooks/set-state-in-effect.
+  */
+  function handleQueryChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const next = e.target.value;
+    setQuery(next);
+    cancelPendingSearch();
+
+    if (!next.trim()) {
       setResults([]);
       setError(null);
       setLoading(false);
@@ -279,7 +302,7 @@ function AutoPartSearch({
 
     setLoading(true);
     debounceRef.current = setTimeout(async () => {
-      const result = await searchAutoPartsAction(query);
+      const result = await searchAutoPartsAction(next);
       if (result.ok) {
         setResults(result.data);
         setError(null);
@@ -288,11 +311,11 @@ function AutoPartSearch({
       }
       setLoading(false);
     }, 350);
+  }
 
-    return () => {
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-    };
-  }, [query]);
+  // Lo único que queda como efecto: cortar un debounce pendiente al desmontar,
+  // para que no dispare una búsqueda sobre un componente que ya no está.
+  useEffect(() => cancelPendingSearch, []);
 
   return (
     <div className={styles.searchWrapper}>
@@ -302,7 +325,7 @@ function AutoPartSearch({
           type="text"
           placeholder="Buscar repuesto por nombre o código..."
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleQueryChange}
           className={styles.searchInput}
         />
       </div>
@@ -329,8 +352,9 @@ function AutoPartSearch({
                   disabled={sinStock}
                   onClick={() => {
                     onAdd(part);
-                    setQuery('');
-                    setResults([]);
+                    // Limpia también el debounce en vuelo: sin esto, la última
+                    // tecla tipeada volvería a poblar la lista ya cerrada.
+                    resetSearch();
                   }}
                 >
                   <span className={styles.resultInfo}>
@@ -440,8 +464,20 @@ function FormaPagoSection() {
   );
 
   const [tasaContexto, setTasaContexto] = useState<TasaContexto | null>(null);
-  const [tasaLoading, setTasaLoading] = useState(false);
   const [tasaError, setTasaError] = useState<string | null>(null);
+
+  /*
+    Derivado, no un useState: "estamos cargando" es exactamente "pedimos la tasa
+    y todavía no tenemos ni valor ni error". Guardarlo obligaba a prenderlo con
+    un setState sincrónico dentro del efecto —lo que marca
+    react-hooks/set-state-in-effect— y a mantener tres estados en acuerdo.
+
+    Efecto de borde buscado: al recalcular por un cambio del total con el
+    contexto ya cargado, ya no parpadea "Consultando tasa…". Se sigue viendo la
+    referencia con la tasa que ya teníamos mientras llega la nueva.
+  */
+  const tasaLoading = formaPago === 'bs' && tasaContexto == null && tasaError == null;
+
   // El usuario puede ajustar el monto a mano: una vez que lo toca, dejamos de
   // pisarlo con el prefill automático (mismo criterio que precio_venta_nuevo
   // en InvoiceItemsPreview.tsx).
@@ -450,13 +486,15 @@ function FormaPagoSection() {
   useEffect(() => {
     if (formaPago !== 'bs') return;
     let cancelled = false;
-    setTasaLoading(true);
-    setTasaError(null);
 
+    // El cuerpo del efecto no toca estado: todo se resuelve en el callback,
+    // que es lo que la regla sí admite y lo que hace que `tasaLoading` pueda
+    // derivarse en vez de guardarse.
     getContextoTasaAction().then((result) => {
       if (cancelled) return;
       if (result.ok) {
         setTasaContexto(result.data);
+        setTasaError(null);
         if (!montoTouchedRef.current) {
           setValue(
             'montoEnFormaPago',
@@ -467,7 +505,6 @@ function FormaPagoSection() {
       } else {
         setTasaError(result.error);
       }
-      setTasaLoading(false);
     });
 
     return () => {
@@ -518,7 +555,8 @@ function FormaPagoSection() {
               {tasaError}
             </p>
           )}
-          {tasaContexto && !tasaLoading && (
+          {/* `!tasaLoading` sobra: con tasaContexto cargado, el derivado ya es false. */}
+          {tasaContexto && (
             <>
               <p className={styles.bsPreviewText}>
                 Referencia: {formatBs(totalUsd * tasaContexto.tasaValor)}{' '}
