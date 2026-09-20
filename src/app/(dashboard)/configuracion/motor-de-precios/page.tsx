@@ -4,12 +4,20 @@ import { BrechaHistoricoChart } from '@/components/charts/BrechaHistoricoChart/B
 import { AjustesAvanzados } from '@/components/features/pricing/AjustesAvanzados';
 import { KSugeridoPanel } from '@/components/features/pricing/KSugeridoPanel';
 import { MotorPreciosHeader } from '@/components/features/pricing/MotorPreciosHeader';
+import { RepricingMasivoPanel } from '@/components/features/pricing/RepricingMasivoPanel';
 import { TasasReadout } from '@/components/features/pricing/TasasReadout';
+import { getReprecioMasivoPreview } from '@/lib/api/auto-parts';
 import { listConfiguraciones } from '@/lib/api/configuraciones';
 import { getBrechaHistorico, getBrechaStatus } from '@/lib/api/pricing';
 import { getTasasSalud } from '@/lib/api/tasas';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { BrechaHistoricoPoint, BrechaStatus, Configuracion, TasaSalud } from '@/types';
+import type {
+  BrechaHistoricoPoint,
+  BrechaStatus,
+  Configuracion,
+  ReprecioMasivoPreviewItem,
+  TasaSalud,
+} from '@/types';
 import styles from './motor-de-precios.module.css';
 
 export default async function MotorDePreciosPage() {
@@ -55,6 +63,24 @@ export default async function MotorDePreciosPage() {
             aplica hasta que lo confirmes.
           </p>
           <KSugeridoPanel />
+        </section>
+
+        {/*
+          Igual que K sugerido: sin fetch en el server disparado por nada más
+          que el render normal de la página. A diferencia de K sugerido no hay
+          botón de cálculo previo porque el preview es de solo lectura —
+          `no-store` ya garantiza que lo que ve el usuario es el estado actual.
+        */}
+        <section className={styles.section}>
+          <h2 className={styles.sectionTitle}>Repricing masivo</h2>
+          <p className={styles.sectionIntro}>
+            Repuestos cuya desviación entre precio actual y sugerido supera el umbral
+            configurado. Revisá la vista previa y elegí a cuáles aplicarles el precio
+            sugerido — nunca se aplica a ciegas.
+          </p>
+          <Suspense fallback={<RepricingSkeleton />}>
+            <RepricingSection />
+          </Suspense>
         </section>
 
         <Suspense fallback={<AjustesSkeleton />}>
@@ -111,6 +137,33 @@ async function AjustesSection() {
 
 function AjustesSkeleton() {
   return <div className={styles.skeletonAjustes} aria-hidden="true" />;
+}
+
+/**
+ * `null` distingue "no se pudo traer la preview" de "[]" — que es una
+ * respuesta válida del backend (nadie supera el umbral hoy). Colapsar los dos
+ * en `[]` haría pasar una falla de red por el estado normal de "nada para
+ * reprecio masivo".
+ */
+async function RepricingSection() {
+  const items = await withFallback<ReprecioMasivoPreviewItem[] | null>(
+    getReprecioMasivoPreview(),
+    null,
+  );
+
+  if (items === null) {
+    return (
+      <p className={styles.error} role="alert">
+        No se pudo obtener la vista previa del repricing masivo.
+      </p>
+    );
+  }
+
+  return <RepricingMasivoPanel items={items} />;
+}
+
+function RepricingSkeleton() {
+  return <div className={styles.skeletonRepricing} aria-hidden="true" />;
 }
 
 function HeaderSkeleton() {

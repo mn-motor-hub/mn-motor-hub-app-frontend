@@ -1,5 +1,13 @@
 import { BASE_URL, apiFetch } from './client';
-import type { AutoPart, ApiListResponse, ApiItemResponse, PaginationMeta, PrecioSugerido } from '@/types';
+import type {
+  AutoPart,
+  ApiListResponse,
+  ApiItemResponse,
+  PaginationMeta,
+  PrecioSugerido,
+  ReprecioMasivoPreviewItem,
+  ReprecioMasivoResultado,
+} from '@/types';
 
 export async function getAutoParts(params?: {
   page?: number;
@@ -72,4 +80,57 @@ async function autoPartError(res: Response, fallback: string): Promise<Error> {
   if (res.status === 404) return new Error(body?.message ?? 'El repuesto no existe.');
   if (res.status === 400) return new Error(body?.message ?? 'Datos inválidos.');
   return new Error(body?.message ?? `${fallback} (HTTP ${res.status})`);
+}
+
+interface GetReprecioMasivoPreviewResponse { data: ReprecioMasivoPreviewItem[] }
+interface AplicarReprecioMasivoResponse { data: ReprecioMasivoResultado }
+
+/**
+ * Sin paginar (catálogo elegible hoy: 43 filas) — ya viene filtrado por el
+ * backend contra `reprecio_masivo_umbral_pct`. Una lista vacía es una
+ * respuesta válida: nadie supera el umbral hoy.
+ *
+ * `no-store`: precede una escritura financiera masiva — mismo criterio que
+ * `getPrecioSugerido` y `getKSugerido`. El usuario decide sobre el estado de
+ * ahora, no sobre un catálogo cacheado hasta 60s atrás.
+ */
+export async function getReprecioMasivoPreview(): Promise<ReprecioMasivoPreviewItem[]> {
+  const res = await apiFetch(`${BASE_URL}/api/auto-parts/reprecio-masivo/preview`, {
+    cache: 'no-store',
+  });
+  if (!res.ok) throw new Error('Error al obtener la vista previa del repricing masivo.');
+  const body: GetReprecioMasivoPreviewResponse = await res.json();
+  return body.data;
+}
+
+/**
+ * Aplica el precio sugerido a los repuestos elegidos. El backend recalcula la
+ * desviación de nuevo al aplicar: un id que en la preview superaba el umbral
+ * puede volver en `omitidos` si otro cambio lo tocó entretanto — no es un
+ * error, es el camino esperado.
+ */
+export async function aplicarReprecioMasivo(ids: number[]): Promise<ReprecioMasivoResultado> {
+  const res = await apiFetch(`${BASE_URL}/api/auto-parts/reprecio-masivo/aplicar`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ids }),
+  });
+  if (!res.ok) throw await reprecioMasivoError(res);
+  const body: AplicarReprecioMasivoResponse = await res.json();
+  return body.data;
+}
+
+/** El 400 de esta ruta trae el motivo real (ids vacío, no enteros) — se propaga. */
+async function reprecioMasivoError(res: Response): Promise<Error> {
+  const fallback = 'No se pudo aplicar el repricing masivo.';
+  try {
+    const body: unknown = await res.json();
+    const message =
+      typeof body === 'object' && body !== null && 'message' in body
+        ? (body as { message?: unknown }).message
+        : null;
+    return new Error(typeof message === 'string' && message ? message : fallback);
+  } catch {
+    return new Error(fallback);
+  }
 }

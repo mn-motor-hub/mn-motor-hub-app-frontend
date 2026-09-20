@@ -508,6 +508,57 @@ export interface KAplicado {
   ultimaRevisionK: string;
 }
 
+/**
+ * Una fila de GET /api/auto-parts/reprecio-masivo/preview — ya viene filtrada
+ * por el backend contra `reprecio_masivo_umbral_pct`, sin paginar.
+ */
+export interface ReprecioMasivoPreviewItem {
+  id: number;
+  codigoInterno: string;
+  nombre: string;
+  // null si el repuesto nunca tuvo precio cargado.
+  precioActual: number | null;
+  precioSugerido: number;
+  // Puede ser negativo (precio actual por debajo del sugerido) o positivo.
+  desviacionPct: number;
+  // Instante ISO del último registro en price_history para precio_venta, o
+  // null si nunca tuvo uno.
+  ultimaModificacion: string | null;
+}
+
+export interface ReprecioMasivoAplicado {
+  id: number;
+  precioAnterior: number;
+  precioNuevo: number;
+}
+
+/**
+ * `motivo` es uno de tres textos fijos que el backend ya redacta en español
+ * ("Repuesto no encontrado o inactivo", "Sin proveedor activo con costo", "La
+ * desviación ya no supera el umbral") — se muestra tal cual, no se mapea.
+ */
+export interface ReprecioMasivoOmitido {
+  id: number;
+  motivo: string;
+}
+
+/** `motivo` acá es el mensaje de la excepción tal cual, no un catálogo fijo. */
+export interface ReprecioMasivoErrorItem {
+  id: number;
+  motivo: string;
+}
+
+/**
+ * Respuesta de POST /api/auto-parts/reprecio-masivo/aplicar. Los tres arrays
+ * cubren, sin superposición, todos los ids enviados — cada id termina en
+ * exactamente uno de los tres.
+ */
+export interface ReprecioMasivoResultado {
+  aplicados: ReprecioMasivoAplicado[];
+  omitidos: ReprecioMasivoOmitido[];
+  errores: ReprecioMasivoErrorItem[];
+}
+
 // ─── Configuración del sistema ──────────────────────────────
 export interface Configuracion {
   clave: string;

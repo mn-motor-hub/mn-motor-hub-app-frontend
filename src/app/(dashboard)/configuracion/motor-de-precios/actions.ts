@@ -2,7 +2,8 @@
 
 import { revalidatePath, updateTag } from 'next/cache';
 import { PRICING_TAG, aplicarK, getKSugerido } from '@/lib/api/pricing';
-import type { ActionResult, KAplicado, KSugerido } from '@/types';
+import { aplicarReprecioMasivo } from '@/lib/api/auto-parts';
+import type { ActionResult, KAplicado, KSugerido, ReprecioMasivoResultado } from '@/types';
 
 /**
  * Estas acciones existen porque el token vive en una cookie httpOnly: el panel
@@ -49,6 +50,36 @@ export async function aplicarKAction(kNuevo: number): Promise<ActionResult<KApli
     return {
       ok: false,
       error: err instanceof Error ? err.message : 'No se pudo aplicar el factor K.',
+    };
+  }
+}
+
+/**
+ * Aplica el repricing masivo sobre los ids elegidos por el operador en la
+ * preview — nunca "todo lo que siga superando el umbral en este momento".
+ *
+ * Toca `auto_parts.precio_venta` de cada repuesto aplicado, así que invalida
+ * `/inventario` completo (mismo criterio que `updateAutoPartAction`) más el
+ * detalle de cada repuesto que sí se aplicó, y esta misma página para
+ * refrescar la preview.
+ */
+export async function aplicarReprecioMasivoAction(
+  ids: number[],
+): Promise<ActionResult<ReprecioMasivoResultado>> {
+  try {
+    const data = await aplicarReprecioMasivo(ids);
+
+    revalidatePath('/inventario');
+    for (const { id } of data.aplicados) {
+      revalidatePath(`/inventario/${id}`);
+    }
+    revalidatePath('/configuracion/motor-de-precios');
+
+    return { ok: true, data };
+  } catch (err) {
+    return {
+      ok: false,
+      error: err instanceof Error ? err.message : 'No se pudo aplicar el repricing masivo.',
     };
   }
 }

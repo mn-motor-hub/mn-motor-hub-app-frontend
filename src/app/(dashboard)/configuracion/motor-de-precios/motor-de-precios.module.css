@@ -117,8 +117,17 @@
   animation: pulse 1.4s ease-in-out infinite;
 }
 
+.skeletonRepricing {
+  height: 320px;
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface-container);
+  border: 1px solid var(--color-outline-variant);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .skeletonAjustes {
+  .skeletonAjustes,
+  .skeletonRepricing {
     animation: none;
   }
 }
