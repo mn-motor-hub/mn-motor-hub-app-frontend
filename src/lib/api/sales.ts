@@ -2,6 +2,7 @@ import { BASE_URL, apiFetch } from './client';
 import type {
   ApiItemResponse,
   ApiListResponse,
+  MetodoPago,
   PaginationMeta,
   Sale,
   SaleEstado,
@@ -14,6 +15,7 @@ export interface CreateSalePayload {
   clienteTelefono?: string;
   createdBy: string;
   formaPago: 'usd' | 'bs';
+  metodoPago: MetodoPago;
   montoEnFormaPago: number;
   // Descuento comercial a nivel venta — reemplaza al viejo override manual de tasa.
   descuentoUsd?: number;

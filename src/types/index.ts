@@ -370,6 +370,8 @@ export interface TasaFetchResult {
 
 // ─── Ventas ───────────────────────────────────────────────────
 export type FormaPago = 'usd' | 'bs';
+// Instrumento/canal con el que se cobró — distinto de FormaPago, que es la moneda.
+export type MetodoPago = 'pago_movil' | 'transferencia_bancaria' | 'zelle' | 'binance';
 export type SaleEstado = 'en_proceso' | 'confirmada' | 'anulada';
 
 export interface SaleItem {
@@ -402,6 +404,8 @@ export interface Sale {
   ventaBajoCosto: boolean;
   formaPago: FormaPago;
   montoEnFormaPago: number;
+  // null solo en ventas anteriores a que el backend lo exigiera — no se les inventó un valor.
+  metodoPago: MetodoPago | null;
   estado: SaleEstado;
   notas: string | null;
   createdAt: string;

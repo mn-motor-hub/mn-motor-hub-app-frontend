@@ -12,8 +12,15 @@ import { AnularSaleButton } from './AnularSaleButton';
 import { ConfirmarSaleButton } from './ConfirmarSaleButton';
 import { SaleEstadoBadge } from './SaleEstadoBadge';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
-import type { Sale } from '@/types';
+import type { MetodoPago, Sale } from '@/types';
 import styles from './SalesTable.module.css';
+
+const METODO_PAGO_LABELS: Record<MetodoPago, string> = {
+  pago_movil: 'Pago móvil',
+  transferencia_bancaria: 'Transferencia bancaria',
+  zelle: 'Zelle',
+  binance: 'Binance',
+};
 
 const columnHelper = createColumnHelper<Sale>();
 
@@ -42,6 +49,13 @@ export function SalesTable({ data }: SalesTableProps) {
     columnHelper.accessor('formaPago', {
       header: 'Forma de pago',
       cell: (info) => (info.getValue() === 'usd' ? 'USD' : 'Bs'),
+    }),
+    columnHelper.accessor('metodoPago', {
+      header: 'Método de pago',
+      cell: (info) => {
+        const metodo = info.getValue();
+        return metodo ? METODO_PAGO_LABELS[metodo] : '—';
+      },
     }),
     columnHelper.accessor('estado', {
       header: 'Estado',

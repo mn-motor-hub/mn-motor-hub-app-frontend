@@ -9,8 +9,15 @@ import { SaleEstadoBadge } from '@/components/features/ventas/SaleEstadoBadge';
 import { getSale } from '@/lib/api/sales';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
 import { withFallback } from '@/lib/utils/with-fallback';
-import type { Sale } from '@/types';
+import type { MetodoPago, Sale } from '@/types';
 import styles from './detalle.module.css';
+
+const METODO_PAGO_LABELS: Record<MetodoPago, string> = {
+  pago_movil: 'Pago móvil',
+  transferencia_bancaria: 'Transferencia bancaria',
+  zelle: 'Zelle',
+  binance: 'Binance',
+};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -71,6 +78,10 @@ export default async function VentaDetailPage({ params }: PageProps) {
               <Field
                 label="Forma de pago"
                 value={sale.formaPago === 'usd' ? 'USD' : 'Bs'}
+              />
+              <Field
+                label="Método de pago"
+                value={sale.metodoPago ? METODO_PAGO_LABELS[sale.metodoPago] : '—'}
               />
               <Field
                 label={`Monto pagado (${sale.formaPago === 'usd' ? 'USD' : 'Bs'})`}

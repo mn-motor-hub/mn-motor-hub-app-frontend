@@ -6,9 +6,16 @@ import { getSale } from '@/lib/api/sales';
 import { withFallback } from '@/lib/utils/with-fallback';
 import { formatCurrencyUsd, formatBs, formatDate } from '@/lib/utils/format';
 import { COMPANY } from '@/lib/constants/company';
-import type { Sale } from '@/types';
+import type { MetodoPago, Sale } from '@/types';
 import { PrintButton } from './PrintButton';
 import styles from './comprobante.module.css';
+
+const METODO_PAGO_LABELS: Record<MetodoPago, string> = {
+  pago_movil: 'Pago móvil',
+  transferencia_bancaria: 'Transferencia bancaria',
+  zelle: 'Zelle',
+  binance: 'Binance',
+};
 
 interface PageProps {
   params: Promise<{ id: string }>;
@@ -107,6 +114,10 @@ export default async function ComprobanteVentaPage({ params }: PageProps) {
           <div className={styles.totalRow}>
             <span>Forma de pago</span>
             <span>{sale.formaPago === 'usd' ? 'USD' : 'Bolívares'}</span>
+          </div>
+          <div className={styles.totalRow}>
+            <span>Método de pago</span>
+            <span>{sale.metodoPago ? METODO_PAGO_LABELS[sale.metodoPago] : '—'}</span>
           </div>
           <div className={styles.totalRow}>
             <span>Monto pagado</span>

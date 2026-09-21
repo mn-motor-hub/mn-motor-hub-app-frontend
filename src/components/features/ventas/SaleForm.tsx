@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import {
+  type DefaultValues,
   FormProvider,
   useFieldArray,
   useForm,
@@ -19,8 +20,15 @@ import {
 } from '@/app/(dashboard)/ventas/actions';
 import { createSaleSchema, type CreateSaleFormData } from '@/lib/schemas/sale.schema';
 import { formatBs, formatCurrencyUsd } from '@/lib/utils/format';
-import type { AutoPart, TasaContexto } from '@/types';
+import type { AutoPart, MetodoPago, TasaContexto } from '@/types';
 import styles from './SaleForm.module.css';
+
+const METODO_PAGO_OPTIONS: { value: MetodoPago; label: string }[] = [
+  { value: 'pago_movil', label: 'Pago móvil' },
+  { value: 'transferencia_bancaria', label: 'Transferencia bancaria' },
+  { value: 'zelle', label: 'Zelle' },
+  { value: 'binance', label: 'Binance' },
+];
 
 function roundTwo(n: number): number {
   return Math.round(n * 100) / 100;
@@ -44,7 +52,8 @@ function findFirstErrorMessage(node: unknown): string | undefined {
   return undefined;
 }
 
-const DEFAULT_VALUES: CreateSaleFormData = {
+// DefaultValues (parcial) y no CreateSaleFormData: metodoPago queda sin valor.
+const DEFAULT_VALUES: DefaultValues<CreateSaleFormData> = {
   clienteNombre: '',
   clienteDocumento: '',
   clienteTelefono: '',
@@ -453,6 +462,7 @@ function FormaPagoSection() {
   } = useFormContext<CreateSaleFormData>();
 
   const formaPago = useWatch({ control, name: 'formaPago' });
+  const metodoPago = useWatch({ control, name: 'metodoPago' });
   const items = useWatch({ control, name: 'items' }) ?? [];
   const descuentoUsd = useWatch({ control, name: 'descuentoUsd' }) ?? 0;
   const subtotalUsd = items.reduce(
@@ -545,6 +555,36 @@ function FormaPagoSection() {
             </label>
           ))}
         </div>
+      </fieldset>
+
+      <fieldset
+        className={styles.fieldset}
+        aria-describedby={errors.metodoPago ? 'metodo-pago-error' : undefined}
+      >
+        <legend className={styles.legend}>
+          Método de pago<span className={styles.required}> *</span>
+        </legend>
+        <div className={`${styles.segmented} ${styles.segmentedWrap}`}>
+          {METODO_PAGO_OPTIONS.map((option) => (
+            <label
+              key={option.value}
+              className={`${styles.segment} ${metodoPago === option.value ? styles.segmentActive : ''}`}
+            >
+              <input
+                type="radio"
+                value={option.value}
+                className={styles.srOnly}
+                {...register('metodoPago')}
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+        {errors.metodoPago && (
+          <span id="metodo-pago-error" className={styles.fieldError}>
+            {errors.metodoPago.message}
+          </span>
+        )}
       </fieldset>
 
       {formaPago === 'bs' && (

@@ -33,6 +33,7 @@ export async function createSaleAction(
       clienteTelefono: data.clienteTelefono || undefined,
       createdBy,
       formaPago: data.formaPago,
+      metodoPago: data.metodoPago,
       montoEnFormaPago: data.montoEnFormaPago,
       descuentoUsd: data.descuentoUsd || undefined,
       notas: data.notas || undefined,

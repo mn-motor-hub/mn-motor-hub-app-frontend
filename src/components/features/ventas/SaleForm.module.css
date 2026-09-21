@@ -295,6 +295,19 @@
   gap: var(--space-sm);
 }
 
+/* Grupo de 4 opciones (método de pago): 2 por fila en mobile. Es una variante
+   aparte y no un cambio a .segmented para no tocar el de forma de pago. */
+.segmentedWrap {
+  flex-wrap: wrap;
+}
+
+.segmentedWrap .segment {
+  /* Mitad menos la mitad del gap (--space-sm = 2 × --space-xs). */
+  flex: 1 1 calc(50% - var(--space-xs));
+  padding: var(--space-xs) var(--space-sm);
+  text-align: center;
+}
+
 .segment {
   flex: 1;
   display: flex;
@@ -385,6 +398,10 @@
   }
 
   .row > * {
+    flex: 1;
+  }
+
+  .segmentedWrap .segment {
     flex: 1;
   }
 }
