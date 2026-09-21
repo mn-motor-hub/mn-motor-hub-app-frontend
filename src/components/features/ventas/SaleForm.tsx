@@ -28,6 +28,7 @@ const METODO_PAGO_OPTIONS: { value: MetodoPago; label: string }[] = [
   { value: 'transferencia_bancaria', label: 'Transferencia bancaria' },
   { value: 'zelle', label: 'Zelle' },
   { value: 'binance', label: 'Binance' },
+  { value: 'efectivo', label: 'Efectivo' },
 ];
 
 function roundTwo(n: number): number {

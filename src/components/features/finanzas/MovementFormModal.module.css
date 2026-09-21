@@ -105,6 +105,11 @@
   border-color: var(--color-danger);
 }
 
+.hint {
+  font-size: var(--text-sm);
+  color: var(--color-on-surface-variant);
+}
+
 .error,
 .createError,
 .submitError {

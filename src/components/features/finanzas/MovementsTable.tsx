@@ -14,8 +14,16 @@ import { Modal } from '@/components/ui/Modal/Modal';
 import { MovementFormModal } from './MovementFormModal';
 import { deleteMovementAction } from '@/app/(dashboard)/finanzas/actions';
 import { formatCurrencyUsd, formatDate } from '@/lib/utils/format';
-import type { FinancialCategory, FinancialMovement } from '@/types';
+import type { FinancialCategory, FinancialMovement, MetodoPago } from '@/types';
 import styles from './MovementsTable.module.css';
+
+const METODO_PAGO_LABELS: Record<MetodoPago, string> = {
+  pago_movil: 'Pago móvil',
+  transferencia_bancaria: 'Transferencia bancaria',
+  zelle: 'Zelle',
+  binance: 'Binance',
+  efectivo: 'Efectivo',
+};
 
 const columnHelper = createColumnHelper<FinancialMovement>();
 
@@ -67,6 +75,13 @@ export function MovementsTable({ data, categorias }: MovementsTableProps) {
         ) : (
           <Badge variant="neutral">Planificado</Badge>
         ),
+    }),
+    columnHelper.accessor('metodoPago', {
+      header: 'Método de pago',
+      cell: (info) => {
+        const metodo = info.getValue();
+        return metodo ? METODO_PAGO_LABELS[metodo] : <span className={styles.muted}>—</span>;
+      },
     }),
     columnHelper.accessor('registeredBy', {
       header: 'Registrado por',

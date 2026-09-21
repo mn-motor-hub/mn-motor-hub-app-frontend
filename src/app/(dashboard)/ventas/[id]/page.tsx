@@ -17,6 +17,7 @@ const METODO_PAGO_LABELS: Record<MetodoPago, string> = {
   transferencia_bancaria: 'Transferencia bancaria',
   zelle: 'Zelle',
   binance: 'Binance',
+  efectivo: 'Efectivo',
 };
 
 interface PageProps {

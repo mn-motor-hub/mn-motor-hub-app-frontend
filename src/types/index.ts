@@ -160,6 +160,8 @@ export interface FinancialMovement {
   registeredBy: string;
   source: 'manual';
   status: FinancialMovementStatus;
+  // null en movimientos anteriores a la columna y en 'planificado' cargados sin método — no se les inventó un valor.
+  metodoPago: MetodoPago | null;
   active: boolean;
   createdAt: string;
   updatedAt: string;
@@ -371,7 +373,7 @@ export interface TasaFetchResult {
 // ─── Ventas ───────────────────────────────────────────────────
 export type FormaPago = 'usd' | 'bs';
 // Instrumento/canal con el que se cobró — distinto de FormaPago, que es la moneda.
-export type MetodoPago = 'pago_movil' | 'transferencia_bancaria' | 'zelle' | 'binance';
+export type MetodoPago = 'pago_movil' | 'transferencia_bancaria' | 'zelle' | 'binance' | 'efectivo';
 export type SaleEstado = 'en_proceso' | 'confirmada' | 'anulada';
 
 export interface SaleItem {

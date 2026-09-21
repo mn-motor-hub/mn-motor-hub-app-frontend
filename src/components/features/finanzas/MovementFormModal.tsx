@@ -15,10 +15,26 @@ import {
 } from '@/app/(dashboard)/finanzas/actions';
 import {
   createMovementFormSchema,
+  isMetodoPagoRequired,
+  resolveMovementStatus,
+  todayISO,
   type CreateFinancialMovementData,
 } from '@/lib/schemas/financial-movement.schema';
-import type { FinancialCategory, FinancialMovement, FinancialType } from '@/types';
+import type {
+  FinancialCategory,
+  FinancialMovement,
+  FinancialType,
+  MetodoPago,
+} from '@/types';
 import styles from './MovementFormModal.module.css';
+
+const METODO_PAGO_OPTIONS: { value: MetodoPago; label: string }[] = [
+  { value: 'pago_movil', label: 'Pago móvil' },
+  { value: 'transferencia_bancaria', label: 'Transferencia bancaria' },
+  { value: 'zelle', label: 'Zelle' },
+  { value: 'binance', label: 'Binance' },
+  { value: 'efectivo', label: 'Efectivo' },
+];
 
 export interface MovementFormModalProps {
   open: boolean;
@@ -53,7 +69,12 @@ export function MovementFormModal({
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const schema = useMemo(() => createMovementFormSchema(categoriasLocal), [categoriasLocal]);
+  // `movement` entra al schema porque el backend no exige método al editar un
+  // confirmado anterior a la columna (ver isMetodoPagoRequired).
+  const schema = useMemo(
+    () => createMovementFormSchema(categoriasLocal, movement),
+    [categoriasLocal, movement],
+  );
 
   // El componente se monta recién al abrirse (ver NewMovementButton), así que
   // estos defaults se aplican en cada apertura sin necesidad de un reset().
@@ -72,8 +93,13 @@ export function MovementFormModal({
     setSubmitting(true);
 
     // `status` no se expone en creación: el backend lo deriva de la fecha.
+    // En edición, vaciar el selector de un movimiento que tenía método manda
+    // null (así lo borra el PATCH); si nunca lo tuvo, la clave se omite.
     const result = movement
-      ? await updateMovementAction(movement.id, data)
+      ? await updateMovementAction(movement.id, {
+          ...data,
+          metodoPago: data.metodoPago ?? (movement.metodoPago ? null : undefined),
+        })
       : await createMovementAction(data);
 
     if (result.ok) {
@@ -99,6 +125,7 @@ export function MovementFormModal({
           <AmountAndDate />
           <DescriptionField />
           <CategorySelect categorias={categoriasLocal} onCategoriaCreada={handleCategoriaCreada} />
+          <MetodoPagoSelect movement={movement} />
           <RegisteredByField />
           {isEdit && <StatusToggle />}
 
@@ -403,6 +430,71 @@ function CategorySelect({
   );
 }
 
+// ── Método de pago ───────────────────────────────────────────────────────────
+
+function MetodoPagoSelect({ movement }: { movement?: FinancialMovement }) {
+  const {
+    control,
+    trigger,
+    watch,
+    formState: { errors },
+  } = useFormContext<CreateFinancialMovementData>();
+
+  const date = watch('date');
+  const status = watch('status');
+  const required = isMetodoPagoRequired({ date, status }, movement);
+  const planificado = resolveMovementStatus(date, status) === 'planificado';
+
+  // Un error viejo no se muestra si la fecha o el estado cambiaron y el método
+  // dejó de ser obligatorio; el estado de RHF se limpia recién al tocar el campo.
+  const error = required ? errors.metodoPago?.message : undefined;
+
+  return (
+    <div className={styles.field}>
+      <label htmlFor="metodo-pago-select" className={styles.label}>
+        Método de pago {required && <span className={styles.required}>*</span>}
+      </label>
+
+      {/* Sin preselección: el valor se registra como dato real, lo elige quien carga. */}
+      <Controller
+        name="metodoPago"
+        control={control}
+        render={({ field }) => (
+          <select
+            id="metodo-pago-select"
+            className={[styles.select, error ? styles.selectError : ''].filter(Boolean).join(' ')}
+            value={field.value ?? ''}
+            onChange={(e) => field.onChange(e.target.value || undefined)}
+            // mode 'onChange' no valida al salir del campo: sin esto, dejarlo
+            // vacío y pasar de largo no mostraría el error.
+            onBlur={() => {
+              field.onBlur();
+              void trigger('metodoPago');
+            }}
+            aria-describedby={error ? 'metodo-pago-error' : undefined}
+          >
+            <option value="">— Seleccioná el método de pago —</option>
+            {METODO_PAGO_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        )}
+      />
+
+      {error && (
+        <span id="metodo-pago-error" className={styles.error} role="alert">
+          {error}
+        </span>
+      )}
+      {!error && planificado && (
+        <span className={styles.hint}>Opcional mientras el movimiento esté planificado</span>
+      )}
+    </div>
+  );
+}
+
 // ── Helpers ──────────────────────────────────────────────────────────────────
 
 function buildDefaults(movement?: FinancialMovement): Partial<CreateFinancialMovementData> {
@@ -415,6 +507,7 @@ function buildDefaults(movement?: FinancialMovement): Partial<CreateFinancialMov
       financialCategoryId: movement.financialCategoryId,
       registeredBy: movement.registeredBy,
       status: movement.status,
+      metodoPago: movement.metodoPago ?? undefined,
     };
   }
   return {
@@ -424,12 +517,4 @@ function buildDefaults(movement?: FinancialMovement): Partial<CreateFinancialMov
     financialCategoryId: 0,
     registeredBy: '',
   };
-}
-
-/** Hoy en local como YYYY-MM-DD — toISOString() correría el día por UTC. */
-function todayISO(): string {
-  const d = new Date();
-  const mm = String(d.getMonth() + 1).padStart(2, '0');
-  const dd = String(d.getDate()).padStart(2, '0');
-  return `${d.getFullYear()}-${mm}-${dd}`;
 }

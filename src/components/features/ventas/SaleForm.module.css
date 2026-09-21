@@ -302,7 +302,9 @@
 }
 
 .segmentedWrap .segment {
-  /* Mitad menos la mitad del gap (--space-sm = 2 × --space-xs). */
+  /* Mitad menos la mitad del gap (--space-sm = 2 × --space-xs). Con cinco
+     opciones quedan 2 + 2 + 1: la última fila no deja hueco porque el flex-grow
+     estira "Efectivo" a todo el ancho. */
   flex: 1 1 calc(50% - var(--space-xs));
   padding: var(--space-xs) var(--space-sm);
   text-align: center;
@@ -402,6 +404,9 @@
   }
 
   .segmentedWrap .segment {
-    flex: 1;
+    /* Ancho según el contenido (basis auto), no partes iguales: con cinco
+       opciones "Transferencia bancaria" se partía en dos líneas. Si la fila no
+       alcanza, envuelve y el grow reparte el resto en vez de desbordar. */
+    flex: 1 1 auto;
   }
 }

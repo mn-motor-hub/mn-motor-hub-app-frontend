@@ -34,7 +34,7 @@ export const createSaleSchema = z
     formaPago: z.enum(['usd', 'bs'], { message: 'Seleccioná la forma de pago' }),
     // Sin default en el form a propósito: el valor se registra como dato real,
     // así que tiene que elegirlo el vendedor. Espeja el @IsIn del backend.
-    metodoPago: z.enum(['pago_movil', 'transferencia_bancaria', 'zelle', 'binance'], {
+    metodoPago: z.enum(['pago_movil', 'transferencia_bancaria', 'zelle', 'binance', 'efectivo'], {
       message: 'Seleccioná el método de pago',
     }),
     montoEnFormaPago: z
