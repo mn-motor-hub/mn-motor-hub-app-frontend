@@ -311,6 +311,9 @@
 }
 
 .segment {
+  /* Containing block del .srOnly absoluto: sin ancestro posicionado el radio
+     escapa del overflow de .layout y empuja la altura de html. */
+  position: relative;
   flex: 1;
   display: flex;
   align-items: center;
