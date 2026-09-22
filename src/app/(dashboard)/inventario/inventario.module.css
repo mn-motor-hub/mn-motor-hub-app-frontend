@@ -13,11 +13,13 @@
   }
 }
 
+/* Ancho completo bajo los filtros; ancho automático desde 900px (ver .row en AutoPartFilters.module.css) */
 .importLink {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: var(--space-xs);
+  width: 100%;
   min-height: 44px;
   padding: var(--space-sm) var(--space-md);
   background-color: var(--color-primary);
@@ -31,6 +33,13 @@
 
 .importLink:hover {
   background-color: var(--color-primary-hover);
+}
+
+/* 900px y no 768px a propósito: el mismo corte que la fila de filtros */
+@media (min-width: 900px) {
+  .importLink {
+    width: auto;
+  }
 }
 
 .tableSection {

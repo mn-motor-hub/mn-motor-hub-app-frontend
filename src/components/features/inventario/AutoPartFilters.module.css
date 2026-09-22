@@ -5,22 +5,30 @@
   padding: var(--space-md);
 }
 
-/* Fila principal: controles a la izquierda, slot a la derecha */
+/*
+  Fila principal. Apilada (controles arriba, slot debajo) hasta 900px; en fila
+  (controles a la izquierda, slot a la derecha) desde 900px.
+
+  The row breakpoint is 900px, NOT the repo's standard 768px, on purpose. Between
+  768px and ~900px the 240px sidebar leaves .main under ~530px, and .controls
+  (flex: 1 with a 0 basis) never wraps below .rightGroup, so the import button
+  ends up on top of the selects again. Do not "fix" this to 768px.
+*/
 .row {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
   gap: var(--space-sm);
-  flex-wrap: wrap;
 }
 
-/* Grupo de filtros — crece para ocupar el espacio disponible */
+/* Grupo de filtros — a ancho completo al apilar; crece desde 900px */
 .controls {
   display: flex;
   align-items: center;
   gap: var(--space-sm);
   flex-wrap: wrap;
-  flex: 1;
+  flex: 0 0 auto;
   min-width: 0;
 }
 
@@ -81,7 +89,10 @@
   border-left-color: var(--color-primary);
 }
 
+/* Ancho completo y contenido: sin esto toma el ancho de la opción más larga */
 .select {
+  width: 100%;
+  min-width: 0;
   height: 44px;
   padding: 0 var(--space-md);
   border: 1px solid var(--color-outline-variant);
@@ -137,5 +148,24 @@
 
   .textInput {
     width: 100%;
+  }
+}
+
+/* Fila: ver el comentario de .row — 900px es deliberado, no 768px */
+@media (min-width: 900px) {
+  .row {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .controls {
+    flex: 1;
+  }
+
+  .select {
+    width: auto;
+    max-width: 100%;
   }
 }
